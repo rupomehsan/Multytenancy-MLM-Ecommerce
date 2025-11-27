@@ -2,7 +2,7 @@
 
 
 use Illuminate\Support\Facades\Route;
-use App\Modules\Inventory\Managements\Suppliers\Controllers\ProductSupplierController;
+use App\Modules\INVENTORY\Managements\Suppliers\Controllers\ProductSupplierController;
 
 Route::get('/add/new/product-supplier', [ProductSupplierController::class, 'addNewProductSupplier'])->name('AddNewProductSupplier');
 Route::post('/save/new/product-supplier', [ProductSupplierController::class, 'saveNewProductSupplier'])->name('SaveNewProductSupplier');

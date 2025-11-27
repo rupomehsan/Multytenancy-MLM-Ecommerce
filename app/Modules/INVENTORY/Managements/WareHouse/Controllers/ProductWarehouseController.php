@@ -1,11 +1,8 @@
 <?php
 
-namespace App\Modules\Inventory\Managements\WareHouse\Controllers;
+namespace App\Modules\INVENTORY\Managements\WareHouse\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Inventory\Models\ProductWarehouse;
-use App\Http\Controllers\Inventory\Models\ProductWarehouseRoom;
-use App\Http\Controllers\Inventory\Models\ProductWarehouseRoomCartoon;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -15,11 +12,19 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+use App\Modules\INVENTORY\Managements\WareHouse\Database\Models\ProductWarehouse;
+use App\Modules\INVENTORY\Managements\WareHouseRoom\Database\Models\ProductWarehouseRoom;
+use App\Modules\INVENTORY\Managements\WareHouseRoomCartoon\Database\Models\ProductWarehouseRoomCartoon;
+
 class ProductWarehouseController extends Controller
 {
+    public function __construct()
+    {
+        $this->loadModuleViewPath('INVENTORY/Managements/WareHouse');
+    }
     public function addNewProductWarehouse()
     {
-        return view('backend.product_warehouse.create');
+        return view('create');
     }
 
     public function saveNewProductWarehouse(Request $request)
@@ -103,14 +108,14 @@ class ProductWarehouseController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('backend.product_warehouse.view');
+        return view('view');
     }
 
 
     public function editProductWarehouse($slug)
     {
         $data = ProductWarehouse::where('slug', $slug)->first();
-        return view('backend.product_warehouse.edit', compact('data'));
+        return view('edit', compact('data'));
     }
 
     public function updateProductWarehouse(Request $request)
@@ -154,7 +159,7 @@ class ProductWarehouseController extends Controller
         $data->save();
 
         Toastr::success('Product Warehouse Has been Updated', 'Success!');
-        return view('backend.product_warehouse.edit', compact('data'));
+        return view('edit', compact('data'));
     }
 
 

@@ -31,7 +31,7 @@ use Faker\Generator;
 use Illuminate\Container\Container;
 
 
-use App\Http\Controllers\BaseController as Controller;
+use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
 {

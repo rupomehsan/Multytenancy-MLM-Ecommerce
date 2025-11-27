@@ -1,8 +1,8 @@
-@extends('backend.master')
+@extends('tenant.admin.layouts.app')
 
 @section('header_css')
     <style>
-        ol{
+        ol {
             font-weight: 500;
         }
 
@@ -25,7 +25,7 @@
             clear: both;
         }
 
-        small.instruction_text{
+        small.instruction_text {
             color: #1e1e1e;
             font-weight: 500;
             font-size: 13px;
@@ -43,25 +43,25 @@
 @endsection
 
 @section('content')
-
     <div class="row">
         <div class="col-lg-12 col-xl-12">
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-3">Rearrange Categories by Dragging them</h4>
-                    <small class="instruction_text">[N/B: Drag the Item using your Mouse Cursor to Rearrange their Order. Then Press the save button to save the Rearranged Order]</small>
+                    <small class="instruction_text">[N/B: Drag the Item using your Mouse Cursor to Rearrange their Order.
+                        Then Press the save button to save the Rearranged Order]</small>
 
-                    <form action="{{url('save/rearranged/blog/categories')}}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ url('save/rearranged/blog/categories') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <ol class="clearfix">
                             @php
                                 $sl = 1;
                             @endphp
                             @foreach ($categories as $category)
-                            <li style="background: #{{rand(1000,9999)}};">
-                                <input type="hidden" value="{{$category->slug}}" name="slug[]">
-                                {{$sl++}}) {{$category->name}} [{{$category->slug}}]
-                            </li>
+                                <li style="background: #{{ rand(1000, 9999) }};">
+                                    <input type="hidden" value="{{ $category->slug }}" name="slug[]">
+                                    {{ $sl++ }}) {{ $category->name }} [{{ $category->slug }}]
+                                </li>
                             @endforeach
                         </ol>
                         <button type="submit" class="btn rounded btn-primary">Save Rearranged Order</button>
@@ -75,13 +75,13 @@
 
 
 @section('footer_js')
-    <script src="{{url('js')}}/jquery.dragndrop.js"></script>
+    <script src="{{ url('js') }}/jquery.dragndrop.js"></script>
     <script>
-        $(function(){
+        $(function() {
             $('ol').dragndrop({
-                onDrop: function( element, droppedElement ) {
-                    console.log( 'element dropped: ' );
-                    console.log( droppedElement );
+                onDrop: function(element, droppedElement) {
+                    console.log('element dropped: ');
+                    console.log(droppedElement);
                 }
             });
         });

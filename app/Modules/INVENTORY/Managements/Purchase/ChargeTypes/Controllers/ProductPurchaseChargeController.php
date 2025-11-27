@@ -1,20 +1,10 @@
 <?php
 
-namespace App\Modules\Inventory\Managements\Purchase\ChargeTypes\Controllers;
+
+namespace App\Modules\INVENTORY\Managements\Purchase\ChargeTypes\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Inventory\Models\ProductSupplier;
-use App\Http\Controllers\Inventory\Models\ProductWarehouse;
-use App\Http\Controllers\Inventory\Models\ProductWarehouseRoom;
-use App\Http\Controllers\Inventory\Models\ProductWarehouseRoomCartoon;
-use App\Http\Controllers\Inventory\Models\ProductPurchaseOrder;
-use App\Http\Controllers\Inventory\Models\ProductPurchaseOrderProduct;
-use App\Http\Controllers\Inventory\Models\ProductPurchaseQuotation;
-use App\Http\Controllers\Inventory\Models\ProductPurchaseQuotationProduct;
-use App\Http\Controllers\Inventory\Models\ProductStock;
-use App\Http\Controllers\Inventory\Models\ProductPurchaseOtherCharge;
-use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -23,8 +13,27 @@ use DataTables;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+
+use App\Modules\INVENTORY\Managements\Suppliers\Database\Models\ProductSupplier;
+use App\Modules\INVENTORY\Managements\WareHouse\Database\Models\ProductWarehouse;
+use App\Modules\INVENTORY\Managements\WareHouseRoom\Database\Models\ProductWarehouseRoom;
+use App\Modules\INVENTORY\Managements\WareHouseRoomCartoon\Database\Models\ProductWarehouseRoomCartoon;
+use App\Modules\INVENTORY\Managements\Purchase\Orders\Database\Models\ProductPurchaseOrder;
+use App\Modules\INVENTORY\Managements\Purchase\Orders\Database\Models\ProductPurchaseOrderProduct;
+use App\Modules\INVENTORY\Managements\Purchase\Quotations\Database\Models\ProductPurchaseQuotation;
+use App\Modules\INVENTORY\Managements\Purchase\Quotations\Database\Models\ProductPurchaseQuotationProduct;
+use App\Modules\INVENTORY\Managements\Purchase\Orders\Database\Models\ProductStock;
+use App\Modules\INVENTORY\Managements\Purchase\ChargeTypes\Database\Models\ProductPurchaseOtherCharge;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\Product;
+
+
+
 class ProductPurchaseChargeController extends Controller
 {
+    public function __construct()
+    {
+        $this->loadModuleViewPath('INVENTORY/Managements/Purchase/ChargeTypes');
+    }
     public function addNewPurchaseProductCharge()
     {
         // $products = Product::where('status', 'active')->get();
@@ -32,7 +41,7 @@ class ProductPurchaseChargeController extends Controller
         // $productWarehouses = ProductWarehouse::where('status', 'active')->get();
         // $productWarehouseRooms = ProductWarehouseRoom::where('status', 'active')->get();
         // $productWarehouseRoomCartoons = ProductWarehouseRoomCartoon::where('status', 'active')->get();
-        return view('backend.product_charge.create');
+        return view('create');
     }
 
     public function saveNewPurchaseProductCharge(Request $request)
@@ -106,7 +115,7 @@ class ProductPurchaseChargeController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('backend.product_charge.view');
+        return view('view');
     }
 
 
@@ -118,7 +127,7 @@ class ProductPurchaseChargeController extends Controller
         // $productWarehouseRooms = ProductWarehouseRoom::where('product_warehouse_id', $data->product_warehouse_id)->where('status', 'active')->get();
         // $productWarehouseRoomCartoon = ProductWarehouseRoomCartoon::where('product_warehouse_id', $data->product_warehouse_id)->where('product_warehouse_room_id', $data->product_warehouse_room_id)->where('status', 'active')->get();
         // $suppliers = ProductSupplier::where('status', 'active')->get();
-        return view('backend.product_charge.edit', compact('data'));
+        return view('edit', compact('data'));
     }
 
 

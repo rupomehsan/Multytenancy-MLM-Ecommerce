@@ -2,7 +2,7 @@
 
 
 use Illuminate\Support\Facades\Route;
-use App\Modules\Inventory\Managements\Purchase\Quotations\Controllers\ProductPurchaseQuotationController;
+use App\Modules\INVENTORY\Managements\Purchase\Quotations\Controllers\ProductPurchaseQuotationController;
 
 Route::get('/add/new/purchase-product/quotation', [ProductPurchaseQuotationController::class, 'addNewPurchaseProductQuotation'])->name('AddNewPurchaseProductQuotation');
 Route::post('/save/new/purchase-product/quotation', [ProductPurchaseQuotationController::class, 'saveNewPurchaseProductQuotation'])->name('SaveNewPurchaseProductQuotation');

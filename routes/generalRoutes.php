@@ -7,8 +7,6 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SmsServiceController;
 
 Route::group(['middleware' => ['auth', 'CheckUserType', 'DemoMode']], function () {
-
-
     // backup download
     Route::get('/download/database/backup', [BackupController::class, 'downloadDBBackup'])->name('DownloadDBBackup');
     Route::get('/download/product/files/backup', [BackupController::class, 'downloadProductFilesBackup'])->name('DownloadProductFilesBackup');

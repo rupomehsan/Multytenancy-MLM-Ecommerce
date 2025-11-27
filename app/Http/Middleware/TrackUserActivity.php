@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
-use App\Models\UserActivity;
+use App\Modules\ECOMMERCE\Managements\UserManagements\Users\Database\Models\UserActivity;
 
 class TrackUserActivity
 {

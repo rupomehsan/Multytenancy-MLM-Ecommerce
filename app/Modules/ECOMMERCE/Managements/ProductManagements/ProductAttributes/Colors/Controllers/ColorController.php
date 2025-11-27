@@ -16,7 +16,7 @@ class ColorController extends Controller
 
     public function __construct()
     {
-        $this->loadModuleViewPath('ECOMMERCE/Managements/ProductAttributes/Colors');
+        $this->loadModuleViewPath('ECOMMERCE/Managements/ProductManagements/ProductAttributes/Colors');
     }
 
     public function viewAllColors(Request $request)

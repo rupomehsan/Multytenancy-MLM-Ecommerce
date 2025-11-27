@@ -19,7 +19,7 @@ class SupportTicketController extends Controller
 {
     public function __construct()
     {
-        $this->loadModuleViewPath('CRM/Managements/SupportTicker');
+        $this->loadModuleViewPath('CRM/Managements/SupportTickets');
     }
 
     public function pendingSupportTickets(Request $request)

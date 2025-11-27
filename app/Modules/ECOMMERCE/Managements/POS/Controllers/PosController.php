@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Modules\ECOMMERCE\Managements\POS\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 use App\Modules\INVENTORY\Managements\WareHouse\Database\Models\ProductWarehouse;
-use App\Modules\INVENTORY\Managements\WarehouseRoom\Database\Models\ProductWarehouseRoom;
-use App\Modules\INVENTORY\Managements\RoomCartoon\Database\Models\ProductWarehouseRoomCartoon;
+use App\Modules\INVENTORY\Managements\WareHouseRoom\Database\Models\ProductWarehouseRoom;
+use App\Modules\INVENTORY\Managements\WareHouseRoomCartoon\Database\Models\ProductWarehouseRoomCartoon;
 use App\Modules\CRM\Managements\CustomerSourceType\Database\Models\CustomerSourceType;
 use App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Outlets\Database\Models\Outlet;
 use App\Modules\ECOMMERCE\Managements\UserManagements\Users\Database\Models\UserAddress;
@@ -32,6 +32,8 @@ use App\Modules\ECOMMERCE\Managements\Orders\Database\Models\ShippingInfo;
 
 use App\Http\Controllers\Account\Models\AccountsConfiguration;
 use App\Http\Controllers\Account\AccountsHelper;
+
+use App\Http\Controllers\Controller;
 
 class PosController extends Controller
 {

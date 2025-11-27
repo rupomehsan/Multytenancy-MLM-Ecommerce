@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Account\Models;
 
-use App\Http\Controllers\Outlet\Models\CustomerSourceType;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+
+use App\Modules\CRM\Managements\CustomerSourceType\Database\Models\CustomerSourceType;
+use App\Modules\ECOMMERCE\Managements\UserManagements\Users\Database\Models\User;
+
 
 class AcAccount extends Model
 {
@@ -52,6 +54,4 @@ class AcAccount extends Model
     {
         return $this->hasMany(AcAccount::class, 'parent_id')->with('inc');
     }
-
-
 }

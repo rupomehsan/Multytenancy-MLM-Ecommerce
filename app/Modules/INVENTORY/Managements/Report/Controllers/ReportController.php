@@ -1,17 +1,22 @@
 <?php
 
-namespace App\Modules\Inventory\Managements\Report\Controllers;
+namespace App\Modules\INVENTORY\Managements\Report\Controllers;
 
-use App\Http\Controllers\Inventory\Models\ProductPurchaseOrder;
-use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use App\Modules\INVENTORY\Managements\Purchase\Orders\Database\Models\ProductPurchaseOrder;
+use App\Modules\ECOMMERCE\Managements\Orders\Database\Models\Order;
+
 class ReportController extends Controller
 {
+    public function __construct()
+    {
+        $this->loadModuleViewPath('INVENTORY/Managements/Report');
+    }
     public function salesReport()
     {
-        return view('backend.report.sales_report');
+        return view('sales_report');
     }
 
     public function generateSalesReport(Request $request)
@@ -37,13 +42,13 @@ class ReportController extends Controller
         }
         $data = $query->orderBy('id', 'desc')->get();
 
-        $returnHTML = view('backend.report.sales_report_view', compact('startDate', 'endDate', 'data'))->render();
+        $returnHTML = view('sales_report_view', compact('startDate', 'endDate', 'data'))->render();
         return response()->json(['variant' => $returnHTML]);
     }
 
     public function productPurchaseReport(Request $request)
     {
-        return view('backend.report.product_purchase_report');
+        return view('product_purchase_report');
     }
     public function generateProductPurchaseReport(Request $request)
     {
@@ -68,7 +73,7 @@ class ReportController extends Controller
 
         $data = $query->orderBy('id', 'desc')->get();
 
-        $returnHTML = view('backend.report.product_purchase_report_view', compact('startDate', 'endDate', 'data'))->render();
+        $returnHTML = view('product_purchase_report_view', compact('startDate', 'endDate', 'data'))->render();
         return response()->json(['variant' => $returnHTML]);
     }
 }

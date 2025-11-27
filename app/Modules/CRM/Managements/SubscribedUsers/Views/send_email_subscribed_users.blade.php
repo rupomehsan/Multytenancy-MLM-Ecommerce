@@ -1,4 +1,4 @@
-@extends('backend.master')
+@extends('tenant.admin.layouts.app')
 
 @section('header_css')
     <link href="{{ url('dataTable') }}/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -102,7 +102,7 @@
     <script src="{{ url('dataTable') }}/js/jquery.dataTables.min.js"></script>
     <script src="{{ url('dataTable') }}/js/dataTables.bootstrap4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        {{-- <script src="{{url('assets')}}/plugins/select2/select2.min.js"></script> --}}
+    {{-- <script src="{{url('assets')}}/plugins/select2/select2.min.js"></script> --}}
     <script>
         function updateCheckmarks() {
             var selectedValues = $('#emails-select').val() || [];

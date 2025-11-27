@@ -4,8 +4,8 @@ namespace App\Modules\INVENTORY\Managements\WareHouse\Database\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Modules\INVENTORY\Managements\WareHouse\Database\Models\ProductWarehouseRoom;
-use App\Http\Controllers\Inventory\Models\ProductWarehouseRoomCartoon;
+use App\Modules\INVENTORY\Managements\WareHouseRoom\Database\Models\ProductWarehouseRoom;
+use App\Modules\INVENTORY\Managements\WareHouseRoomCartoon\Database\Models\ProductWarehouseRoomCartoon;
 
 class ProductWarehouse extends Model
 {

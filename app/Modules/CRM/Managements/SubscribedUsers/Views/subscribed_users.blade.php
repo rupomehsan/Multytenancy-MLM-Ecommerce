@@ -1,4 +1,4 @@
-@extends('backend.master')
+@extends('tenant.admin.layouts.app')
 
 @section('header_css')
     <link href="{{ url('dataTable') }}/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -66,14 +66,15 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-3">Subscribed Users List</h4>
-                    
+
                     <div class="table-responsive">
 
                         <label id="customFilter">
-                            <a href="{{url('download/subscribed/users/excel')}}"
+                            <a href="{{ url('download/subscribed/users/excel') }}"
                                 class="btn btn-sm btn-success rounded ml-3"><i class="feather-download"></i> Download As
                                 Excel</a>
-                            <a href="{{ url('subscribed/users/send-email') }}" class="btn btn-sm btn-primary rounded ml-3"><i class="feather-mail"></i> Send Email</a>
+                            <a href="{{ url('subscribed/users/send-email') }}"
+                                class="btn btn-sm btn-primary rounded ml-3"><i class="feather-mail"></i> Send Email</a>
                         </label>
 
                         <table class="table table-bordered mb-0 data-table">
@@ -98,7 +99,6 @@
 
 
 @section('footer_js')
-
     {{-- js code for data table --}}
     <script src="{{ url('dataTable') }}/js/jquery.validate.js"></script>
     <script src="{{ url('dataTable') }}/js/jquery.dataTables.min.js"></script>
@@ -109,8 +109,7 @@
             processing: true,
             serverSide: true,
             ajax: "{{ url('/view/all/subscribed/users') }}",
-            columns: [
-                {
+            columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
                 }, //orderable: true, searchable: true
@@ -118,8 +117,16 @@
                     data: 'email',
                     name: 'email'
                 },
-                { data: 'created_at', name: 'created_at' },
-                { data: 'action', name: 'action', orderable: false, searchable: false },
+                {
+                    data: 'created_at',
+                    name: 'created_at'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
             ],
         });
 
@@ -134,7 +141,7 @@
             }
         });
 
-        $('body').on('click', '.deleteBtn', function () {
+        $('body').on('click', '.deleteBtn', function() {
             var id = $(this).data("id");
             if (confirm("Are You sure want to delete !")) {
                 if (check_demo_user()) {
@@ -143,11 +150,11 @@
                 $.ajax({
                     type: "GET",
                     url: "{{ url('delete/subcribed/users') }}" + '/' + id,
-                    success: function (data) {
+                    success: function(data) {
                         table.draw(false);
                         toastr.error("Subscription has been Deleted", "Deleted Successfully");
                     },
-                    error: function (data) {
+                    error: function(data) {
                         console.log('Error:', data);
                     }
                 });

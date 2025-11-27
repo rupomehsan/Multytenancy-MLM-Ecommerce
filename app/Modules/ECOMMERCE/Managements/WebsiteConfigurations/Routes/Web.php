@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Modules\ECOMMERCE\Managements\WebsiteConfigurations\Controllers\GeneralInfoController;
 
 
-
 Route::get('/general/info', [GeneralInfoController::class, 'generalInfo'])->name('GeneralInfo');
 Route::post('/update/general/info', [GeneralInfoController::class, 'updateGeneralInfo'])->name('UpdateGeneralInfo');
 

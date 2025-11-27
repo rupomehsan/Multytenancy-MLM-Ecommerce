@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Modules\ECOMMERCE\Managements\UserManagements\Roles\Controllers;
 
 
 use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use DataTables;
+use App\Http\Controllers\Controller;
 
 use App\Modules\ECOMMERCE\Managements\UserManagements\Roles\Database\Models\PermissionRoutes;
 use App\Modules\ECOMMERCE\Managements\UserManagements\Roles\Database\Models\RolePermission;

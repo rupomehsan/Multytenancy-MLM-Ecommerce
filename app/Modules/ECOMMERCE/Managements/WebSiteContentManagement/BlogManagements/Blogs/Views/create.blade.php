@@ -64,7 +64,9 @@
                                             <select name="category_id" data-toggle="select2" class="form-control"
                                                 id="category_id" required>
                                                 @php
-                                                    echo App\Models\BlogCategory::getDropDownList('name');
+                                                    echo App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\BlogManagements\BlogCategory\Database\Models\BlogCategory::getDropDownList(
+                                                        'name',
+                                                    );
                                                 @endphp
                                             </select>
                                             <div class="invalid-feedback" style="display: block;">

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Inventory\Managements\Purchase\ChargeTypes\Database\Models;
+namespace App\Modules\INVENTORY\Managements\Purchase\ChargeTypes\Database\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

@@ -1,4 +1,4 @@
-@extends('backend.master')
+@extends('tenant.admin.layouts.app')
 
 @section('header_css')
     <link href="{{ url('dataTable') }}/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -109,8 +109,7 @@
             processing: true,
             serverSide: true,
             ajax: "{{ route('ViewAllProductColor') }}",
-            columns: [
-                {
+            columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
                 },
@@ -125,7 +124,7 @@
                 {
                     data: 'code',
                     name: 'code',
-                    render: function (data, type, row) {
+                    render: function(data, type, row) {
                         return `<div style="width: 30px; height: 30px; background-color: ${data}; border: 1px solid #000; margin: 0 auto;"></div>`;
                     }
                 },
@@ -137,10 +136,12 @@
                 },
             ],
             dom: 'lfrtip',
-            initComplete: function () {
+            initComplete: function() {
                 // Append the Rearrange Category button to the search input area
                 var searchBox = this.api().table().container().querySelector('.dataTables_filter');
-                var rearrangeButton = $('<a href="{{url('/add/new/product-color')}}" class="btn btn-success btn-sm" style="margin-left: 5px;"><b><i class="fas fa-plus"></i> Add Color</b></a>');
+                var rearrangeButton = $(
+                    '<a href="{{ url('/add/new/product-color') }}" class="btn btn-success btn-sm" style="margin-left: 5px;"><b><i class="fas fa-plus"></i> Add Color</b></a>'
+                    );
                 $(searchBox).append(rearrangeButton);
             }
         });
@@ -155,20 +156,21 @@
             }
         });
 
-        $('body').on('click', '.deleteBtn', function () {
+        $('body').on('click', '.deleteBtn', function() {
             var productColorId = $(this).data("id");
 
             if (confirm("Are You sure want to delete !")) {
                 if (check_demo_user()) {
                     return false;
-                } $.ajax({
+                }
+                $.ajax({
                     type: "GET",
                     url: "{{ url('delete/product-color') }}" + '/' + productColorId,
-                    success: function (data) {
+                    success: function(data) {
                         table.draw(false);
                         toastr.error("Customer category has been Deleted", "Deleted Successfully");
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         console.log('Error 11:', xhr.responseJSON.error);
                         if (xhr.responseJSON && xhr.responseJSON.error) {
                             toastr.error(xhr.responseJSON.error, "Error");

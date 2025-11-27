@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Banners\Controllers;
 
-use App\Models\Banner;
-use App\Models\PromotionalBanner;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Brian2694\Toastr\Facades\Toastr;
@@ -11,50 +9,62 @@ use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 use Intervention\Image\Facades\Image;
 
+use App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Banners\Models\Banner;
+use App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Banners\Database\Models\PromotionalBanner;
+
+use App\Http\Controllers\Controller;
+
 class BannerController extends Controller
 {
-    public function viewAllSliders(Request $request){
+    public function __construct()
+    {
+        $this->loadModuleViewPath('ECOMMERCE/Managements/WebSiteContentManagement/Banners');
+    }
+    public function viewAllSliders(Request $request)
+    {
         if ($request->ajax()) {
 
             $data = Banner::where('type', 1)->orderBy('serial', 'asc')->get();
 
             return Datatables::of($data)
-                    ->editColumn('status', function($data) {
-                        if($data->status == 1){
-                            return '<span class="btn btn-sm btn-success rounded" style="padding: 0.1rem .5rem;">Active</span>';
-                        } else {
-                            return '<span class="btn btn-sm btn-warning rounded" style="padding: 0.1rem .5rem;">Inactive</span>';
-                        }
-                    })
-                    ->addIndexColumn()
-                    ->addColumn('action', function($data){
-                        $btn = ' <a href="'.url('edit/slider').'/'.$data->slug.'" class="mb-1 btn-sm btn-warning rounded"><i class="fas fa-edit"></i></a>';
-                        $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$data->slug.'" data-original-title="Delete" class="btn-sm btn-danger rounded deleteBtn"><i class="fas fa-trash-alt"></i></a>';
-                        return $btn;
-                    })
-                    ->rawColumns(['action', 'image', 'status'])
-                    ->make(true);
+                ->editColumn('status', function ($data) {
+                    if ($data->status == 1) {
+                        return '<span class="btn btn-sm btn-success rounded" style="padding: 0.1rem .5rem;">Active</span>';
+                    } else {
+                        return '<span class="btn btn-sm btn-warning rounded" style="padding: 0.1rem .5rem;">Inactive</span>';
+                    }
+                })
+                ->addIndexColumn()
+                ->addColumn('action', function ($data) {
+                    $btn = ' <a href="' . url('edit/slider') . '/' . $data->slug . '" class="mb-1 btn-sm btn-warning rounded"><i class="fas fa-edit"></i></a>';
+                    $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->slug . '" data-original-title="Delete" class="btn-sm btn-danger rounded deleteBtn"><i class="fas fa-trash-alt"></i></a>';
+                    return $btn;
+                })
+                ->rawColumns(['action', 'image', 'status'])
+                ->make(true);
         }
-        return view('backend.banners.sliders');
+        return view('sliders');
     }
 
-    public function addNewSlider(){
-        return view('backend.banners.create_slider');
+    public function addNewSlider()
+    {
+        return view('create_slider');
     }
 
-    public function saveNewSlider(Request $request){
+    public function saveNewSlider(Request $request)
+    {
         $request->validate([
             'image' => 'required',
         ]);
 
         $image = null;
-        if ($request->hasFile('image')){
+        if ($request->hasFile('image')) {
             $get_image = $request->file('image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
             $location = public_path('banner/');
 
             // $get_image->move($location, $image_name);
-            if($get_image->getClientOriginalExtension() == 'svg'){
+            if ($get_image->getClientOriginalExtension() == 'svg') {
                 $get_image->move($location, $image_name);
             } else {
                 Image::make($get_image)->save($location . $image_name, 60);
@@ -85,10 +95,11 @@ class BannerController extends Controller
         return back();
     }
 
-    public function deleteData($slug){
+    public function deleteData($slug)
+    {
         $data = Banner::where('slug', $slug)->first();
-        if($data->image){
-            if(file_exists(public_path($data->image))){
+        if ($data->image) {
+            if (file_exists(public_path($data->image))) {
                 unlink(public_path($data->image));
             }
         }
@@ -96,12 +107,14 @@ class BannerController extends Controller
         return response()->json(['success' => 'Data deleted successfully.']);
     }
 
-    public function editSlider($slug){
+    public function editSlider($slug)
+    {
         $data = Banner::where('slug', $slug)->first();
-        return view('backend.banners.update_slider', compact('data'));
+        return view('update_slider', compact('data'));
     }
 
-    public function updateSlider(Request $request){
+    public function updateSlider(Request $request)
+    {
         $request->validate([
             'status' => 'required',
         ]);
@@ -109,9 +122,9 @@ class BannerController extends Controller
         $data = Banner::where('slug', $request->slug)->first();
 
         $image = $data->image;
-        if ($request->hasFile('image')){
+        if ($request->hasFile('image')) {
 
-            if($image != '' && file_exists(public_path($image))){
+            if ($image != '' && file_exists(public_path($image))) {
                 unlink(public_path($image));
             }
 
@@ -120,7 +133,7 @@ class BannerController extends Controller
             $location = public_path('banner/');
 
             // $get_image->move($location, $image_name);
-            if($get_image->getClientOriginalExtension() == 'svg'){
+            if ($get_image->getClientOriginalExtension() == 'svg') {
                 $get_image->move($location, $image_name);
             } else {
                 Image::make($get_image)->save($location . $image_name, 60);
@@ -145,17 +158,18 @@ class BannerController extends Controller
 
         Toastr::success('Data has been Updated', 'Success');
         return redirect('/view/all/sliders');
-
     }
 
-    public function rearrangeSlider(){
+    public function rearrangeSlider()
+    {
         $data = Banner::where('type', 1)->orderBy('serial', 'asc')->get();
-        return view('backend.banners.rearrange_slider', compact('data'));
+        return view('rearrange_slider', compact('data'));
     }
 
-    public function updateRearrangedSliders(Request $request){
+    public function updateRearrangedSliders(Request $request)
+    {
         $sl = 1;
-        foreach($request->slug as $slug){
+        foreach ($request->slug as $slug) {
             Banner::where('slug', $slug)->update([
                 'serial' => $sl
             ]);
@@ -171,49 +185,52 @@ class BannerController extends Controller
 
 
 
-    public function viewAllBanners(Request $request){
+    public function viewAllBanners(Request $request)
+    {
         if ($request->ajax()) {
 
             $data = Banner::where('type', 2)->orderBy('serial', 'asc')->get();
 
             return Datatables::of($data)
-                    ->editColumn('status', function($data) {
-                        if($data->status == 1){
-                            return '<span class="btn btn-sm btn-success rounded">Active</span>';
-                        } else {
-                            return '<span class="btn btn-sm btn-danger rounded">Inactive</span>';
-                        }
-                    })
-                    ->addIndexColumn()
-                    ->addColumn('action', function($data){
-                        $btn = ' <a href="'.url('edit/banner').'/'.$data->slug.'" class="mb-1 d-inline-block btn-sm btn-warning rounded"><i class="fas fa-edit"></i></a>';
-                        $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$data->slug.'" data-original-title="Delete" class="d-inline-block btn-sm btn-danger rounded deleteBtn"><i class="fas fa-trash-alt"></i></a>';
-                        return $btn;
-                    })
-                    ->rawColumns(['action', 'image', 'status'])
-                    ->make(true);
+                ->editColumn('status', function ($data) {
+                    if ($data->status == 1) {
+                        return '<span class="btn btn-sm btn-success rounded">Active</span>';
+                    } else {
+                        return '<span class="btn btn-sm btn-danger rounded">Inactive</span>';
+                    }
+                })
+                ->addIndexColumn()
+                ->addColumn('action', function ($data) {
+                    $btn = ' <a href="' . url('edit/banner') . '/' . $data->slug . '" class="mb-1 d-inline-block btn-sm btn-warning rounded"><i class="fas fa-edit"></i></a>';
+                    $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->slug . '" data-original-title="Delete" class="d-inline-block btn-sm btn-danger rounded deleteBtn"><i class="fas fa-trash-alt"></i></a>';
+                    return $btn;
+                })
+                ->rawColumns(['action', 'image', 'status'])
+                ->make(true);
         }
-        return view('backend.banners.banners');
+        return view('banners');
     }
 
-    public function addNewBanner(){
-        return view('backend.banners.create_banner');
+    public function addNewBanner()
+    {
+        return view('create_banner');
     }
 
-    public function saveNewBanner(Request $request){
+    public function saveNewBanner(Request $request)
+    {
         $request->validate([
             'image' => 'required',
             'position' => 'required',
         ]);
 
         $image = null;
-        if ($request->hasFile('image')){
+        if ($request->hasFile('image')) {
             $get_image = $request->file('image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
             $location = public_path('banner/');
 
             // $get_image->move($location, $image_name);
-            if($get_image->getClientOriginalExtension() == 'svg'){
+            if ($get_image->getClientOriginalExtension() == 'svg') {
                 $get_image->move($location, $image_name);
             } else {
                 Image::make($get_image)->save($location . $image_name, 60);
@@ -245,12 +262,14 @@ class BannerController extends Controller
         return redirect('/view/all/banners');
     }
 
-    public function editBanner($slug){
+    public function editBanner($slug)
+    {
         $data = Banner::where('slug', $slug)->first();
-        return view('backend.banners.update_banner', compact('data'));
+        return view('update_banner', compact('data'));
     }
 
-    public function updateBanner(Request $request){
+    public function updateBanner(Request $request)
+    {
         $request->validate([
             'status' => 'required',
         ]);
@@ -258,9 +277,9 @@ class BannerController extends Controller
         $data = Banner::where('slug', $request->slug)->first();
 
         $image = $data->image;
-        if ($request->hasFile('image')){
+        if ($request->hasFile('image')) {
 
-            if($image != '' && file_exists(public_path($image))){
+            if ($image != '' && file_exists(public_path($image))) {
                 unlink(public_path($image));
             }
 
@@ -269,7 +288,7 @@ class BannerController extends Controller
             $location = public_path('banner/');
 
             // $get_image->move($location, $image_name);
-            if($get_image->getClientOriginalExtension() == 'svg'){
+            if ($get_image->getClientOriginalExtension() == 'svg') {
                 $get_image->move($location, $image_name);
             } else {
                 Image::make($get_image)->save($location . $image_name, 60);
@@ -295,17 +314,18 @@ class BannerController extends Controller
 
         Toastr::success('Data has been Updated', 'Success');
         return redirect('/view/all/banners');
-
     }
 
-    public function rearrangeBanners(){
+    public function rearrangeBanners()
+    {
         $data = Banner::where('type', 2)->orderBy('serial', 'asc')->get();
-        return view('backend.banners.rearrange_banners', compact('data'));
+        return view('rearrange_banners', compact('data'));
     }
 
-    public function updateRearrangedBanners(REquest $request){
+    public function updateRearrangedBanners(REquest $request)
+    {
         $sl = 1;
-        foreach($request->slug as $slug){
+        foreach ($request->slug as $slug) {
             Banner::where('slug', $slug)->update([
                 'serial' => $sl
             ]);
@@ -317,26 +337,28 @@ class BannerController extends Controller
 
 
 
-    public function viewPromotionalBanner(){
+    public function viewPromotionalBanner()
+    {
         $promotionalBanner = PromotionalBanner::where('id', 1)->first();
-        return view('backend.banners.promotional_banner', compact('promotionalBanner'));
+        return view('promotional_banner', compact('promotionalBanner'));
     }
 
-    public function updatePromotionalBanner(Request $request){
+    public function updatePromotionalBanner(Request $request)
+    {
 
-        $started_at = str_replace("/","-",$request->started_at);
+        $started_at = str_replace("/", "-", $request->started_at);
         $started_at = date("Y-m-d H:i:s", strtotime($started_at));
 
-        $end_at = str_replace("/","-",$request->end_at);
+        $end_at = str_replace("/", "-", $request->end_at);
         $end_at = date("Y-m-d H:i:s", strtotime($end_at));
 
         $data = PromotionalBanner::firstOrNew(['id' => 1]);
 
         $icon = request()->icon ?? ($data->icon ?? "");
 
-        if ($request->hasFile('icon')){
+        if ($request->hasFile('icon')) {
 
-            if($icon && file_exists(public_path($icon))){
+            if ($icon && file_exists(public_path($icon))) {
                 unlink(public_path($icon));
             }
 
@@ -344,7 +366,7 @@ class BannerController extends Controller
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
             $location = public_path('banner/');
             // $get_image->move($location, $image_name);
-            if($get_image->getClientOriginalExtension() == 'svg'){
+            if ($get_image->getClientOriginalExtension() == 'svg') {
                 $get_image->move($location, $image_name);
             } else {
                 Image::make($get_image)->save($location . $image_name, 60);
@@ -353,9 +375,9 @@ class BannerController extends Controller
         }
 
         $product_image = request()->product_image ?? ($data->product_image ?? "");
-        if ($request->hasFile('product_image')){
+        if ($request->hasFile('product_image')) {
 
-            if($product_image && file_exists(public_path($product_image))){
+            if ($product_image && file_exists(public_path($product_image))) {
                 unlink(public_path($product_image));
             }
 
@@ -363,7 +385,7 @@ class BannerController extends Controller
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
             $location = public_path('banner/');
             // $get_image->move($location, $image_name);
-            if($get_image->getClientOriginalExtension() == 'svg'){
+            if ($get_image->getClientOriginalExtension() == 'svg') {
                 $get_image->move($location, $image_name);
             } else {
                 Image::make($get_image)->save($location . $image_name, 60);
@@ -372,9 +394,9 @@ class BannerController extends Controller
         }
 
         $background_image = request()->background_image ?? ($data->background_image ?? "");
-        if ($request->hasFile('background_image')){
+        if ($request->hasFile('background_image')) {
 
-            if($background_image && file_exists(public_path($background_image))){
+            if ($background_image && file_exists(public_path($background_image))) {
                 unlink(public_path($background_image));
             }
 
@@ -382,7 +404,7 @@ class BannerController extends Controller
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
             $location = public_path('banner/');
             // $get_image->move($location, $image_name);
-            if($get_image->getClientOriginalExtension() == 'svg'){
+            if ($get_image->getClientOriginalExtension() == 'svg') {
                 $get_image->move($location, $image_name);
             } else {
                 Image::make($get_image)->save($location . $image_name, 60);
@@ -415,13 +437,13 @@ class BannerController extends Controller
 
         Toastr::success('Data has been Updated', 'Success');
         return back();
-
     }
 
-    public function removePromotionalHeaderIcon(){
+    public function removePromotionalHeaderIcon()
+    {
         $data = PromotionalBanner::where('id', 1)->first();
         $icon = $data->icon;
-        if($icon && file_exists(public_path($icon))){
+        if ($icon && file_exists(public_path($icon))) {
             unlink(public_path($icon));
             $data->icon = null;
             $data->save();
@@ -430,10 +452,11 @@ class BannerController extends Controller
         return back();
     }
 
-    public function removePromotionalProductImage(){
+    public function removePromotionalProductImage()
+    {
         $data = PromotionalBanner::where('id', 1)->first();
         $product_image = $data->product_image;
-        if($product_image && file_exists(public_path($product_image))){
+        if ($product_image && file_exists(public_path($product_image))) {
             unlink(public_path($product_image));
             $data->product_image = null;
             $data->save();
@@ -442,10 +465,11 @@ class BannerController extends Controller
         return back();
     }
 
-    public function removePromotionalBackgroundImage(){
+    public function removePromotionalBackgroundImage()
+    {
         $data = PromotionalBanner::where('id', 1)->first();
         $background_image = $data->background_image;
-        if($background_image && file_exists(public_path($background_image))){
+        if ($background_image && file_exists(public_path($background_image))) {
             unlink(public_path($background_image));
             $data->background_image = null;
             $data->save();

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Inventory\Models;
+namespace App\Modules\INVENTORY\Managements\Suppliers\Database\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Http\Controllers\Inventory\Models\ProductSupplier;
+
 
 class ProductSupplierContact extends Model
 {
@@ -12,7 +12,8 @@ class ProductSupplierContact extends Model
 
     protected $guarded = [];
 
-    public function contactsupplier() {
+    public function contactsupplier()
+    {
         return $this->belongsTo(ProductSupplier::class, 'product_supplier_id');
     }
 }

@@ -2,7 +2,7 @@
 
 
 use Illuminate\Support\Facades\Route;
-use App\Modules\Inventory\Managements\Purchase\ChargeTypes\Controllers\ProductPurchaseChargeController;
+use App\Modules\INVENTORY\Managements\Purchase\ChargeTypes\Controllers\ProductPurchaseChargeController;
 
 
 Route::get('/add/new/purchase-product/charge', [ProductPurchaseChargeController::class, 'addNewPurchaseProductCharge'])->name('AddNewPurchaseProductCharge');

@@ -2,19 +2,20 @@
 
 namespace App\Modules\ECOMMERCE\Managements\Orders\Database\Models;
 
-use App\Models\User;
-use App\Models\ShippingInfo;
-use App\Models\BillingAddress;
-use App\Models\OrderDetails;
-use App\Models\OrderDeliveyMan;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Http\Controllers\Outlet\Models\Outlet;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Http\Controllers\Outlet\Models\CustomerSourceType;
-use App\Http\Controllers\Inventory\Models\ProductWarehouse;
-use App\Http\Controllers\Inventory\Models\ProductWarehouseRoom;
-use App\Http\Controllers\Inventory\Models\ProductWarehouseRoomCartoon;
+
+use App\Modules\ECOMMERCE\Managements\UserManagements\Users\Database\Models\User;
+use App\Modules\ECOMMERCE\Managements\Orders\Database\Models\ShippingInfo;
+use App\Modules\ECOMMERCE\Managements\Orders\Database\Models\BillingAddress;
+use App\Modules\ECOMMERCE\Managements\Orders\Database\Models\OrderDetails;
+use App\Modules\ECOMMERCE\Managements\Orders\Database\Models\OrderDeliveyMan;
+use App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Outlets\Database\Models\Outlet;
+use App\Modules\CRM\Managements\CustomerSourceType\Database\Models\CustomerSourceType;
+use App\Modules\INVENTORY\Managements\WareHouse\Database\Models\ProductWarehouse;
+use App\Modules\INVENTORY\Managements\WareHouseRoom\Database\Models\ProductWarehouseRoom;
+use App\Modules\INVENTORY\Managements\WareHouseRoomCartoon\Database\Models\ProductWarehouseRoomCartoon;
 
 class Order extends Model
 {

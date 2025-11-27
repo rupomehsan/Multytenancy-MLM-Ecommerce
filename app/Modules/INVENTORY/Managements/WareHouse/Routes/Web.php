@@ -2,7 +2,7 @@
 
 
 use Illuminate\Support\Facades\Route;
-use App\Modules\Inventory\Managements\WareHouse\Controllers\ProductWarehouseController;
+use App\Modules\INVENTORY\Managements\WareHouse\Controllers\ProductWarehouseController;
 
 Route::get('/add/new/product-warehouse', [ProductWarehouseController::class, 'addNewProductWarehouse'])->name('AddNewProductWarehouse');
 //  Route::post('/subcategory/wise/childcategory', [ProductController::class, 'childcategorySubcategoryWise'])->name('ChildcategorySubcategoryWise');

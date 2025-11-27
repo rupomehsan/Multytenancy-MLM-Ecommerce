@@ -22,6 +22,8 @@ use App\Modules\ECOMMERCE\Managements\UserManagements\Users\Database\Models\Cust
 use App\Modules\CRM\Managements\SupportTickets\Database\Models\SupportTicket;
 use App\Modules\ECOMMERCE\Managements\UserManagements\Roles\Database\Models\UserRolePermission;
 
+use App\Http\Controllers\Controller;
+
 class UserController extends Controller
 {
     public function __construct()

@@ -24,7 +24,7 @@ class BrandController extends Controller
 
     public function __construct()
     {
-        $this->loadModuleViewPath('Ecommerce/Managements/ProductAttributes/Brands');
+        $this->loadModuleViewPath('ECOMMERCE/Managements/ProductManagements/ProductAttributes/Brands');
     }
 
     public function addNewBrand(Request $request)

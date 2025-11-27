@@ -28,7 +28,7 @@ class PackageProductController extends Controller
 {
     public function __construct()
     {
-        $this->loadModuleViewPath('ECOMMERCE/Managements/PackageProducts');
+        $this->loadModuleViewPath('ECOMMERCE/Managements/ProductManagements/PackageProducts');
     }
     /**
      * Display package products listing page

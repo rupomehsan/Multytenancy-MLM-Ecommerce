@@ -17,7 +17,7 @@ class ProductModelController extends Controller
 {
     public function __construct()
     {
-        $this->loadModuleViewPath('ECOMMERCE/Managements/ProductAttributes/Models');
+        $this->loadModuleViewPath('ECOMMERCE/Managements/ProductManagements/ProductAttributes/Models');
     }
     public function viewAllModels(Request $request)
     {

@@ -19,12 +19,12 @@
             <div class="card">
                 <div class="card-body">
                     <div class="mb-4">
-                        @include('backend.orders.pos.product_search_form')
+                        @include('pos.product_search_form')
                     </div>
                     <div class="pos-item-card-group" style="max-height: 1020px; overflow-y: scroll; padding-right: 12px;">
                         <div class="live_search row gap-2" style="gap: 10px;">
                             {{-- Live search results will be rendered here --}}
-                            @include('backend.orders.pos.live_search_products')
+                            @include('pos.live_search_products')
                         </div>
                     </div>
                 </div>
@@ -91,7 +91,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="cart_items">
-                                    @include('backend.orders.pos.cart_items')
+                                    @include('pos.cart_items')
                                 </tbody>
                             </table>
                         </div>
@@ -108,7 +108,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="cart_calculation">
-                                    @include('backend.orders.pos.cart_calculation')
+                                    @include('pos.cart_calculation')
                                 </tbody>
                             </table>
                         </div>
@@ -179,10 +179,10 @@
 
                                 <div class="tab-content">
                                     <div class="tab-pane show active" id="home1">
-                                        @include('backend.orders.pos.shipping_form')
+                                        @include('pos.shipping_form')
                                     </div>
                                     <div class="tab-pane" id="profile1">
-                                        @include('backend.orders.pos.billing_form')
+                                        @include('pos.billing_form')
                                     </div>
                                 </div>
                             </div>
@@ -208,10 +208,10 @@
     </div>
 
     <!-- Modal -->
-    @include('backend.orders.pos.customer_create_modal')
+    @include('pos.customer_create_modal')
 
     <!-- Modal -->
-    @include('backend.orders.pos.customer_address_modal')
+    @include('pos.customer_address_modal')
 
     <div class="modal fade" id="variantModal" tabindex="-1" role="dialog" aria-labelledby="variantModalLabel"
         aria-hidden="true">
@@ -430,7 +430,7 @@
                 // Restore the delivery method selection after thana is updated
                 if (selectedDeliveryMethod) {
                     $('input[name="delivery_method"][value="' + selectedDeliveryMethod + '"]').prop('checked',
-                    true);
+                        true);
                     // Reapply the delivery method UI changes
                     changeOfDeliveryMetod(selectedDeliveryMethod);
                 }
@@ -441,7 +441,7 @@
             if (selectedDeliveryMethod) {
                 setTimeout(function() {
                     $('input[name="delivery_method"][value="' + selectedDeliveryMethod + '"]').prop('checked',
-                    true);
+                        true);
                     changeOfDeliveryMetod(selectedDeliveryMethod);
                 }, 1200);
             }

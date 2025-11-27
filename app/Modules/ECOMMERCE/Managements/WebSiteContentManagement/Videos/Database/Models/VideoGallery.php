@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Gallery\Models;
+namespace App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Videos\Database\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,5 +10,4 @@ class VideoGallery extends Model
 {
     use HasFactory;
     protected $guarded = [];
-
 }

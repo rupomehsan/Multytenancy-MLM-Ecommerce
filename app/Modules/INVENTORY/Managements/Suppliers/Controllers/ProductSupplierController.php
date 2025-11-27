@@ -1,12 +1,8 @@
 <?php
 
-namespace App\Modules\Inventory\Managements\Suppliers\Controllers;
+namespace App\Modules\INVENTORY\Managements\Suppliers\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Inventory\Models\ProductWarehouse;
-use App\Http\Controllers\Inventory\Models\ProductWarehouseRoom;
-use App\Http\Controllers\Inventory\Models\ProductSupplier;
-use App\Http\Controllers\Inventory\Models\ProductSupplierContact;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -17,13 +13,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
+
+
+use App\Modules\INVENTORY\Managements\Suppliers\Database\Models\ProductSupplier;
+use App\Modules\INVENTORY\Managements\WareHouse\Database\Models\ProductWarehouse;
+use App\Modules\INVENTORY\Managements\WareHouseRoom\Database\Models\ProductWarehouseRoom;
+use App\Modules\INVENTORY\Managements\Suppliers\Database\Models\ProductSupplierContact;
+
 class ProductSupplierController extends Controller
 {
+    public function __construct()
+    {
+        $this->loadModuleViewPath('INVENTORY/Managements/Suppliers');
+    }
     public function addNewProductSupplier()
     {
         $productSupplierContacts = ProductSupplierContact::where('status', 'active')->get();
         $supplier_type = DB::table('supplier_source_types')->where('status', 'active')->get();
-        return view('backend.product_supplier.create', compact('productSupplierContacts', 'supplier_type'));
+        return view('create', compact('productSupplierContacts', 'supplier_type'));
     }
 
     public function saveNewProductSupplier(Request $request)
@@ -117,7 +124,7 @@ class ProductSupplierController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('backend.product_supplier.view');
+        return view('view');
     }
 
 
@@ -127,7 +134,7 @@ class ProductSupplierController extends Controller
         $data = ProductSupplier::where('slug', $slug)->first();
         $product_supplier_contacts = ProductSupplierContact::where('status', 'active')->get();
         $supplier_type = DB::table('supplier_source_types')->where('status', 'active')->get();
-        return view('backend.product_supplier.edit', compact('data', 'product_supplier_contacts', 'supplier_type'));
+        return view('edit', compact('data', 'product_supplier_contacts', 'supplier_type'));
     }
 
     public function updateProductSupplier(Request $request)

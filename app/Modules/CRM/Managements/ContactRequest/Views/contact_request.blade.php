@@ -1,4 +1,5 @@
-@extends('backend.master')
+@extends('tenant.admin.layouts.app')
+
 
 @section('header_css')
     <link href="{{ url('dataTable') }}/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -80,7 +81,8 @@
     </div>
 
     <!-- Modal for composing email -->
-    <div class="modal fade" id="composeEmailModal" tabindex="-1" role="dialog" aria-labelledby="composeEmailModalLabel" aria-hidden="true">
+    <div class="modal fade" id="composeEmailModal" tabindex="-1" role="dialog" aria-labelledby="composeEmailModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -93,7 +95,8 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="recipient-email">To</label>
-                            <input type="email" class="form-control" id="recipient-email" name="email" readonly required>
+                            <input type="email" class="form-control" id="recipient-email" name="email" readonly
+                                required>
                         </div>
                         <div class="form-group">
                             <label for="email-subject">Subject</label>
@@ -116,7 +119,6 @@
 
 
 @section('footer_js')
-
     {{-- js code for data table --}}
     <script src="{{ url('dataTable') }}/js/jquery.validate.js"></script>
     <script src="{{ url('dataTable') }}/js/jquery.dataTables.min.js"></script>
@@ -127,8 +129,7 @@
             processing: true,
             serverSide: true,
             ajax: "{{ url('/view/all/contact/requests') }}",
-            columns: [
-                {
+            columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
                 }, //orderable: true, searchable: true
@@ -140,13 +141,26 @@
                     data: 'email',
                     name: 'email'
                 },
-                { data: 'phone', name: 'phone' },
-                { data: 'message', name: 'message' },
-                { data: 'status', name: 'status' },
-                { data: 'action', name: 'action', orderable: false, searchable: false },
+                {
+                    data: 'phone',
+                    name: 'phone'
+                },
+                {
+                    data: 'message',
+                    name: 'message'
+                },
+                {
+                    data: 'status',
+                    name: 'status'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
             ],
         });
-
     </script>
 
     {{-- js code for user crud --}}
@@ -157,7 +171,7 @@
             }
         });
 
-        $('body').on('click', '.deleteBtn', function () {
+        $('body').on('click', '.deleteBtn', function() {
             var id = $(this).data("id");
             if (confirm("Are You sure want to delete !")) {
                 if (check_demo_user()) {
@@ -166,18 +180,18 @@
                 $.ajax({
                     type: "GET",
                     url: "{{ url('delete/contact/request') }}" + '/' + id,
-                    success: function (data) {
+                    success: function(data) {
                         table.draw(false);
                         toastr.error("Request has been Deleted", "Deleted Successfully");
                     },
-                    error: function (data) {
+                    error: function(data) {
                         console.log('Error:', data);
                     }
                 });
             }
         });
 
-        $('body').on('click', '.changeStatus', function () {
+        $('body').on('click', '.changeStatus', function() {
             var id = $(this).data("id");
             // Get email from the closest row's email cell if not present in data-email
             var email = $(this).data("email");
@@ -200,13 +214,13 @@
             $.ajax({
                 type: "GET",
                 url: "{{ url('change/request/status') }}" + '/' + id + '?' + formData,
-                success: function (data) {
+                success: function(data) {
                     $('#composeEmailModal').modal('hide');
                     toastr.success("Email sent and status changed.", "Success");
                     table.draw(false);
                     submitBtn.prop('disabled', false).text('Send Email');
                 },
-                error: function (data) {
+                error: function(data) {
                     toastr.error("Failed to send email.", "Error");
                     submitBtn.prop('disabled', false).text('Send Email');
                 }

@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Inventory\Models;
+namespace App\Modules\INVENTORY\Managements\Suppliers\Database\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+
+
 
 class ProductSupplier extends Model
 {
@@ -11,8 +13,8 @@ class ProductSupplier extends Model
 
     protected $guarded = [];
 
-    public function contact() {
+    public function contact()
+    {
         return $this->hasOne(ProductSupplierContact::class, 'product_supplier_id');
     }
-
 }

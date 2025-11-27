@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Outlet;
+namespace App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Outlets\Controllers;
+
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Outlet\Models\Outlet;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -14,11 +14,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 
+
+
+use App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Outlets\Database\Models\Outlet;
+
+
 class OutletController extends Controller
 {
+    public function __construct()
+    {
+        $this->loadModuleViewPath('ECOMMERCE/Managements/WebSiteContentManagement/Outlets');
+    }
     public function addNewOutlet()
     {
-        return view('backend.outlet.create');
+        return view('create');
     }
 
     public function saveNewOutlet(Request $request)
@@ -109,14 +118,14 @@ class OutletController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('backend.outlet.view');
+        return view('view');
     }
 
 
     public function editOutlet($slug)
     {
         $data = Outlet::where('slug', $slug)->first();
-        return view('backend.outlet.edit', compact('data'));
+        return view('edit', compact('data'));
     }
 
     public function updateOutlet(Request $request)
@@ -161,8 +170,6 @@ class OutletController extends Controller
 
                 $images[] = "outletImages/" . $image_name; // Add the new image to the images array
             }
-
-           
         }
 
         $clean = preg_replace('/[^a-zA-Z0-9\s]/', '', strtolower($request->title)); //remove all non alpha numeric
@@ -189,7 +196,7 @@ class OutletController extends Controller
         $data->save();
 
         Toastr::success('Updated Successfully', 'Success!');
-        return view('backend.outlet.edit', compact('data'));
+        return view('edit', compact('data'));
     }
 
 

@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Gallery;
+namespace App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Videos\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Gallery\Models\VideoGallery;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -14,11 +13,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 
+
+use App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Videos\Database\Models\VideoGallery;
+
+
 class VideoGalleryController extends Controller
 {
+    public function __construct()
+    {
+        $this->loadModuleViewPath('ECOMMERCE/Managements/WebSiteContentManagement/Videos');
+    }
     public function addNewVideoGallery()
     {
-        return view('backend.video.create');
+        return view('create');
     }
 
     public function saveNewVideoGallery(Request $request)
@@ -97,14 +104,15 @@ class VideoGalleryController extends Controller
                 ->rawColumns(['source', 'action'])
                 ->make(true);
         }
-        return view('backend.video.view');
+        return view('view');
     }
 
-    public function editVideoGallery($slug) {
+    public function editVideoGallery($slug)
+    {
         $data = VideoGallery::where('slug', $slug)->first();
-        return view('backend.video.edit', compact('data'));
+        return view('edit', compact('data'));
     }
-    
+
     public function updateVideoGallery(Request $request)
     {
         // dd($request->all());
@@ -116,14 +124,14 @@ class VideoGalleryController extends Controller
 
         $data = VideoGallery::where('id', request()->video_gallery_id)->first();
 
-     
+
         $clean = preg_replace('/[^a-zA-Z0-9\s]/', '', strtolower($request->title)); //remove all non alpha numeric
         $slug = preg_replace('!\s+!', '-', $clean);
 
 
         // Update the outlet data
         $data->title = $request->title ?? $data->title;
-        $data->source = $request->source ?? $data->source;       
+        $data->source = $request->source ?? $data->source;
         if ($data->title != $request->title) {
             $data->slug = Str::slug($request->title) . time();
         }
@@ -133,10 +141,10 @@ class VideoGalleryController extends Controller
         $data->save();
 
         Toastr::success('Updated Successfully', 'Success!');
-        return view('backend.video.edit', compact('data'));
+        return view('edit', compact('data'));
     }
 
-    
+
     public function deleteVideoGallery($slug)
     {
         $data = VideoGallery::where('slug', $slug)->first();
@@ -149,7 +157,4 @@ class VideoGalleryController extends Controller
             'data' => 1
         ]);
     }
-
-   
-
 }

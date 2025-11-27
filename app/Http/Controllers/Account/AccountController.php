@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Storage;
 
 class AccountController extends Controller
 {
+
     public function addNewAcAccount()
     {
         $accounts = AcAccount::where('status', 'active')->get();
@@ -65,7 +66,6 @@ class AccountController extends Controller
 
         Toastr::success('Added successfully!', 'Success');
         return back();
-
     }
 
 
@@ -187,8 +187,8 @@ class AccountController extends Controller
     public function getJsonAcAccount()
     {
         $accounts = AcAccount::where('status', 'active')
-                                ->where('account_name', '!=', 'Expense')
-                                ->get();
+            ->where('account_name', '!=', 'Expense')
+            ->get();
         $nestedData = $this->buildTree($accounts);
         // dd($nestedData);
         return response()->json($nestedData);
@@ -241,10 +241,4 @@ class AccountController extends Controller
 
         // return response()->json($nestedData);
     }
-
-
-
-
-
-
 }

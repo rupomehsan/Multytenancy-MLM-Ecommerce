@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Inventory\Managements\Purchase\Quotations\Controllers;
+namespace App\Modules\INVENTORY\Managements\Purchase\Quotations\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Inventory\Models\ProductSupplier;
