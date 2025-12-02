@@ -168,22 +168,3 @@ class MigrateModules extends Command
         }
     }
 }
-
-
-// # Normal migration (core first, then modules)
-// php artisan migrate:modules --force
-
-// # Fresh migration (drop all tables, modules first, then core)
-// php artisan migrate:modules --fresh --force
-
-// # Fresh migration with seeding
-// php artisan migrate:modules --fresh --force --seed-all
-
-// # Skip core migrations
-// php artisan migrate:modules --no-core --force
-
-// # Target specific module
-// php artisan migrate:modules --module=ECOMMERCE --force
-
-// # Dry-run to see what would be migrated
-// php artisan migrate:modules --pretend
