@@ -5,7 +5,7 @@ namespace App\Modules\ECOMMERCE\Managements\Reports\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-use App\Modules\INVENTORY\Managements\Purchase\Orders\Database\Models\ProductPurchaseOrder;
+use App\Modules\INVENTORY\Managements\Purchase\PurchaseOrders\Database\Models\ProductPurchaseOrder;
 use App\Modules\ECOMMERCE\Managements\Orders\Database\Models\Order;
 
 class ReportController extends Controller

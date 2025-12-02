@@ -6,7 +6,7 @@
 
 <ul class="metismenu list-unstyled" id="side-menu">
     <li>
-        <a href="{{ url('/home') }}" data-active-paths="{{ url('/home') }}">
+        <a href="{{ url('/admin/dashboard') }}" data-active-paths="{{ url('/admin/dashboard') }}">
             <i class="feather-home"></i>
             <span> Ecommerce Dashboard</span>
         </a>
@@ -380,7 +380,11 @@
             <i class="feather-file-text"></i>
             <span>Pos Invoices</span>
             <span style="color:lightgreen" title="Total Invoices">
-                (@php echo DB::table('orders')->where('order_from', 3)->where('invoice_generated', 1)->count(); @endphp)
+                (@php
+                    echo \Illuminate\Support\Facades\Schema::hasColumn('orders', 'order_from')
+                        ? DB::table('orders')->where('order_from', 3)->where('invoice_generated', 1)->count()
+                        : 0;
+                @endphp)
             </span>
         </a>
 
@@ -687,7 +691,7 @@
 
 
 
-    <!-- <li>
+    {{-- <li>
         <a href="{{ url('/view/all/payment-type') }}"
             data-active-paths="{{ url('/view/all/payment-type') }}, {{ url('/add/new/payment-type') }}, {{ url('/edit/payment-type/*') }}">
             <i class="feather-box"></i> Payment Types
@@ -733,7 +737,7 @@
                 ({{ DB::table('ac_transactions')->count() }})
             </span>
         </a>
-    </li> -->
+    </li> --}}
 
 
     <!-- <li>
@@ -1200,8 +1204,8 @@
     </li>
     <li><a href="{{ url('/clear/cache') }}"><i class="feather-rotate-cw"></i><span>Clear Cache</span></a></li>
     <li>
-        <a href="{{ route('logout') }}"
-            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        <a href="{{ route('admin.logout') }}"
+            onclick="event.preventDefault(); if (confirm('Are you sure you want to logout?')) { document.getElementById('logout-form').submit(); }">
             <i class="feather-log-out"></i><span>Logout</span>
         </a>
     </li>

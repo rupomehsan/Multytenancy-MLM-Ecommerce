@@ -17,6 +17,7 @@ class CreatePermissionRoutesTable extends Migration
             $table->id();
             $table->string('route')->nullable();
             $table->string('route_group_name')->nullable();
+            $table->string('route_module_name')->nullable();
             $table->string('name')->nullable();
             $table->string('method')->nullable();
             $table->timestamps();

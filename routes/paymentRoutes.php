@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\Tenant\Admin\PaymentController;
 
 
 Route::group(['middleware' => ['auth', 'CheckUserType', 'DemoMode']], function () {
@@ -11,5 +11,4 @@ Route::group(['middleware' => ['auth', 'CheckUserType', 'DemoMode']], function (
     Route::post('sslcommerz/failure', [PaymentController::class, 'failure'])->name('failure');
     Route::post('sslcommerz/cancel', [PaymentController::class, 'cancel'])->name('cancel');
     Route::post('sslcommerz/ipn', [PaymentController::class, 'ipn'])->name('payment.ipn');
-   
 });

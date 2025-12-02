@@ -25,6 +25,7 @@ class CreateOutletsTable extends Migration
             $table->string('contact_number_2', 60)->nullable();
             $table->string('contact_number_3', 60)->nullable();
             $table->text('map')->nullable();
+            $table->string('video_link')->nullable();
 
             $table->unsignedBigInteger('creator')->nullable();
             $table->string('slug',)->nullable();

@@ -162,11 +162,13 @@
     </script>
 
     <script>
-        // CKEDITOR.replace('section_description', {
-        //     filebrowserUploadUrl: "{{ route('ckeditor.upload', ['_token' => csrf_token()]) }}",
-        //     filebrowserUploadMethod: 'form',
-        //     height: 160,
-        // });
+        {{--
+            CKEDITOR.replace('section_description', {
+                filebrowserUploadUrl: "{{ route('ckeditor.upload', ['_token' => csrf_token()]) }}",
+                filebrowserUploadMethod: 'form',
+                height: 160,
+            });
+        --}}
 
         $("#bg_color").spectrum({
             preferredFormat: 'hex',

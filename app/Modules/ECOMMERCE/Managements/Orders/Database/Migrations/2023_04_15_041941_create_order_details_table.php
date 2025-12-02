@@ -18,6 +18,15 @@ class CreateOrderDetailsTable extends Migration
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('product_id');
 
+            // Inventory / fulfillment fields
+            $table->unsignedBigInteger('store_id')->nullable();
+            $table->unsignedBigInteger('warehouse_id')->nullable();
+            $table->unsignedBigInteger('warehouse_room_id')->nullable();
+            $table->unsignedBigInteger('warehouse_room_cartoon_id')->nullable();
+
+            // Pricing / rewards
+            $table->double('special_discount', 20, 4)->nullable()->default(0);
+            $table->integer('reward_points')->nullable()->default(0);
             // added later start
             $table->unsignedBigInteger('color_id')->comment("Variant")->nullable();
             $table->unsignedBigInteger('size_id')->comment("Variant")->nullable();

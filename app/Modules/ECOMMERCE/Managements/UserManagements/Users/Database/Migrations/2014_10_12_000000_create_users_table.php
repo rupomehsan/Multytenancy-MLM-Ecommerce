@@ -29,11 +29,19 @@ class CreateUsersTable extends Migration
             $table->longText('address')->nullable();
             $table->double('balance')->comment("In BDT")->default(0);
 
+            // Referral and wallet fields
+            $table->string('referral_code')->nullable()->unique();
+            $table->unsignedBigInteger('referred_by')->nullable();
+            $table->decimal('wallet_balance', 16, 2)->default(0)->comment('Wallet balance in BDT');
+
             $table->tinyInteger('delete_request_submitted')->comment("0=>No; 1=>Yes")->default(0);
             $table->dateTime('delete_request_submitted_at')->nullable();
 
             $table->tinyInteger('status')->comment("1=>Active; 0=>Inactive")->default(1);
             $table->timestamps();
+
+            // Foreign key for referred_by -> users.id (nullable)
+            $table->foreign('referred_by')->references('id')->on('users')->onDelete('set null');
         });
     }
 

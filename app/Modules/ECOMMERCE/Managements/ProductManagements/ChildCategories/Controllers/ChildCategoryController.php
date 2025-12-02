@@ -13,7 +13,7 @@ use DataTables;
 
 use App\Modules\ECOMMERCE\Managements\ProductManagements\ChildCategories\Database\Models\ChildCategory;
 use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\Product;
-use App\Modules\ECOMMERCE\Managements\ProductManagements\Subcategories\Database\Models\Subcategory;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Database\Models\Subcategory;
 
 use App\Http\Controllers\Controller;
 

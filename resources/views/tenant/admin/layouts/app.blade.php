@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-@php
-    $generalInfo = DB::table('general_infos')
-        ->where('id', 1)
-        ->select('logo', 'company_name', 'fav_icon', 'guest_checkout')
-        ->first();
-@endphp
+
 
 <head>
     <meta charset="utf-8" />
@@ -19,17 +14,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- App favicon -->
-    @if ($generalInfo->fav_icon != '' && $generalInfo->fav_icon != null && file_exists(public_path($generalInfo->fav_icon)))
+    @if (
+        $generalInfo &&
+            $generalInfo->fav_icon != '' &&
+            $generalInfo->fav_icon != null &&
+            file_exists(public_path($generalInfo->fav_icon)))
         <link rel="shortcut icon" href="{{ url($generalInfo->fav_icon) }}">
     @else
-        <link rel="shortcut icon" href="{{ url('assets') }}/images/favicon.ico">
+        <link rel="shortcut icon" href="{{ url('tenant/admin/assets') }}/images/favicon.ico">
     @endif
     <!-- App css -->
-    <link href="{{ url('assets') }}/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/css/icons.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/css/theme.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/css/toastr.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/css/custom.css" rel="stylesheet" type="text/css" />
+    <link href="{{ url('tenant/admin/assets') }}/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ url('tenant/admin/assets') }}/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ url('tenant/admin/assets') }}/css/theme.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ url('tenant/admin/assets') }}/css/toastr.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ url('tenant/admin/assets') }}/css/custom.css" rel="stylesheet" type="text/css" />
     @yield('header_css')
     @yield('header_js')
 </head>
@@ -47,13 +46,18 @@
                 <!-- LOGO -->
                 <div class="navbar-brand-box">
                     <a href="{{ url('/home') }}" class="logo mt-2" style="display: inline-block;">
-                        @if ($generalInfo->logo != '' && $generalInfo->logo != null && file_exists(public_path($generalInfo->logo)))
+                        @if (
+                            $generalInfo &&
+                                $generalInfo->logo != '' &&
+                                $generalInfo->logo != null &&
+                                file_exists(public_path($generalInfo->logo)))
                             <span>
                                 <img src="{{ url($generalInfo->logo) }}" alt="" class="img-fluid"
                                     style="max-height: 100px; max-width: 150px;">
                             </span>
                         @else
-                            <h3 style="color: white; margin-top: 20px">{{ $generalInfo->company_name }}</h3>
+                            <h3 style="color: white; margin-top: 20px">
+                                {{ $generalInfo->company_name ?? config('app.name') }}</h3>
                         @endif
                     </a>
                 </div>
@@ -108,19 +112,19 @@
 
 
     <!-- jQuery  -->
-    <script src="{{ url('assets') }}/js/jquery.min.js"></script>
-    <script src="{{ url('assets') }}/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url('assets') }}/js/metismenu.min.js"></script>
-    <script src="{{ url('assets') }}/js/waves.js"></script>
-    <script src="{{ url('assets') }}/js/simplebar.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/jquery-sparkline/jquery.sparkline.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/morris-js/morris.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/raphael/raphael.min.js"></script>
-    <script src="{{ url('assets') }}/pages/dashboard-demo.js"></script>
-    <script src="{{ url('assets') }}/js/theme.js"></script>
-    <script src="{{ url('assets') }}/js/ajax.js"></script>
-    <script src="{{ url('assets') }}/js/ajax_two.js"></script>
-    <script src="{{ url('assets') }}/js/search_product_ajax.js"></script>
+    <script src="{{ url('tenant/admin/assets') }}/js/jquery.min.js"></script>
+    <script src="{{ url('tenant/admin/assets') }}/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url('tenant/admin/assets') }}/js/metismenu.min.js"></script>
+    <script src="{{ url('tenant/admin/assets') }}/js/waves.js"></script>
+    <script src="{{ url('tenant/admin/assets') }}/js/simplebar.min.js"></script>
+    <script src="{{ url('tenant/admin/assets') }}/plugins/jquery-sparkline/jquery.sparkline.min.js"></script>
+    <script src="{{ url('tenant/admin/assets') }}/plugins/morris-js/morris.min.js"></script>
+    <script src="{{ url('tenant/admin/assets') }}/plugins/raphael/raphael.min.js"></script>
+    <script src="{{ url('tenant/admin/assets') }}/pages/dashboard-demo.js"></script>
+    <script src="{{ url('tenant/admin/assets') }}/js/theme.js"></script>
+    <script src="{{ url('tenant/admin/assets') }}/js/ajax.js"></script>
+    <script src="{{ url('tenant/admin/assets') }}/js/ajax_two.js"></script>
+    <script src="{{ url('tenant/admin/assets') }}/js/search_product_ajax.js"></script>
 
     <script>
         const handleScroll = () => {
@@ -163,7 +167,9 @@
             }
         }
     </script>
-    <script src="{{ url('assets') }}/js/toastr.min.js"></script>
+
+    <script src="{{ url('tenant/admin/assets') }}/js/toastr.min.js"></script>
+
     {!! Toastr::message() !!}
 
     @yield('footer_js')

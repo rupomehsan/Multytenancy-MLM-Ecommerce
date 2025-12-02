@@ -18,7 +18,7 @@ class TermsAndPolicyController extends Controller
     }
     public function viewTermsAndCondition()
     {
-        $data = TermsAndPolicies::where('id', 1)->select('terms')->first();
+        $data = TermsAndPolicies::where('id', 1)->select('terms')->first() ?? new TermsAndPolicies();
         return view('terms', compact('data'));
     }
 
@@ -35,7 +35,7 @@ class TermsAndPolicyController extends Controller
 
     public function viewPrivacyPolicy()
     {
-        $data = TermsAndPolicies::where('id', 1)->select('privacy_policy')->first();
+        $data = TermsAndPolicies::where('id', 1)->select('privacy_policy')->first() ?? new TermsAndPolicies();
         return view('privacy', compact('data'));
     }
 
@@ -51,7 +51,7 @@ class TermsAndPolicyController extends Controller
 
     public function viewShippingPolicy()
     {
-        $data = TermsAndPolicies::where('id', 1)->select('shipping_policy')->first();
+        $data = TermsAndPolicies::where('id', 1)->select('shipping_policy')->first() ?? new TermsAndPolicies();
         return view('shipping', compact('data'));
     }
 
@@ -67,7 +67,7 @@ class TermsAndPolicyController extends Controller
 
     public function viewReturnPolicy()
     {
-        $data = TermsAndPolicies::where('id', 1)->select('return_policy')->first();
+        $data = TermsAndPolicies::where('id', 1)->select('return_policy')->first() ?? new TermsAndPolicies();
         return view('return', compact('data'));
     }
 

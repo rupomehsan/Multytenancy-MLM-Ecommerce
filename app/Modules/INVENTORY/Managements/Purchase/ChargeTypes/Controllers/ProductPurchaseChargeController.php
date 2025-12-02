@@ -18,11 +18,11 @@ use App\Modules\INVENTORY\Managements\Suppliers\Database\Models\ProductSupplier;
 use App\Modules\INVENTORY\Managements\WareHouse\Database\Models\ProductWarehouse;
 use App\Modules\INVENTORY\Managements\WareHouseRoom\Database\Models\ProductWarehouseRoom;
 use App\Modules\INVENTORY\Managements\WareHouseRoomCartoon\Database\Models\ProductWarehouseRoomCartoon;
-use App\Modules\INVENTORY\Managements\Purchase\Orders\Database\Models\ProductPurchaseOrder;
-use App\Modules\INVENTORY\Managements\Purchase\Orders\Database\Models\ProductPurchaseOrderProduct;
+use App\Modules\INVENTORY\Managements\Purchase\PurchaseOrders\Database\Models\ProductPurchaseOrder;
+use App\Modules\INVENTORY\Managements\Purchase\PurchaseOrders\Database\Models\ProductPurchaseOrderProduct;
 use App\Modules\INVENTORY\Managements\Purchase\Quotations\Database\Models\ProductPurchaseQuotation;
 use App\Modules\INVENTORY\Managements\Purchase\Quotations\Database\Models\ProductPurchaseQuotationProduct;
-use App\Modules\INVENTORY\Managements\Purchase\Orders\Database\Models\ProductStock;
+use App\Modules\INVENTORY\Managements\Purchase\PurchaseOrders\Database\Models\ProductStock;
 use App\Modules\INVENTORY\Managements\Purchase\ChargeTypes\Database\Models\ProductPurchaseOtherCharge;
 use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\Product;
 

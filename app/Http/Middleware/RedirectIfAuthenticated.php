@@ -19,11 +19,36 @@ class RedirectIfAuthenticated
      */
     public function handle(Request $request, Closure $next, ...$guards)
     {
-        $guards = empty($guards) ? [null] : $guards;
+        // Default to checking web, admin, and customer guards if none specified
+        $guards = empty($guards) ? ['web', 'admin', 'customer'] : $guards;
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+                $user = Auth::guard($guard)->user();
+
+                // Check which login page is being accessed
+                $isAdminLogin = $request->is('admin/login*');
+                $isCustomerLogin = $request->is('login') || $request->is('register');
+
+                // Admin guard: only redirect if accessing admin login
+                if ($guard === 'admin' && $isAdminLogin && in_array($user->user_type, [1, 2])) {
+                    return redirect()->route('admin.dashboard');
+                }
+
+                // Customer guard: only redirect if accessing customer login
+                if ($guard === 'customer' && $isCustomerLogin && $user->user_type == 3) {
+                    return redirect()->route('UserDashboard');
+                }
+
+                // Web guard (legacy): redirect based on user type
+                if ($guard === 'web') {
+                    if ($isAdminLogin && in_array($user->user_type, [1, 2])) {
+                        return redirect()->route('admin.dashboard');
+                    }
+                    if ($isCustomerLogin && $user->user_type == 3) {
+                        return redirect()->route('UserDashboard');
+                    }
+                }
             }
         }
 

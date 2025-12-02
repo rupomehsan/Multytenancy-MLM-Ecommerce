@@ -69,7 +69,7 @@
                       <input type="checkbox" id="guest_checkout" onchange="guestCheckout()"
                           @if ($generalInfo->guest_checkout == 1) checked @endif> Guest Checkout
                   </label>
-                  <a href="{{ env('APP_FRONTEND_URL') }}" target="_blank" class="btn text-white rounded"
+                  <a href="/" target="_blank" class="btn text-white rounded"
                       style="background: linear-gradient(to right, #17263ADE, #2c3e50f5, #17263A);"><i
                           class="fas fa-paper-plane"></i> Visit Website</a>
               </div>
@@ -94,14 +94,14 @@
                           <span class="d-none d-sm-inline-block"><i class="fas fa-key"></i> Change
                               Password</span>
                       </a>
-                      <a href="{{ route('logout') }}"
+                      <a href="{{ route('admin.logout') }}"
                           class="dropdown-item d-flex align-items-center justify-content-between logout"
                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                           <span class="d-none d-sm-inline-block"><i class="fas fa-sign-out-alt"></i>
                               Logout</span>
                       </a>
 
-                      <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                      <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" class="d-none">
                           @csrf
                       </form>
                   </div>

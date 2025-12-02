@@ -94,7 +94,7 @@ class GeneralInfoController extends Controller
 
     public function generalInfo(Request $request)
     {
-        $data = GeneralInfo::where('id', 1)->first();
+        $data = GeneralInfo::where('id', 1)->first() ?? new GeneralInfo();
         return view('info', compact('data'));
     }
 
@@ -189,7 +189,7 @@ class GeneralInfoController extends Controller
 
     public function websiteThemePage()
     {
-        $data = GeneralInfo::where('id', 1)->first();
+        $data = GeneralInfo::where('id', 1)->first() ?? new GeneralInfo();
         return view('website_theme', compact('data'));
     }
 
@@ -212,7 +212,7 @@ class GeneralInfoController extends Controller
 
     public function socialMediaPage()
     {
-        $data = GeneralInfo::where('id', 1)->first();
+        $data = GeneralInfo::where('id', 1)->first() ?? new GeneralInfo();
         return view('social_media', compact('data'));
     }
 
@@ -240,7 +240,7 @@ class GeneralInfoController extends Controller
 
     public function seoHomePage()
     {
-        $data = GeneralInfo::where('id', 1)->select('meta_title', 'meta_keywords', 'meta_description', 'meta_og_title', 'meta_og_description', 'meta_og_image')->first();
+        $data = GeneralInfo::where('id', 1)->select('meta_title', 'meta_keywords', 'meta_description', 'meta_og_title', 'meta_og_description', 'meta_og_image')->first() ?? new GeneralInfo();
         return view('seo_homepage', compact('data'));
     }
 
@@ -278,7 +278,7 @@ class GeneralInfoController extends Controller
 
     public function customCssJs()
     {
-        $data = GeneralInfo::where('id', 1)->first();
+        $data = GeneralInfo::where('id', 1)->first() ?? new GeneralInfo();
         return view('custom_css_js', compact('data'));
     }
 
@@ -297,9 +297,9 @@ class GeneralInfoController extends Controller
 
     public function socialChatScriptPage()
     {
-        $googleRecaptcha = GoogleRecaptcha::where('id', 1)->first();
-        $generalInfo = GeneralInfo::where('id', 1)->first();
-        $socialLoginInfo = SocialLogin::where('id', 1)->first();
+        $googleRecaptcha = GoogleRecaptcha::where('id', 1)->first() ?? new GoogleRecaptcha();
+        $generalInfo = GeneralInfo::where('id', 1)->first() ?? new GeneralInfo();
+        $socialLoginInfo = SocialLogin::where('id', 1)->first() ?? new SocialLogin();
         return view('social_chat_script', compact('googleRecaptcha', 'generalInfo', 'socialLoginInfo'));
     }
 
@@ -408,7 +408,7 @@ class GeneralInfoController extends Controller
 
     public function changeGuestCheckoutStatus()
     {
-        $info = GeneralInfo::where('id', 1)->first();
+        $info = GeneralInfo::where('id', 1)->first() ?? new GeneralInfo();
         if ($info->guest_checkout == 1) {
             GeneralInfo::where('id', 1)->update([
                 'guest_checkout' => 0

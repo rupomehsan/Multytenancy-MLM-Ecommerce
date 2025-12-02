@@ -27,6 +27,8 @@ class CreateGeneralInfosTable extends Migration
             $table->longText('google_map_link')->nullable();
             $table->string('footer_copyright_text')->nullable();
             $table->string('payment_banner')->nullable();
+            // Allow customers to checkout as guest (1=>Enabled, 0=>Disabled)
+            $table->tinyInteger('guest_checkout')->default(1)->comment("1=>Enabled; 0=>Disabled");
             $table->string('play_store_link')->nullable();
             $table->string('app_store_link')->nullable();
 
@@ -76,6 +78,9 @@ class CreateGeneralInfosTable extends Migration
             $table->tinyInteger('fb_pixel_status')->default(0)->comment("1=>Active; 0=>Inactive");
             $table->string('fb_pixel_app_id')->nullable();
 
+            // Facebook Page ID for Messenger integration
+            $table->string('fb_page_id')->nullable();
+
             // Tawk.to
             $table->tinyInteger('tawk_chat_status')->default(0)->comment("1=>Active; 0=>Inactive");
             $table->string('tawk_chat_link')->nullable();
@@ -83,6 +88,9 @@ class CreateGeneralInfosTable extends Migration
             // Crisp Chat
             $table->tinyInteger('crisp_chat_status')->default(0)->comment("1=>Active; 0=>Inactive");
             $table->string('crisp_website_id')->nullable();
+
+            // Messenger chat toggle (via Facebook page/messenger)
+            $table->tinyInteger('messenger_chat_status')->default(0)->comment("1=>Active; 0=>Inactive");
 
             $table->longText('about_us')->nullable();
             $table->timestamps();

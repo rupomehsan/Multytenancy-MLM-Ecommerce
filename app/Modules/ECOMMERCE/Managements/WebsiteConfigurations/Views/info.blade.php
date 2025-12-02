@@ -228,11 +228,13 @@
     <script src="https://cdn.ckeditor.com/4.12.1/standard/ckeditor.js"></script>
 
     <script>
-        // CKEDITOR.replace('footer_copyright_text', {
-        //     filebrowserUploadUrl: "{{ route('ckeditor.upload', ['_token' => csrf_token()]) }}",
-        //     filebrowserUploadMethod: 'form',
-        //     height: 120,
-        // });
+        {{--
+            CKEDITOR.replace('footer_copyright_text', {
+                filebrowserUploadUrl: "{{ route('ckeditor.upload', ['_token' => csrf_token()]) }}",
+                filebrowserUploadMethod: 'form',
+                height: 120,
+            });
+        --}}
 
         @if ($data->logo && file_exists(public_path($data->logo)))
             $(".dropify-preview").eq(0).css("display", "block");

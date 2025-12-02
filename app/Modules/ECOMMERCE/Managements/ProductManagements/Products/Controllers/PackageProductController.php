@@ -18,7 +18,7 @@ use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Color
 use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\Product;
 use App\Modules\ECOMMERCE\Managements\ProductManagements\Categories\Database\Models\Category;
 use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Sizes\Database\Models\ProductSize;
-use App\Modules\ECOMMERCE\Managements\ProductManagements\Subcategories\Database\Models\Subcategory;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Database\Models\Subcategory;
 use App\Modules\ECOMMERCE\Managements\ProductManagements\ChildCategories\Database\Models\ChildCategory;
 use App\Modules\ECOMMERCE\Managements\ProductManagements\PackageProducts\Database\Models\PackageProductItem;
 

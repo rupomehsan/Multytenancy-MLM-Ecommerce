@@ -1,0 +1,244 @@
+<?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+
+class MigrateModules extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * - `--module=` : target a single module by folder name
+     * - `--seed`    : run the module's `Database\\Seeders\\DatabaseSeeder` if present
+     * - `--path=`   : also run a specific migration path (relative to project root)
+     * - `--force`  : pass force to migrations (useful in production)
+     *
+     * @var string
+     */
+    protected $signature = 'migrate:modules {--module=} {--seed} {--seed-all} {--path=} {--force} {--no-core} {--pretend} {--fresh}';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Run migrations located in `app/Modules/*` recursively and optionally seed them.';
+
+    public function handle()
+    {
+        $modulesDir = app_path('Modules');
+        $targetModule = $this->option('module');
+        $extraPath = $this->option('path');
+        $shouldSeed = $this->option('seed');
+        $shouldSeedAll = $this->option('seed-all');
+        $force = $this->option('force');
+        $noCore = $this->option('no-core');
+        $pretend = $this->option('pretend');
+        $fresh = $this->option('fresh');
+
+        if (!is_dir($modulesDir)) {
+            $this->error("Modules directory not found: {$modulesDir}");
+            return 1;
+        }
+
+        // If --fresh flag is set, drop all tables first
+        if ($fresh) {
+            $this->warn('Dropping all tables...');
+            $this->call('db:wipe', ['--force' => true]);
+            $this->info('All tables dropped successfully.');
+            $this->line('');
+        }
+
+        // Find all migration directories under app/Modules recursively.
+        $moduleMigrationPaths = [];
+
+        try {
+            $rii = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($modulesDir, \RecursiveDirectoryIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::SELF_FIRST
+            );
+            foreach ($rii as $file) {
+                if ($file->isDir() && strcasecmp($file->getFilename(), 'migrations') === 0) {
+                    $dirPath = $file->getPathname();
+                    // If --module specified, ensure path contains that module folder name
+                    if ($targetModule) {
+                        // module name may be nested; check whether module segment exists in path
+                        if (stripos($dirPath, DIRECTORY_SEPARATOR . $targetModule . DIRECTORY_SEPARATOR) === false && stripos($dirPath, DIRECTORY_SEPARATOR . $targetModule) === false) {
+                            continue;
+                        }
+                    }
+                    // Make path relative to base_path() because migrate expects a relative path
+                    $relative = str_replace(base_path() . DIRECTORY_SEPARATOR, '', $dirPath);
+                    $relative = str_replace('\\', '/', $relative); // normalize for cross-platform
+                    $moduleMigrationPaths[] = $relative;
+                }
+            }
+        } catch (\Exception $e) {
+            $this->error("Error scanning modules directory: " . $e->getMessage());
+            return 1;
+        }
+
+        // Optionally include direct path supplied with --path
+        if ($extraPath) {
+            $moduleMigrationPaths[] = $extraPath;
+        }
+
+        // Deduplicate and sort by path depth (shallow first)
+        $moduleMigrationPaths = array_values(array_unique($moduleMigrationPaths));
+        usort($moduleMigrationPaths, function ($a, $b) {
+            return substr_count($a, DIRECTORY_SEPARATOR) - substr_count($b, DIRECTORY_SEPARATOR);
+        });
+
+        if (empty($moduleMigrationPaths)) {
+            $this->info('No module migrations found to run.');
+        }
+
+        // Run module migrations first when --fresh is used (to avoid dependency issues)
+        if ($fresh || $noCore) {
+            $this->line('');
+            $migratedCount = 0;
+            foreach ($moduleMigrationPaths as $foundPath) {
+                $params = ['--path' => $foundPath];
+                if ($force) $params['--force'] = true;
+                if ($pretend) $params['--pretend'] = true;
+                
+                $exitCode = $this->call('migrate', $params);
+                if ($exitCode === 0) {
+                    $migratedCount++;
+                }
+
+                if ($shouldSeed || $shouldSeedAll) {
+                    $parts = explode(DIRECTORY_SEPARATOR, $foundPath);
+                    $moduleIndex = array_search('Modules', array_map('strtolower', $parts));
+                    if ($moduleIndex !== false && isset($parts[$moduleIndex + 1])) {
+                        $moduleName = $parts[$moduleIndex + 1];
+                        $seederFile = base_path("app/Modules/{$moduleName}/Database/Seeders/DatabaseSeeder.php");
+                        $class = "App\\Modules\\{$moduleName}\\Database\\Seeders\\DatabaseSeeder";
+                        if (is_file($seederFile)) {
+                            if (! class_exists($class)) {
+                                require_once $seederFile;
+                            }
+                            if (class_exists($class)) {
+                                $this->info("Seeding module: {$moduleName} (class: {$class})");
+                                $this->call('db:seed', ['--class' => $class]);
+                            } else {
+                                $this->warn("Seeder class not found for module {$moduleName}. Skipping.");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Run core migrations after module migrations when using --fresh
+        if (!$noCore) {
+            $this->line('');
+            $this->info('Running core migrations (database/migrations)');
+            $params = [];
+            if ($force) $params['--force'] = true;
+            if ($pretend) $params['--pretend'] = true;
+            $exitCode = $this->call('migrate', $params);
+            if ($exitCode !== 0) {
+                return $exitCode;
+            }
+        }
+
+        // If not using --fresh, run module migrations after core
+        if (!$fresh && !$noCore) {
+
+        try {
+            $rii = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($modulesDir, \RecursiveDirectoryIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::SELF_FIRST
+            );
+            foreach ($rii as $file) {
+                if ($file->isDir() && strcasecmp($file->getFilename(), 'migrations') === 0) {
+                    $dirPath = $file->getPathname();
+                    // If --module specified, ensure path contains that module folder name
+                    if ($targetModule) {
+                        // module name may be nested; check whether module segment exists in path
+                        if (stripos($dirPath, DIRECTORY_SEPARATOR . $targetModule . DIRECTORY_SEPARATOR) === false && stripos($dirPath, DIRECTORY_SEPARATOR . $targetModule) === false) {
+                            continue;
+                        }
+                    }
+                    // Make path relative to base_path() because migrate expects a relative path
+                    $relative = str_replace(base_path() . DIRECTORY_SEPARATOR, '', $dirPath);
+                    $relative = str_replace('\\', '/', $relative); // normalize for cross-platform
+                    $moduleMigrationPaths[] = $relative;
+                }
+            }
+        } catch (\Exception $e) {
+            $this->error("Error scanning modules directory: " . $e->getMessage());
+            return 1;
+        }
+
+        // Optionally include direct path supplied with --path
+        if ($extraPath) {
+            $moduleMigrationPaths[] = $extraPath;
+        }
+
+        // Deduplicate and sort by path depth (shallow first)
+        $moduleMigrationPaths = array_values(array_unique($moduleMigrationPaths));
+        usort($moduleMigrationPaths, function ($a, $b) {
+            return substr_count($a, DIRECTORY_SEPARATOR) - substr_count($b, DIRECTORY_SEPARATOR);
+        });
+
+        if (empty($moduleMigrationPaths)) {
+            $this->info('No module migrations found to run.');
+        }
+
+        $migratedCount = 0;
+        $this->line(''); // blank line for readability
+        foreach ($moduleMigrationPaths as $foundPath) {
+            $params = ['--path' => $foundPath];
+            if ($force) $params['--force'] = true;
+            if ($pretend) $params['--pretend'] = true;
+
+            // Capture output by calling migrate silently to check if migrations ran
+            $exitCode = $this->call('migrate', $params);
+            if ($exitCode === 0) {
+                $migratedCount++;
+            }
+
+            if ($shouldSeed || $shouldSeedAll) {
+                // Try to locate a DatabaseSeeder under the same module path
+                // derive module base: app/Modules/{ModuleName}
+                $parts = explode(DIRECTORY_SEPARATOR, $foundPath);
+                $moduleIndex = array_search('Modules', array_map('strtolower', $parts));
+                if ($moduleIndex !== false && isset($parts[$moduleIndex + 1])) {
+                    $moduleName = $parts[$moduleIndex + 1];
+                    $seederFile = base_path("app/Modules/{$moduleName}/Database/Seeders/DatabaseSeeder.php");
+                    $class = "App\\Modules\\{$moduleName}\\Database\\Seeders\\DatabaseSeeder";
+                    if (is_file($seederFile)) {
+                        if (! class_exists($class)) {
+                            require_once $seederFile;
+                        }
+                        if (class_exists($class)) {
+                            $this->info("Seeding module: {$moduleName} (class: {$class})");
+                            $this->call('db:seed', ['--class' => $class]);
+                        } else {
+                            $this->warn("Seeder class not found for module {$moduleName}. Skipping.");
+                        }
+                    }
+                }
+            }
+        }
+
+        // If an extra path was provided, run migrate for it too
+        if ($extraPath) {
+            $this->info("Running migrations for provided path: {$extraPath}");
+            $params = ['--path' => $extraPath];
+            if ($force) $params['--force'] = true;
+            $this->call('migrate', $params);
+        }
+
+        $this->line(''); // blank line for readability
+        if ($migratedCount > 0) {
+            $this->info("✓ Module migrations complete. Processed {$migratedCount} module paths.");
+        } else {
+            $this->info('✓ Module migrations complete. All modules are up to date.');
+        }
+        return 0;
+    }
+}

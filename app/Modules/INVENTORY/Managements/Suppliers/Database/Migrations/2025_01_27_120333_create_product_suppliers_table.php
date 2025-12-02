@@ -19,6 +19,8 @@ class CreateProductSuppliersTable extends Migration
             $table->string('name')->nullable();
             $table->text('address')->nullable();
             $table->string('image')->nullable();
+            $table->string('supplier_type')->nullable();
+
 
             $table->unsignedBigInteger('creator')->nullable();
             $table->string('slug',)->nullable();

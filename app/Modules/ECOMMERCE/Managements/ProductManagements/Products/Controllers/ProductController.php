@@ -2,22 +2,6 @@
 
 namespace App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Controllers;
 
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\ChildCategory;
-use App\Models\Color;
-use App\Models\Flag;
-use App\Models\Product;
-use App\Models\ProductImage;
-use App\Models\ProductReview;
-use App\Models\ProductSize;
-use App\Models\ProductVariant;
-use App\Models\ProductWarrenty;
-use App\Models\Subcategory;
-use App\Models\ProductModel;
-use App\Models\OrderDetails;
-use App\Models\ProductQuestionAnswer;
-use App\Models\Unit;
 use Illuminate\Support\Facades\DB;
 use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
@@ -26,18 +10,40 @@ use Sohibd\Laravelslug\Generate;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use Yajra\DataTables\DataTables;
-
 use Faker\Generator;
 use Illuminate\Container\Container;
+
+
+
+
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Brands\Database\Models\Brand;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\Categories\Database\Models\Category;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ChildCategories\Database\Models\ChildCategory;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Database\Models\Subcategory;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Colors\Database\Models\Color;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Flags\Database\Models\Flag;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\Product;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\ProductImage;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\ProductReview;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Sizes\Database\Models\ProductSize;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\ProductVariant;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\ProductWarrenty;
+use App\Modules\ECOMMERCE\Managements\Orders\Database\Models\OrderDetails;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\ProductQuestionAnswer;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Units\Database\Models\Unit;
 
 
 use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->loadModuleViewPath('ECOMMERCE/Managements/ProductManagements/Products');
+    }
     public function addNewProduct()
     {
-        return view('backend.product.create');
+        return view('create');
     }
 
     public function childcategorySubcategoryWise(Request $request)
@@ -321,7 +327,7 @@ class ProductController extends Controller
                 ->rawColumns(['action', 'price', 'status'])
                 ->make(true);
         }
-        return view('backend.product.view');
+        return view('view');
     }
 
     public function deleteProduct($slug)
@@ -370,10 +376,10 @@ class ProductController extends Controller
         $product = Product::where('slug', $slug)->first();
         $subcategories = Subcategory::where('category_id', $product->category_id)->select('name', 'id')->orderBy('name', 'asc')->get();
         $childcategories = ChildCategory::where('category_id', $product->category_id)->where('subcategory_id', $product->subcategory_id)->select('name', 'id')->orderBy('name', 'asc')->get();
-        $productModels = ProductModel::where('brand_id', $product->brand_id)->select('name', 'id')->orderBy('name', 'asc')->get();
+        $productModels = Product::where('brand_id', $product->brand_id)->select('name', 'id')->orderBy('name', 'asc')->get();
         $gallery = ProductImage::where('product_id', $product->id)->get();
         $productVariants = ProductVariant::where('product_id', $product->id)->orderBy('id', 'asc')->get();
-        return view('backend.product.update', compact('product', 'gallery', 'subcategories', 'childcategories', 'productModels', 'productVariants'));
+        return view('update', compact('product', 'gallery', 'subcategories', 'childcategories', 'productModels', 'productVariants'));
     }
 
     public function updateProduct(Request $request)
@@ -666,7 +672,7 @@ class ProductController extends Controller
                 ->rawColumns(['action', 'rating'])
                 ->make(true);
         }
-        return view('backend.product.reviews');
+        return view('reviews');
     }
 
     public function approveProductReview($slug)
@@ -687,7 +693,7 @@ class ProductController extends Controller
 
     public function addAnotherVariant()
     {
-        $returnHTML = view('backend.product.variant')->render();
+        $returnHTML = view('variant')->render();
         return response()->json(['variant' => $returnHTML]);
     }
 
@@ -737,7 +743,7 @@ class ProductController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('backend.product.questions');
+        return view('questions');
     }
 
     public function deleteQuestionAnswer($id)
@@ -765,7 +771,7 @@ class ProductController extends Controller
     // demo products function
     public function generateDemoProducts()
     {
-        return view('backend.product.generate_demo');
+        return view('generate_demo');
     }
 
     public function saveGeneratedDemoProducts(Request $request)
@@ -782,7 +788,7 @@ class ProductController extends Controller
             $subcategoryId = Subcategory::where('status', 1)->where('category_id', isset($categoryId[0]) ? $categoryId[0]->id : null)->select('id')->inRandomOrder()->limit(1)->get();
             $childCategoryId = ChildCategory::where('subcategory_id', isset($subcategoryId[0]) ? $subcategoryId[0]->id : null)->select('id')->inRandomOrder()->limit(1)->get();
             $brandId = Brand::where('status', 1)->select('id')->inRandomOrder()->limit(1)->get();
-            $modelId = ProductModel::where('brand_id', isset($brandId[0]) ? $brandId[0]->id : null)->select('id')->inRandomOrder()->limit(1)->get();
+            $modelId = Product::where('brand_id', isset($brandId[0]) ? $brandId[0]->id : null)->select('id')->inRandomOrder()->limit(1)->get();
             $unitId = Unit::select('id')->inRandomOrder()->limit(1)->get();
             $warrentyId = ProductWarrenty::select('id')->inRandomOrder()->limit(1)->get();
             $flagId = Flag::select('id')->where('status', 1)->inRandomOrder()->limit(1)->get();
@@ -881,7 +887,7 @@ class ProductController extends Controller
 
     public function removeDemoProductsPage()
     {
-        return view('backend.product.remove_demo');
+        return view('remove_demo');
     }
 
     public function removeDemoProducts()

@@ -5,6 +5,7 @@ namespace App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\ProductVariant;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\PackageProducts\Database\Models\PackageProductItem;
 
 class Product extends Model
 {

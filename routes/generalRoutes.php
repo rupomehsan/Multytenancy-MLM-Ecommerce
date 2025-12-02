@@ -2,9 +2,9 @@
 
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BackupController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\SmsServiceController;
+use App\Http\Controllers\Tenant\Admin\BackupController;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Controllers\ProductController;
+use App\Modules\ECOMMERCE\Managements\SmsService\Controllers\SmsServiceController;
 
 Route::group(['middleware' => ['auth', 'CheckUserType', 'DemoMode']], function () {
     // backup download

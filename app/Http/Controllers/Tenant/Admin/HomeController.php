@@ -19,7 +19,7 @@ use App\Modules\CRM\Managements\CustomerCategory\Database\Models\CustomerCategor
 use App\Modules\CRM\Managements\ContactHistory\Database\Models\CustomerContactHistory;
 use App\Modules\CRM\Managements\NextDateContacts\Database\Models\CustomerNextContactDate;
 use App\Modules\CRM\Managements\CustomerSourceType\Database\Models\CustomerSourceType;
-use App\Modules\INVENTORY\Managements\Purchase\Orders\Database\Models\ProductPurchaseOrder;
+use App\Modules\INVENTORY\Managements\Purchase\PurchaseOrders\Database\Models\ProductPurchaseOrder;
 
 use App\Http\Controllers\Account\Models\AcAccount;
 use App\Http\Controllers\Account\Models\AcTransaction;

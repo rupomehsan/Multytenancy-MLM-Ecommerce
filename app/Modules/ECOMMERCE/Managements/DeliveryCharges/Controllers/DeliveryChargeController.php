@@ -37,7 +37,7 @@ class DeliveryChargeController extends Controller
                 ->make(true);
         }
 
-        return view('backend.delivery_charges');
+        return view('delivery_charges');
     }
 
     public function getDeliveryCharge($id)
@@ -74,7 +74,7 @@ class DeliveryChargeController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('backend.upazila_thana');
+        return view('upazila_thana');
     }
 
     public function getUpazilaInfo($id)

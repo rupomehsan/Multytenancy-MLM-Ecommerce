@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\{path}\Database\Seeders;
+namespace App\Modules\ECOMMERCE\Managements\WebsiteConfigurations\Database\Seeder;
 
 use Illuminate\Database\Seeder as SeederClass;
 use Faker\Factory as Faker;
@@ -11,19 +11,10 @@ class Seeder extends SeederClass
 {
     /**
      * Run the database seeds.
-    php artisan db:seed --class="\App\Modules\{path}\Database\Seeders\Seeder"
+    php artisan db:seed --class="\App\Modules\ECOMMERCE\Managements\WebsiteConfigurations\Database\Seeder\Seeder"
      */
-    static $model = \App\Modules\{path}\Models\Model::class;
-
-    public function run(): void
-    {
-        $faker = Faker::create();
-        self::$model::truncate();
 
 
-        self::$model::create([
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-        ]);
-    }
+
+    public function run(): void {}
 }

@@ -16,24 +16,27 @@ class CreateDbExpensesTable extends Migration
         Schema::create('db_expenses', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('store_id')->nullable();            
+            $table->unsignedBigInteger('store_id')->nullable();
             $table->unsignedBigInteger('count_id')->nullable();
             $table->string('expense_code', 100)->nullable();
             $table->unsignedBigInteger('category_id')->nullable();
-            $table->date('expense_date')->nullable();   
+            $table->date('expense_date')->nullable();
             $table->string('reference_no', 100)->nullable();
             $table->string('expense_for', 255)->nullable();
-            $table->double('expense_amt', 20, 4)->nullable();              
+            $table->double('expense_amt', 20, 4)->nullable();
             $table->unsignedBigInteger('payment_type_id')->nullable();
-            $table->unsignedBigInteger('account_id')->nullable();    
-            $table->text('note')->nullable(); 
+            $table->unsignedBigInteger('account_id')->nullable();
+            // For accounting entries
+            $table->unsignedBigInteger('credit_account_id')->nullable();
+            $table->unsignedBigInteger('debit_account_id')->nullable();
+            $table->text('note')->nullable();
 
             // $table->string('created_by', 50)->nullable();
             // $table->date('created_date')->nullable();   
-            $table->string('created_time', 100)->nullable();  
-            $table->string('system_ip', 100)->nullable();  
-            $table->string('system_name', 100)->nullable();              
-            
+            $table->string('created_time', 100)->nullable();
+            $table->string('system_ip', 100)->nullable();
+            $table->string('system_name', 100)->nullable();
+
 
             $table->unsignedBigInteger('creator')->nullable();
             $table->string('slug')->nullable();

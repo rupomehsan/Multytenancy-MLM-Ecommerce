@@ -5,6 +5,9 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
+use App\Modules\ECOMMERCE\Managements\UserManagements\Users\Database\Seeder\Seeder as UserSeeder;
+use App\Modules\ECOMMERCE\Managements\Locations\Database\Seeder\Seeder as LocationSeeder;
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -14,11 +17,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // Call the AccountGroupsSeeder
+        // Call complete account groups seeder (creates account_types, groups, subsidiaries)
         $this->call([
-            AccountGroupsSeeder::class,
+            CompleteAccountGroupsSeeder::class,
+            UserSeeder::class,
+            LocationSeeder::class
         ]);
-        
+
         // Keep existing ac_accounts data
         DB::table("ac_accounts")->insert([
             'account_name' => 'asset',

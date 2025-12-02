@@ -20,8 +20,13 @@ class CreateBlogsTable extends Migration
             $table->string('title');
             $table->mediumText('short_description')->nullable();
             $table->longText('description')->nullable();
+            // SEO meta fields
+            $table->string('meta_title')->nullable();
+            $table->string('meta_keywords')->nullable();
+            $table->text('meta_description')->nullable();
             $table->string('tags')->nullable();
             $table->string('slug');
+
             $table->tinyInteger('status')->default(1)->comment("0=>Inactive; 1=>Active");
             $table->timestamps();
         });

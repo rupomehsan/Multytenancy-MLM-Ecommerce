@@ -37,6 +37,7 @@ class CreateProductsTable extends Migration
             $table->tinyInteger('warrenty_id')->nullable();
             $table->string('slug')->nullable();
             $table->tinyInteger('flag_id')->nullable();
+            $table->decimal('avg_cost_price', 10, 2)->default(0)->comment('Average cost price of the product');
 
             $table->string('meta_title')->nullable();
             $table->string('meta_keywords')->nullable();
@@ -45,6 +46,7 @@ class CreateProductsTable extends Migration
             $table->tinyInteger('status')->default(1)->comment("1=>Active; 0=>Inactive");
             $table->tinyInteger('has_variant')->default(0)->comment("0=>No Variant; 1=>Product Has variant based on Colors, Region etc.");
             $table->tinyInteger('is_demo')->default(0)->comment("0=>original; 1=>Demo");
+            $table->tinyInteger('is_package')->default(0)->comment("0=>original; 1=>Demo");
             $table->timestamps();
         });
     }
