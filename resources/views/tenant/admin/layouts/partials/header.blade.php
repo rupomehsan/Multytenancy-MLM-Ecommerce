@@ -1,6 +1,30 @@
   <header id="page-topbar">
       <div class="navbar-header">
-          <div class="d-flex align-items-center">
+          <div class="dropdown  ml-2" style="display:flex;gap:8px;align-items:center;">
+              <!-- Icon-only Guest Checkout: checkbox is visually hidden but operable via label -->
+              <label class="btn text-white rounded mr-2 mb-0 d-flex align-items-center justify-content-center"
+                  style="cursor:pointer; width:42px; height:36px; padding:6px; background: linear-gradient(to right, #17263ADE, #2c3e50f5, #17263A);"
+                  title="{{ isset($generalInfo) && $generalInfo->guest_checkout == 1 ? 'Guest Checkout: ON' : 'Guest Checkout: OFF' }}"
+                  aria-label="{{ isset($generalInfo) && $generalInfo->guest_checkout == 1 ? 'Guest Checkout: ON' : 'Guest Checkout: OFF' }}">
+                  <input type="checkbox" id="guest_checkout" onchange="guestCheckout()"
+                      @if (isset($generalInfo) && $generalInfo->guest_checkout == 1) checked @endif
+                      style="position:absolute;opacity:0;width:0;height:0;margin:0;padding:0;">
+                  @if (isset($generalInfo) && $generalInfo->guest_checkout == 1)
+                      <i class="fas fa-user-check" aria-hidden="true" style="font-size:16px;color:#b7f5b0;"></i>
+                  @else
+                      <i class="fas fa-user-slash" aria-hidden="true" style="font-size:16px;color:#f5b0b0;"></i>
+                  @endif
+              </label>
+
+              <!-- Icon-only Visit Website button -->
+              <a href="/" target="_blank"
+                  class="btn text-white rounded d-flex align-items-center justify-content-center"
+                  style="width:42px; height:36px; padding:6px; background: linear-gradient(to right, #17263ADE, #2c3e50f5, #17263A);"
+                  title="Visit Website" aria-label="Visit Website">
+                  <i class="fas fa-globe" aria-hidden="true" style="font-size:16px;"></i>
+              </a>
+          </div>
+          {{-- <div class="d-flex align-items-center">
               <button type="button" class="btn btn-sm mr-2 d-lg-none header-item" id="vertical-menu-btn">
                   <i class="fa fa-fw fa-bars"></i>
               </button>
@@ -10,7 +34,7 @@
                       @yield('page_title')</h6>
                   <h2 class="header-title">@yield('page_heading')</h2>
               </div>
-          </div>
+          </div> --}}
           <div class="d-flex align-items-center">
 
               {{-- <div class="dropdown d-inline-block ml-2">
@@ -63,22 +87,13 @@
                         </div> --}}
 
 
-              <div class="dropdown d-inline-block ml-2">
-                  <label class="btn text-white rounded mr-2 mb-0"
-                      style="cursor:pointer; background: linear-gradient(to right, #17263ADE, #2c3e50f5, #17263A);">
-                      <input type="checkbox" id="guest_checkout" onchange="guestCheckout()"
-                          @if ($generalInfo->guest_checkout == 1) checked @endif> Guest Checkout
-                  </label>
-                  <a href="/" target="_blank" class="btn text-white rounded"
-                      style="background: linear-gradient(to right, #17263ADE, #2c3e50f5, #17263A);"><i
-                          class="fas fa-paper-plane"></i> Visit Website</a>
-              </div>
+
 
               <div class="dropdown d-inline-block ml-2">
                   <button type="button" class="btn header-item" id="page-header-user-dropdown" data-toggle="dropdown"
                       aria-haspopup="true" aria-expanded="false">
                       <img class="rounded-circle header-profile-user"
-                          src="{{ url('assets') }}/images/users/avatar-1.jpg" alt="Header Avatar">
+                          src="{{ url('tenant/admin/assets') }}/images/users/avatar-1.jpg" alt="Header Avatar">
                       <span class="d-none d-sm-inline-block ml-1">@auth {{ Auth::user()->name }}
                           @endauth
                       </span>
@@ -108,5 +123,38 @@
               </div>
 
           </div>
+          <script>
+              document.addEventListener('DOMContentLoaded', function() {
+                  const gc = document.getElementById('guest_checkout');
+                  if (!gc) return;
+                  const label = gc.closest('label');
+                  const icon = label ? label.querySelector('i') : null;
+
+                  function updateIcon(checked) {
+                      if (!icon || !label) return;
+                      if (checked) {
+                          icon.classList.remove('fa-user-slash');
+                          icon.classList.add('fa-user-check');
+                          icon.style.color = '#b7f5b0';
+                          label.setAttribute('title', 'Guest Checkout: ON');
+                          label.setAttribute('aria-label', 'Guest Checkout: ON');
+                      } else {
+                          icon.classList.remove('fa-user-check');
+                          icon.classList.add('fa-user-slash');
+                          icon.style.color = '#f5b0b0';
+                          label.setAttribute('title', 'Guest Checkout: OFF');
+                          label.setAttribute('aria-label', 'Guest Checkout: OFF');
+                      }
+                  }
+
+                  // initialize
+                  updateIcon(gc.checked);
+
+                  // reflect UI immediately when checkbox is toggled
+                  gc.addEventListener('change', function() {
+                      updateIcon(this.checked);
+                  });
+              });
+          </script>
       </div>
   </header>

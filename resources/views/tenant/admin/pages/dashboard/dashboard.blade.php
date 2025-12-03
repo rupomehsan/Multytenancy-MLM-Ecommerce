@@ -26,17 +26,17 @@
             font-weight: 300;
 
             /* animation-name: rotate;
-                    animation-duration: 5s;
-                    animation-iteration-count: infinite;
-                    animation-timing-function: linear;
-                */
+                            animation-duration: 5s;
+                            animation-iteration-count: infinite;
+                            animation-timing-function: linear;
+                        */
 
         }
 
         /* @keyframes rotate{
-                    from{ transform: rotate(-360deg); }
-                    to{ transform: rotate(360deg); }
-                } */
+                            from{ transform: rotate(-360deg); }
+                            to{ transform: rotate(360deg); }
+                        } */
     </style>
 @endsection
 
@@ -47,7 +47,6 @@
 @section('page_heading')
     Overview
 @endsection
-
 @section('content')
 
     <div class="row">

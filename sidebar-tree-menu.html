@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sidebar Tree Menu - Pure HTML/CSS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        /* Sidebar Container */
+        .sidebar {
+            width: 260px;
+            background-color: #ffffff;
+            border-right: 1px solid #e0e0e0;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Sidebar Header */
+        .sidebar-header {
+            padding: 20px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        /* Menu List */
+        .menu-list {
+            list-style: none;
+            padding: 8px 0;
+        }
+
+        /* Menu Item */
+        .menu-item {
+            position: relative;
+        }
+
+        /* Hide checkbox */
+        .menu-toggle {
+            display: none;
+        }
+
+        /* Parent Link */
+        .menu-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            user-select: none;
+        }
+
+        .menu-label:hover {
+            background-color: #f6f6f6;
+        }
+
+        /* Arrow Icon */
+        .menu-arrow {
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 6px solid #666;
+            transition: transform 0.3s ease;
+            margin-left: auto;
+        }
+
+        /* Rotate arrow when expanded */
+        .menu-toggle:checked + .menu-label .menu-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Submenu Container */
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            margin-left: 28px;
+            padding-left: 20px;
+            border-left: 2px solid #d3d3d3;
+            position: relative;
+        }
+
+        /* Show submenu when checkbox is checked */
+        .menu-toggle:checked ~ .submenu {
+            max-height: 500px;
+        }
+
+        /* Submenu List */
+        .submenu-list {
+            list-style: none;
+            padding: 8px 0;
+        }
+
+        /* Submenu Item */
+        .submenu-item {
+            position: relative;
+            padding-left: 28px;
+        }
+
+        /* Horizontal connector line */
+        .submenu-item::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            width: 18px;
+            height: 2px;
+            background-color: #d3d3d3;
+        }
+
+        /* Dot at the end of connector */
+        .submenu-item::after {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background-color: #666;
+            border-radius: 50%;
+        }
+
+        /* Submenu Link */
+        .submenu-link {
+            display: block;
+            padding: 10px 12px;
+            font-size: 13px;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-radius: 4px;
+        }
+
+        .submenu-link:hover {
+            background-color: #f6f6f6;
+            color: #667eea;
+            padding-left: 16px;
+        }
+
+        /* Active state */
+        .submenu-link.active {
+            background-color: #eef2ff;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        /* Icon styles (optional) */
+        .menu-icon {
+            margin-right: 10px;
+            font-size: 16px;
+            width: 20px;
+            display: inline-block;
+        }
+
+        /* Simple menu items without children */
+        .simple-link {
+            display: block;
+            padding: 12px 16px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .simple-link:hover {
+            background-color: #f6f6f6;
+        }
+
+        .simple-link.active {
+            background-color: #eef2ff;
+            color: #667eea;
+            border-left: 3px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            Menu Dashboard
+        </div>
+        
+        <ul class="menu-list">
+            <!-- Simple Menu Item -->
+            <li class="menu-item">
+                <a href="#" class="simple-link active">
+                    <span class="menu-icon">🏠</span>
+                    Dashboard
+                </a>
+            </li>
+
+            <!-- Parent with Children -->
+            <li class="menu-item">
+                <input type="checkbox" id="menu1" class="menu-toggle">
+                <label for="menu1" class="menu-label">
+                    <span>
+                        <span class="menu-icon">📊</span>
+                        Products
+                    </span>
+                    <span class="menu-arrow"></span>
+                </label>
+                <div class="submenu">
+                    <ul class="submenu-list">
+                        <li class="submenu-item">
+                            <a href="#" class="submenu-link">All Products</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="#" class="submenu-link active">Add New Product</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="#" class="submenu-link">Categories</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="#" class="submenu-link">Inventory</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <!-- Another Parent with Children -->
+            <li class="menu-item">
+                <input type="checkbox" id="menu2" class="menu-toggle">
+                <label for="menu2" class="menu-label">
+                    <span>
+                        <span class="menu-icon">👥</span>
+                        Users
+                    </span>
+                    <span class="menu-arrow"></span>
+                </label>
+                <div class="submenu">
+                    <ul class="submenu-list">
+                        <li class="submenu-item">
+                            <a href="#" class="submenu-link">All Users</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="#" class="submenu-link">Add User</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="#" class="submenu-link">Roles & Permissions</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <!-- Another Parent with Children -->
+            <li class="menu-item">
+                <input type="checkbox" id="menu3" class="menu-toggle">
+                <label for="menu3" class="menu-label">
+                    <span>
+                        <span class="menu-icon">🛒</span>
+                        Orders
+                    </span>
+                    <span class="menu-arrow"></span>
+                </label>
+                <div class="submenu">
+                    <ul class="submenu-list">
+                        <li class="submenu-item">
+                            <a href="#" class="submenu-link">All Orders</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="#" class="submenu-link">Pending Orders</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="#" class="submenu-link">Completed Orders</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="#" class="submenu-link">Cancelled Orders</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <!-- Simple Menu Item -->
+            <li class="menu-item">
+                <a href="#" class="simple-link">
+                    <span class="menu-icon">💳</span>
+                    Payments
+                </a>
+            </li>
+
+            <!-- Another Parent with Children -->
+            <li class="menu-item">
+                <input type="checkbox" id="menu4" class="menu-toggle">
+                <label for="menu4" class="menu-label">
+                    <span>
+                        <span class="menu-icon">⚙️</span>
+                        Settings
+                    </span>
+                    <span class="menu-arrow"></span>
+                </label>
+                <div class="submenu">
+                    <ul class="submenu-list">
+                        <li class="submenu-item">
+                            <a href="#" class="submenu-link">General</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="#" class="submenu-link">Email Configuration</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="#" class="submenu-link">Payment Gateway</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <!-- Simple Menu Item -->
+            <li class="menu-item">
+                <a href="#" class="simple-link">
+                    <span class="menu-icon">📈</span>
+                    Reports
+                </a>
+            </li>
+
+            <!-- Simple Menu Item -->
+            <li class="menu-item">
+                <a href="#" class="simple-link">
+                    <span class="menu-icon">🚪</span>
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Demo Info -->
+    <div style="margin-top: 30px; padding: 20px; background: white; border-radius: 8px; max-width: 600px;">
+        <h3 style="color: #333; margin-bottom: 10px;">Features:</h3>
+        <ul style="color: #666; line-height: 1.8;">
+            <li>✅ Pure HTML + CSS only (no JavaScript)</li>
+            <li>✅ Checkbox trick for expand/collapse</li>
+            <li>✅ Continuous vertical connector line</li>
+            <li>✅ Horizontal connector with dot for each child</li>
+            <li>✅ Smooth transitions and hover effects</li>
+            <li>✅ 260px sidebar width</li>
+            <li>✅ Clean professional UI</li>
+            <li>✅ Active states for navigation</li>
+            <li>✅ Responsive and accessible</li>
+        </ul>
+    </div>
+</body>
+</html>

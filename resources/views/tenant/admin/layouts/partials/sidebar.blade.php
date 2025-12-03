@@ -5,53 +5,142 @@
 </div>
 
 <ul class="metismenu list-unstyled" id="side-menu">
+    {{-- Dashboard --}}
+    {{-- Dashboard --}}
     <li>
         <a href="{{ url('/admin/dashboard') }}" data-active-paths="{{ url('/admin/dashboard') }}">
-            <i class="feather-home"></i>
-            <span> Ecommerce Dashboard</span>
+            <i class="feather-shopping-cart"></i>
+            <span> E-Dashboard</span>
         </a>
     </li>
     <li>
         <a href="{{ url('/crm-home') }}" data-active-paths="{{ url('/crm-home') }}">
-            <i class="feather-home"></i>
+            <i class="feather-user-check"></i>
             <span> CRM Dashboard</span>
         </a>
     </li>
     <li>
         <a href="{{ url('/accounts-home') }}" data-active-paths="{{ url('/accounts-home') }}">
-            <i class="feather-home"></i>
+            <i class="feather-dollar-sign"></i>
             <span> Accounts Dashboard</span>
         </a>
     </li>
     <li>
         <a href="{{ url('/inventory-home') }}" data-active-paths="{{ url('/inventory-home') }}">
-            <i class="feather-home"></i>
+            <i class="feather-box"></i>
             <span> Inventory Dashboard</span>
         </a>
     </li>
     <li>
         <a href="{{ url('/create/new/order') }}" data-active-paths="{{ url('/create/new/order') }}">
-            <i class="feather-home"></i>
+            <i class="feather-credit-card"></i>
             <span> POS</span>
         </a>
     </li>
     {{-- Start MLM Module --}}
-    <hr style="border-color: #c8c8c836; margin-top: 12px; margin-bottom: 12px;">
+    {{-- Start MLM Module --}}
+
     <li class="menu-title" style="color: khaki; text-shadow: 1px 1px 2px black;">MLM Modules</li>
+
+
+    <li>
+        <a href="{{ route('mlm.dashboard') }}" data-active-paths="{{ route('mlm.dashboard') }}">
+            <i class="feather-home"></i> <span>MLM Dashboard</span></a>
+    </li>
     <li>
         <a href="javascript: void(0);" class="has-arrow">
-            <i class="feather-settings"></i>
-            <span>Config</span>
+            <i class="feather-percent"></i>
+            <span>Commissions</span>
         </a>
         <ul class="sub-menu" aria-expanded="false">
             <li>
-                <a href="{{ route('mlm.index') }}" data-active-paths="{{ route('mlm.index') }}">
-                    Basic Configuration</a>
+                <a href="{{ route('mlm.commissions.settings') }}"
+                    data-active-paths="{{ route('mlm.commissions.settings') }}">Commission Settings</a>
+            </li>
+            <li>
+                <a href="{{ route('mlm.commissions.record') }}"
+                    data-active-paths="{{ route('mlm.commissions.record') }}">Commission Records</a>
             </li>
         </ul>
     </li>
+    <li>
+        <a href="javascript: void(0);" class="has-arrow">
+            <i class="feather-activity"></i>
+            <span>Referrals</span>
+        </a>
+        <ul class="sub-menu" aria-expanded="false">
+            <li>
+                <a href="{{ route('mlm.referral.lists') }}" data-active-paths="{{ route('mlm.referral.lists') }}">
+                    Referral Lists
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('mlm.referral.tree') }}" data-active-paths="{{ route('mlm.referral.tree') }}">
+                    Referral Tree
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('mlm.referral.activity.log') }}"
+                    data-active-paths="{{ route('mlm.referral.activity.log') }}">
+                    Referral Activity Log
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <a href="javascript: void(0);" class="has-arrow">
+            <i class="feather-credit-card"></i>
+            <span>Wallet</span>
+        </a>
+        <ul class="sub-menu" aria-expanded="false">
+            <li>
+                <a href="{{ route('mlm.wallet.transaction') }}"
+                    data-active-paths="{{ route('mlm.wallet.transaction') }}">Wallet Transactions</a>
+            </li>
+            <li>
+                <a href="{{ route('mlm.user.wallet.balance') }}"
+                    data-active-paths="{{ route('mlm.user.wallet.balance') }}">User Wallet Balances</a>
+            </li>
+        </ul>
+    </li>
+
+    <li>
+        <a href="javascript: void(0);" class="has-arrow">
+            <i class="feather-arrow-down-circle"></i>
+            <span>Withdrawals</span>
+        </a>
+        <ul class="sub-menu" aria-expanded="false">
+            <li>
+                <a href="{{ route('mlm.user.withdraw.request') }}"
+                    data-active-paths="{{ route('mlm.user.withdraw.request') }}">Withdrawal Requests</a>
+            </li>
+            <li>
+                <a href="{{ route('mlm.withdraw.history') }}"
+                    data-active-paths="{{ route('mlm.withdraw.history') }}">Withdrawal History</a>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <a href="{{ route('mlm.top.earners') }}" data-active-paths="{{ route('mlm.top.earners') }}">
+            <i class="feather-star"></i> <span>Top Earners</span></a>
+    </li>
+
+    <li>
+        <a href="{{ route('mlm.reports') }}" data-active-paths="{{ route('mlm.reports') }}">
+            <i class="feather-bar-chart-2"></i> <span>MLM Reports</span>
+        </a>
+    </li>
+    <li>
+        <a href="{{ route('mlm.passive.income') }}" data-active-paths="{{ route('mlm.passive.income') }}">
+            <i class="feather-dollar-sign"></i> <span>Passive Income</span>
+        </a>
+    </li>
+    {{-- End MLM Module --}}
+    {{-- End MLM Module --}}
+
     {{-- Start E-commerce Module --}}
-    <hr style="border-color: #c8c8c836; margin-top: 12px; margin-bottom: 12px;">
+    {{-- Start E-commerce Module --}}
+
     <li class="menu-title" style="color: khaki; text-shadow: 1px 1px 2px black;">E-commerce Modules</li>
     <li>
         <a href="javascript: void(0);" class="has-arrow">
@@ -459,10 +548,12 @@
         </ul>
     </li>
     {{-- End E-commerce Module --}}
+    {{-- End E-commerce Module --}}
 
 
     {{-- Start Inventory Module --}}
-    <hr style="border-color: #c8c8c836; margin-top: 12px; margin-bottom: 12px;">
+    {{-- Start Inventory Module --}}
+
     <li class="menu-title" style="color: khaki; text-shadow: 1px 1px 2px black;">Inventory Modules</li>
     <li>
         <a href="{{ url('/view/all/product-warehouse') }}"
@@ -564,10 +655,12 @@
         </ul>
     </li>
     {{-- End Inventory Module --}}
+    {{-- End Inventory Module --}}
 
 
     {{-- Start Accounts Module --}}
-    <hr style="border-color: #c8c8c836; margin-top: 12px; margin-bottom: 12px;">
+    {{-- Start Accounts Module --}}
+
     <li class="menu-title" style="color: khaki; text-shadow: 1px 1px 2px black;">Accounts Modules</li>
     <li>
         <a href="javascript:void(0);" class="has-arrow">
@@ -777,9 +870,11 @@
         </ul>
     </li> -->
     {{-- End Accounts Module --}}
+    {{-- End Accounts Module --}}
 
     {{-- Start Crm Module --}}
-    <hr style="border-color: #c8c8c836; margin-top: 12px; margin-bottom: 12px;">
+    {{-- Start Crm Module --}}
+
     <li class="menu-title" style="color: khaki; text-shadow: 1px 1px 2px black;">CRM Modules</li>
     <li>
         <a href="{{ url('/view/all/customer-source') }}"
@@ -897,7 +992,9 @@
         </a>
     </li>
     {{-- End Crm Modules --}}
+    {{-- End Crm Modules --}}
 
+    {{-- Start User Role Permission Module --}}
     {{-- Start User Role Permission Module --}}
     <hr style="border-color: #c8c8c836; margin-top: 12px; margin-bottom: 5px;">
     <li class="menu-title" style="color: khaki; text-shadow: 1px 1px 2px black;">User Role Permission</li>
@@ -975,7 +1072,7 @@
     {{-- End Website Config Module --}}
 
     {{-- Start Content Management Module --}}
-    <hr style="border-color: #c8c8c836; margin-top: 12px; margin-bottom: 12px;">
+
     <li class="menu-title" style="color: khaki; text-shadow: 1px 1px 2px black;">Content Management</li>
 
     <li>
@@ -1115,7 +1212,7 @@
     {{-- End Content Management Module --}}
 
     {{-- Start Download & Backup Module --}}
-    <hr style="border-color: #c8c8c836; margin-top: 12px; margin-bottom: 12px;">
+
     <li class="menu-title" style="color: khaki; text-shadow: 1px 1px 2px black;">Download & Backup</li>
 
     <li>
@@ -1180,7 +1277,7 @@
             <i class="feather-folder"></i>Other Images Backup</a>
     </li>
 
-    <hr style="border-color: #c8c8c836; margin-top: 12px; margin-bottom: 12px;">
+
 
     <li>
         <a href="javascript: void(0);" class="has-arrow">
@@ -1301,36 +1398,441 @@
 </script>
 
 <style>
-    /* Enhanced Menu Search Styles */
+    /* Modern Sidebar Design - Creative UI */
 
-    /* Search container styling */
-    .menu-search-container {
-        padding: 10px;
-        background: rgba(0, 0, 0, 0.1);
+    /* Custom Scrollbar */
+    #side-menu::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #side-menu::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+    }
+
+    #side-menu::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+    }
+
+    #side-menu::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #764ba2 0%, #667eea 100%);
+    }
+
+    /* Enhanced Search Container with Glassmorphism */
+    .menu-search-container,
+    div[style*="padding: 10px"] {
+        padding: 16px !important;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        backdrop-filter: blur(10px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         position: sticky;
         top: 0;
         z-index: 1000;
+        margin-bottom: 8px;
     }
 
     #menuSearch {
         width: 100%;
-        padding: 8px 12px;
-        border: 1px solid #555;
-        border-radius: 5px;
-        background: #444;
-        color: white;
+        /* keep left padding for text, right padding to make room for icon */
+        padding: 12px 45px 12px 16px;
+        border: 2px solid rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.95);
+        color: #2d3748;
         font-size: 14px;
+        font-weight: 500;
         box-sizing: border-box;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cpath d='m21 21-4.35-4.35'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        /* place icon on the right side */
+        background-position: calc(100% - 16px) center;
+        background-size: 18px;
     }
 
     #menuSearch::placeholder {
-        color: #aaa;
+        color: #a0aec0;
+        font-weight: 400;
     }
 
     #menuSearch:focus {
         outline: none;
-        border-color: #007bff;
-        box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1), 0 4px 16px rgba(102, 126, 234, 0.2);
+        transform: translateY(-1px);
+    }
+
+    /* Menu List Container */
+    #side-menu {
+        padding: 8px 12px;
+    }
+
+    /* Parent Menu Items - Modern Card Style */
+    #side-menu>li {
+        margin-bottom: 4px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    #side-menu>li>a {
+        padding: 8px 16px !important;
+        border-radius: 10px;
+        font-weight: 500;
+        font-size: 14px;
+        color: #4a5568;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgb(50 59 81 / 12%);
+        background-clip: padding-box;
+        box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.02);
+    }
+
+    /* Animated gradient background on hover */
+    #side-menu>li>a::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+        transition: left 0.5s ease;
+    }
+
+    #side-menu>li>a:hover::before {
+        left: 100%;
+    }
+
+    #side-menu>li>a:hover {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+        color: #667eea;
+        transform: translateX(4px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    }
+
+    /* Active menu item */
+    #side-menu>li.mm-active>a,
+    #side-menu>li>a.active {
+        background: linear-gradient(90deg, rgba(126, 144, 223, 0.527), rgba(118, 75, 162, 0.02));
+        color: white !important;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        transform: translateX(4px);
+    }
+
+    /* Icons styling with gradient */
+    #side-menu>li>a>i {
+        width: 24px;
+        height: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+
+    #side-menu>li>a:hover>i {
+        transform: scale(1.15) rotate(5deg);
+    }
+
+    #side-menu>li.mm-active>a>i,
+    #side-menu>li>a.active>i {
+        -webkit-text-fill-color: white;
+        transform: scale(1.1);
+    }
+
+    /* Menu Title - Modern Section Headers */
+    .menu-title {
+        /* Professional, highlightable section header */
+        font-weight: 700 !important;
+        font-size: 12px !important;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        padding: 14px 14px !important;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 12px;
+        margin-bottom: 12px;
+        text-align: left;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #394683b2 0%, #764ba275 100%);
+        border: 1px solid rgba(15, 23, 42, 0.04);
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03) inset;
+        transition: background 200ms ease, transform 160ms ease, box-shadow 200ms ease;
+        cursor: default;
+    }
+
+    .menu-title:hover {
+        background: linear-gradient(90deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.04));
+        transform: translateX(3px);
+        box-shadow: 0 6px 18px rgba(99, 102, 241, 0.06);
+    }
+
+    /* Left accent bar for quick visual section identification */
+    .menu-title::before {
+        content: '';
+        width: 6px;
+        height: 22px;
+        background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+        border-radius: 3px;
+        margin-right: 10px;
+        box-shadow: 0 2px 6px rgba(102, 126, 234, 0.12);
+        flex-shrink: 0;
+    }
+
+    /* When the section is visible/active (JS may toggle a class), give stronger highlight */
+    .menu-title.is-visible,
+    .menu-title.visible {
+        background: linear-gradient(90deg, rgba(102, 126, 234, 0.10), rgba(118, 75, 162, 0.05));
+        border-color: rgba(102, 126, 234, 0.18);
+        transform: translateX(3px);
+        box-shadow: 0 8px 26px rgba(102, 126, 234, 0.08);
+    }
+
+    /* Horizontal Rule - Gradient Divider */
+    hr {
+        border: none !important;
+        height: 1px;
+        background: linear-gradient(90deg, transparent 0%, rgba(102, 126, 234, 0.3) 50%, transparent 100%) !important;
+        margin: 16px 12px !important;
+    }
+
+    /* Tree Structure for Submenus - Enhanced */
+    .sub-menu {
+        position: relative;
+        margin-left: 32px !important;
+        padding-left: 24px !important;
+        border-left: 2px solid rgba(102, 126, 234, 0.2) !important;
+        background: linear-gradient(to right, rgba(102, 126, 234, 0.02) 0%, transparent 100%);
+        border-radius: 0 8px 8px 0;
+        margin-top: 4px !important;
+        margin-bottom: 4px !important;
+    }
+
+    /* Glowing effect on active submenu */
+    li.mm-active>.sub-menu {
+        border-left-color: #667eea !important;
+        background: linear-gradient(to right, rgba(102, 126, 234, 0.05) 0%, transparent 100%);
+        box-shadow: -2px 0 8px rgba(102, 126, 234, 0.1);
+    }
+
+    /* Submenu items */
+    .sub-menu>li {
+        position: relative;
+        padding-left: 0px !important;
+        margin: 2px 0;
+    }
+
+    /* Animated horizontal connector line */
+    .sub-menu>li::before {
+        content: '';
+        position: absolute;
+        left: -24px;
+        top: 50%;
+        width: 20px;
+        height: 2px;
+        background: linear-gradient(90deg, rgba(102, 126, 234, 0.3), rgba(102, 126, 234, 0.6));
+        z-index: 1;
+        transition: all 0.3s ease;
+    }
+
+    .sub-menu>li:hover::before {
+        width: 24px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+
+    /* Enhanced dot connector with pulse effect */
+    .sub-menu>li::after {
+        content: '';
+        position: absolute;
+        left: -4px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 8px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        z-index: 2;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+    }
+
+    .sub-menu>li:hover::after {
+        width: 10px;
+        height: 10px;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+        }
+
+        70% {
+            box-shadow: 0 0 0 8px rgba(102, 126, 234, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+        }
+    }
+
+    /* Submenu links - Modern style */
+    .sub-menu>li>a {
+        padding: 10px 14px !important;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #64748b;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: block;
+        position: relative;
+        border: 1px solid rgba(15, 23, 42, 0.04);
+        background-clip: padding-box;
+    }
+
+    .sub-menu>li>a:hover {
+        padding-left: 18px !important;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+        color: #667eea;
+        transform: translateX(2px);
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    }
+
+    /* Active submenu item */
+    .sub-menu>li.mm-active>a,
+    .sub-menu>li>a.active,
+    .sub-menu>li>a[aria-expanded="true"] {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+        color: #667eea !important;
+        font-weight: 600;
+        border-left: 3px solid #667eea;
+        border: 1px solid rgba(102, 126, 234, 0.18);
+        padding-left: 18px !important;
+        box-shadow: 0 2px 12px rgba(102, 126, 234, 0.2);
+    }
+
+    /* Nested submenus */
+    .sub-menu .sub-menu {
+        margin-left: 24px !important;
+        border-left-color: rgba(102, 126, 234, 0.15) !important;
+    }
+
+    /* Has-arrow indicator - Modern chevron */
+    .has-arrow::after {
+        border-color: #94a3b8 !important;
+        transition: all 0.3s ease !important;
+    }
+
+    li.mm-active>a.has-arrow::after,
+    a.has-arrow:hover::after {
+        border-color: #667eea !important;
+    }
+
+    /* Badge/Counter styling */
+    #side-menu span[style*="color:lightgreen"],
+    #side-menu span[style*="color:goldenrod"],
+    #side-menu span[style*="color:tomato"] {
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-left: auto;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Smooth entrance animation for menu items */
+    #side-menu>li {
+        animation: slideInLeft 0.4s ease-out backwards;
+    }
+
+    #side-menu>li:nth-child(1) {
+        animation-delay: 0.05s;
+    }
+
+    #side-menu>li:nth-child(2) {
+        animation-delay: 0.1s;
+    }
+
+    #side-menu>li:nth-child(3) {
+        animation-delay: 0.15s;
+    }
+
+    #side-menu>li:nth-child(4) {
+        animation-delay: 0.2s;
+    }
+
+    #side-menu>li:nth-child(5) {
+        animation-delay: 0.25s;
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Collapsible transition enhancement */
+    .sub-menu {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    /* Tooltip effect for collapsed items (optional enhancement) */
+    #side-menu>li>a[title]:hover::after {
+        content: attr(title);
+        position: absolute;
+        left: 100%;
+        margin-left: 10px;
+        padding: 6px 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 6px;
+        font-size: 12px;
+        white-space: nowrap;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+        #side-menu>li>a {
+            padding: 10px 12px !important;
+        }
+
+        .sub-menu {
+            margin-left: 24px !important;
+            padding-left: 16px !important;
+        }
     }
 </style>
