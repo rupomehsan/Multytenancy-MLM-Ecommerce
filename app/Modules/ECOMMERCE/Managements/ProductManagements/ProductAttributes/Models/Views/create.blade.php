@@ -30,7 +30,9 @@
                             <div class="col-sm-10">
                                 <select name="brand_id" class="form-control" id="colFormLabe0" required>
                                     @php
-                                        echo App\Models\Brand::getDropDownList('name');
+                                        if ($brands) {
+                                            echo $brands;
+                                        }
                                     @endphp
                                 </select>
                                 <div class="invalid-feedback" style="display: block;">

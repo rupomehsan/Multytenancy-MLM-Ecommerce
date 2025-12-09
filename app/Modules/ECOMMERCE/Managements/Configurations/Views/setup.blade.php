@@ -8,7 +8,7 @@
 @endsection
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/switchery/switchery.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/switchery/switchery.min.css" rel="stylesheet" type="text/css" />
     <style>
         .config_box {
             border: 1px solid #b7b7b7;
@@ -78,16 +78,16 @@
                                     @endforeach
                                 </div>
                             </div>
+
                         </div>
 
 
-                        <div class="form-group text-center pt-3 mt-3">
-                            <a href="{{ url('/home') }}" style="width: 130px;"
-                                class="btn btn-danger d-inline-block text-white m-2" type="submit"><i
-                                    class="mdi mdi-cancel"></i> Cancel</a>
+
+                        <div class="form-group  pt-3 mt-3">
                             <button class="btn btn-primary m-2" type="submit" style="width: 140px;"><i
                                     class="fas fa-save"></i> Update Info</button>
                         </div>
+
                     </form>
                 </div>
             </div>
@@ -98,7 +98,7 @@
 
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/switchery/switchery.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/switchery/switchery.min.js"></script>
     <script>
         $('[data-toggle="switchery"]').each(function(idx, obj) {
             new Switchery($(this)[0], $(this).data());

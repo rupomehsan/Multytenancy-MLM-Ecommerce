@@ -80,7 +80,7 @@
 
 
 @section('footer_js')
-    <script src="{{ url('js') }}/jquery.dragndrop.js"></script>
+    <script src="{{ asset('tenant/admin/js') }}/jquery.dragndrop.js"></script>
     <script>
         $(function() {
             $('ol').dragndrop({

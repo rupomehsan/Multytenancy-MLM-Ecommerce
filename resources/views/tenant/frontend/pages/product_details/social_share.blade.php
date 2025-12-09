@@ -66,6 +66,6 @@
 </div>
 
 <div class="guarantee__safe--checkout">
-    <img class="guarantee__safe--checkout__img"
-        src="{{ url('tenant/frontend/frontend_assets') }}/img/secure-payment.svg" alt="" style="width: 30%" />
+    <img class="guarantee__safe--checkout__img" src="{{ url('tenant/frontend') }}/img/secure-payment.svg" alt=""
+        style="width: 30%" />
 </div>

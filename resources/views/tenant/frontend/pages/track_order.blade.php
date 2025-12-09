@@ -404,7 +404,7 @@
                                 <div class="single-order-tracking-card card-1">
                                     <div class="order-tracking-card-icon">
                                         <img alt=""
-                                            src="{{ url('tenant/frontend/frontend_assets') }}/assets/images/order-tracking/card-icon-1.svg">
+                                            src="{{ url('tenant/frontend') }}/assets/images/order-tracking/card-icon-1.svg">
                                     </div>
                                     <div class="order-tracking-card-info">
                                         <h6>#{{ $orderInfo->order_no }}</h6>
@@ -414,7 +414,7 @@
                                 <div class="single-order-tracking-card card-2">
                                     <div class="order-tracking-card-icon">
                                         <img alt=""
-                                            src="{{ url('tenant/frontend/frontend_assets') }}/assets/images/order-tracking/card-icon-2.svg">
+                                            src="{{ url('tenant/frontend') }}/assets/images/order-tracking/card-icon-2.svg">
                                     </div>
                                     <div class="order-tracking-card-info">
                                         <h6>{{ date('M d, Y', strtotime($orderInfo->estimated_dd)) }}</h6>
@@ -424,7 +424,7 @@
                                 <div class="single-order-tracking-card card-3">
                                     <div class="order-tracking-card-icon">
                                         <img alt=""
-                                            src="{{ url('tenant/frontend/frontend_assets') }}/assets/images/order-tracking/card-icon-3.svg">
+                                            src="{{ url('tenant/frontend') }}/assets/images/order-tracking/card-icon-3.svg">
                                     </div>
                                     <div class="order-tracking-card-info">
                                         <h6>{{ count($orderdItems) }} @if (count($orderdItems) > 1)
@@ -444,7 +444,7 @@
                                         <div class="product-summary-head order-summary-head">
                                             <h4 class="order-summary-head-title">
                                                 <img alt=""
-                                                    src="{{ url('tenant/frontend/frontend_assets') }}/assets/images/icons/humberger.svg">Product
+                                                    src="{{ url('tenant/frontend') }}/assets/images/icons/humberger.svg">Product
                                                 summary
                                             </h4>
                                             <div class="product-summary-subtotal">

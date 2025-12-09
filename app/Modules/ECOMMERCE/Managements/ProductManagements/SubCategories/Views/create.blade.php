@@ -1,7 +1,7 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
 @endsection
 
 @section('page_title')
@@ -33,7 +33,9 @@
                             <div class="col-sm-10">
                                 <select name="category_id" class="form-control" id="colFormLabe0" required>
                                     @php
-                                        echo App\Models\Category::getDropDownList('name');
+                                        if ($category) {
+                                            echo $category;
+                                        }
                                     @endphp
                                 </select>
                                 <div class="invalid-feedback" style="display: block;">
@@ -74,8 +76,11 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <button class="btn btn-primary" type="submit">Save Subcategory</button>
+                        <div class="form-group row">
+                            <label for="colFormLabe0" class="col-sm-2 col-form-label"></label>
+                            <div class="col-sm-10">
+                                <button class="btn btn-primary" type="submit">Save Subcategory</button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -86,6 +91,6 @@
 
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/dropify/dropify.min.js"></script>
-    <script src="{{ url('assets') }}/pages/fileuploads-demo.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/dropify/dropify.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/pages/fileuploads-demo.js"></script>
 @endsection

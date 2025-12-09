@@ -34,7 +34,7 @@ class UserDashboardController extends Controller
         }
 
         $orders = $query->paginate(10);
-        return view($this->base_url . 'dashboard.my_orders', compact('orders', 'order_status'));
+        return view($this->base_url . 'customer_panel.pages.my_orders', compact('orders', 'order_status'));
     }
 
     public function orderDetails($slug)
@@ -64,9 +64,9 @@ class UserDashboardController extends Controller
 
         $user = Auth::user()->user_type;
         if ($user == 4) {
-            return view($this->base_url . 'dashboard.delivery.order_details', compact('order', 'orderItems'));
+            return view($this->base_url . 'customer_panel.pages.delivery.order_details', compact('order', 'orderItems'));
         }
-        return view($this->base_url . 'dashboard.order_details', compact('order', 'orderItems'));
+        return view($this->base_url . 'customer_panel.pages.order_details', compact('order', 'orderItems'));
     }
 
     public function trackMyOrder($order_no)
@@ -75,7 +75,7 @@ class UserDashboardController extends Controller
         $totalItems = DB::table('order_details')->where('order_id', $order->id)->count();
         $orderProgress = DB::table('order_progress')->where('order_id', $order->id)->orderBy('order_status', 'asc')->get();
 
-        return view($this->base_url . 'dashboard.order_tracking', compact('order', 'totalItems', 'orderProgress'));
+        return view($this->base_url . 'customer_panel.pages.order_tracking', compact('order', 'totalItems', 'orderProgress'));
     }
 
     public function myWishlists()
@@ -88,7 +88,7 @@ class UserDashboardController extends Controller
             ->orderBy('products.id', 'desc')
             ->get();
 
-        return view($this->base_url . 'dashboard.my_wishlists', compact('wishlistedItems'));
+        return view($this->base_url . 'customer_panel.pages.my_wishlists', compact('wishlistedItems'));
     }
 
     public function clearAllWishlist()
@@ -100,7 +100,7 @@ class UserDashboardController extends Controller
 
     public function changePassword()
     {
-        return view($this->base_url . 'dashboard.change_password');
+        return view($this->base_url . 'customer_panel.pages.change_password');
     }
 
     public function updatePassword(Request $request)
@@ -132,7 +132,7 @@ class UserDashboardController extends Controller
         $totalSpent = DB::table('orders')->where('user_id', $userId)->where('order_status', '!=', 4)->sum('total');
         $orders = DB::table('orders')->where('user_id', $userId)->orderBy('id', 'desc')->paginate(10);
 
-        return view($this->base_url . 'dashboard.my_payments', compact('currentMonthSpent', 'lastSixMonthSpent', 'totalSpent', 'orders'));
+        return view($this->base_url . 'customer_panel.pages.my_payments', compact('currentMonthSpent', 'lastSixMonthSpent', 'totalSpent', 'orders'));
     }
 
     public function promoCoupons()
@@ -146,7 +146,7 @@ class UserDashboardController extends Controller
             ->groupBy('promo_codes.code')
             ->get();
 
-        return view($this->base_url . 'dashboard.promo_coupons', compact('promoCoupons', 'appliedCoupons'));
+        return view($this->base_url . 'customer_panel.pages.promo_coupons', compact('promoCoupons', 'appliedCoupons'));
     }
 
     public function productReviews()
@@ -158,7 +158,7 @@ class UserDashboardController extends Controller
             ->orderBy('product_reviews.id', 'desc')
             ->paginate(5);
 
-        return view($this->base_url . 'dashboard.product_reviews', compact('productReviews'));
+        return view($this->base_url . 'customer_panel.pages.product_reviews', compact('productReviews'));
     }
 
     public function deleteProductReview($id)
@@ -181,7 +181,7 @@ class UserDashboardController extends Controller
 
     public function manageProfile()
     {
-        return view($this->base_url . 'dashboard.manage_profile');
+        return view($this->base_url . 'customer_panel.pages.manage_profile');
     }
 
     public function removeUserImage()
@@ -374,7 +374,7 @@ class UserDashboardController extends Controller
     public function userAddress()
     {
         $addresses = DB::table('user_addresses')->where('user_id', Auth::user()->id)->get();
-        return view($this->base_url . 'dashboard.user_address', compact('addresses'));
+        return view($this->base_url . 'customer_panel.pages.user_address', compact('addresses'));
     }
 
     public function saveUserAddress(Request $request)

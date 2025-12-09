@@ -172,7 +172,7 @@
 @else
     <div style="display:block; width: 100%; height: 100%; text-align:center; position: relative;">
         <div style="width: 100%; position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);">
-            <img src="{{ url('tenant/frontend/frontend_assets') }}/img/empty_cart.png" alt="Empty Cart">
+            <img src="{{ url('tenant/frontend') }}/img/empty_cart.png" alt="Empty Cart">
             <h5>There are no more items in your cart!</h5>
             <a href="javascript:void(0)" onclick="closeMiniCart()" class="auth-card-form-btn primary__btn"
                 style="width: 220px; margin: auto;">Continue Shopping</a>

@@ -73,7 +73,7 @@ class HomeController extends Controller
 
 
             return view(
-                'dashboard.delivery.home',
+                'customer_panel.pages.delivery.home',
                 compact(
                     'totalOrderPlaced',
                     'totalRunningOrder',
@@ -92,7 +92,7 @@ class HomeController extends Controller
                 )
             );
         } else {
-            return view($this->baseRoute . 'dashboard.home', compact('totalOrderPlaced', 'totalRunningOrder', 'itemsInWishList', 'totalAmountSpent', 'recentOrders', 'wishlistedItems', 'totalOpenedTickets'));
+            return view($this->baseRoute . 'customer_panel.pages.home', compact('totalOrderPlaced', 'totalRunningOrder', 'itemsInWishList', 'totalAmountSpent', 'recentOrders', 'wishlistedItems', 'totalOpenedTickets'));
         }
     }
 
@@ -177,11 +177,11 @@ class HomeController extends Controller
                 }
             }
 
-            return view('dashboard.verification');
+            return view('customer_panel.pages.verification');
         } elseif (!$userInfo->email_verified_at && $userInfo->verification_code) {
-            return view('dashboard.verification');
+            return view('customer_panel.pages.verification');
         } else {
-            return redirect('/home');
+            return redirect('/cutomer/home');
         }
     }
 

@@ -9,7 +9,7 @@
 @endsection
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
     <style>
         .shipping_input {
             font-size: 13px;
@@ -461,7 +461,8 @@
                                             @endif:</b> ৳ <span
                                             id="order_discount">{{ number_format($order->discount, 2) }}</span></p>
                                     <p><b>VAT/TAX :</b> ৳ <span
-                                            id="order_vat_tax">{{ number_format($order->vat + $order->tax, 2) }}</span></p>
+                                            id="order_vat_tax">{{ number_format($order->vat + $order->tax, 2) }}</span>
+                                    </p>
                                     <p><b>Delivery Charge :</b> ৳ <span
                                             id="order_delivery_charge">{{ number_format($order->delivery_fee, 2) }}</span>
                                     </p>
@@ -532,7 +533,7 @@
 @endsection
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/select2/select2.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.js"></script>
     <script>
         $('[data-toggle="select2"]').select2();
 

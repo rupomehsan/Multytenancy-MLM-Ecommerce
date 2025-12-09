@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Modules\ECOMMERCE\Managements\Configurations\Controllers\StorageController;
+use App\Modules\ECOMMERCE\Managements\Configurations\Controllers\SystemController;
+
 
 use App\Modules\ECOMMERCE\Managements\Configurations\Controllers\ConfigController;
 
@@ -54,3 +56,20 @@ Route::get('/get/storage/info/{id}', [StorageController::class, 'getStorageInfo'
 Route::post('/update/storage', [StorageController::class, 'updateStorage'])->name('UpdateStorage');
 Route::get('/rearrange/storage/types', [StorageController::class, 'rearrangeStorage'])->name('RearrangeStorage');
 Route::post('/save/rearranged/storages', [StorageController::class, 'saveRearrangeStorage'])->name('SaveRearrangeStorage');
+// payment gateway routes
+Route::get('/setup/payment/gateways', [ConfigController::class, 'viewPaymentGateways'])->name('ViewPaymentGateways');
+Route::post('/update/payment/gateway/info', [ConfigController::class, 'updatePaymentGatewayInfo'])->name('UpdatePaymentGatewayInfo');
+Route::get('/change/payment/gateway/status/{provider}', [ConfigController::class, 'changePaymentGatewayStatus'])->name('ChangePaymentGatewayStatus');
+// system routes for email config
+Route::get('/view/email/credential', [SystemController::class, 'viewEmailCredentials'])->name('ViewEmailCredentials');
+Route::get('/view/email/templates', [SystemController::class, 'viewEmailTemplates'])->name('ViewEmailTemplates');
+Route::get('/change/mail/template/status/{templateId}', [SystemController::class, 'changeMailTemplateStatus'])->name('ChangeMailTemplateStatus');
+Route::post('/save/new/email/configure', [SystemController::class, 'saveEmailCredential'])->name('SaveEmailCredential');
+Route::get('/delete/email/config/{slug}', [SystemController::class, 'deleteEmailCredential'])->name('DeleteEmailCredential');
+Route::get('/get/email/config/info/{slug}', [SystemController::class, 'getEmailCredentialInfo'])->name('GetEmailCredentialInfo');
+Route::post('/update/email/config', [SystemController::class, 'updateEmailCredentialInfo'])->name('UpdateEmailCredentialInfo');
+// system route for sms gateway
+Route::get('/setup/sms/gateways', [SystemController::class, 'viewSmsGateways'])->name('ViewSmsGateways');
+Route::post('/update/sms/gateway/info', [SystemController::class, 'updateSmsGatewayInfo'])->name('UpdateSmsGatewayInfo');
+Route::get('/change/gateway/status/{provider}', [SystemController::class, 'changeGatewayStatus'])->name('ChangeGatewayStatus');
+// system route for payment gateway

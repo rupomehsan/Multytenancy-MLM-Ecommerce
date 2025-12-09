@@ -83,6 +83,6 @@
 
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/dropify/dropify.min.js"></script>
-    <script src="{{ url('assets') }}/pages/fileuploads-demo.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/dropify/dropify.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/pages/fileuploads-demo.js"></script>
 @endsection

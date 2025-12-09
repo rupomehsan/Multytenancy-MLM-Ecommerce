@@ -1,10 +1,13 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
     <style>
         .card-header {
             background-color: #17263a;
@@ -423,9 +426,9 @@
 @endsection
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/dataTables.bootstrap4.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/select2/select2.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.js"></script>
     <script>
         $(document).ready(function() {
             // Initialize Select2 for visible fields only
@@ -614,13 +617,13 @@
                 lineItems.forEach((item, index) => {
                     $(this).append(
                         `<input type="hidden" name="line_items[${index}][debit_ledger_id]" value="${item.debitLedger}">`
-                        );
+                    );
                     $(this).append(
                         `<input type="hidden" name="line_items[${index}][credit_ledger_id]" value="${item.creditLedger}">`
-                        );
+                    );
                     $(this).append(
                         `<input type="hidden" name="line_items[${index}][amount]" value="${item.amount}">`
-                        );
+                    );
                 });
 
                 console.log('Form submitting with line items:', lineItems);

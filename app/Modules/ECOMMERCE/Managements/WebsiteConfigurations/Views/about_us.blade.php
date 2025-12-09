@@ -1,7 +1,7 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
 
 
@@ -146,9 +146,9 @@
 
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/dropify/dropify.min.js"></script>
-    <script src="{{ url('assets') }}/pages/fileuploads-demo.js"></script>
-    <script src="{{ url('assets') }}/js/spectrum.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/dropify/dropify.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/pages/fileuploads-demo.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/js/spectrum.min.js"></script>
     {{-- <script src="https://cdn.ckeditor.com/4.12.1/standard/ckeditor.js"></script> --}}
     {{-- <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>

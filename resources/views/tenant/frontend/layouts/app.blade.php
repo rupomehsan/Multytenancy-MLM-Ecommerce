@@ -1,19 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-@php
-    // `generalInfo` is provided globally by AppServiceProvider via View::share('generalInfo', ...)
-
-    $categories = DB::table('categories')
-        ->select('name', 'id', 'slug', 'show_on_navbar')
-        ->where('status', 1)
-        ->orderBy('serial', 'asc')
-        ->get();
-
-    $custom_pages = DB::table('custom_pages')->where('status', 1)->orderBy('id', 'asc')->get();
-
-@endphp
-
 <head>
 
     <!-- Start Meta Data -->
@@ -30,22 +17,21 @@
     @stack('site-seo')
 
     <!-- CSS -->
-    <link rel="stylesheet" href="{{ url('tenant/frontend/frontend_assets') }}/css/vendor/bootstrap.min.css" />
-    <link rel="stylesheet" href="{{ url('tenant/frontend/frontend_assets') }}/css/plugins/animate.min.css" />
-    <link rel="stylesheet" href="{{ url('tenant/frontend/frontend_assets') }}/css/plugins/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="{{ url('tenant/frontend/frontend_assets') }}/css/plugins/owl.carousel.min.css" />
-    <link rel="stylesheet" href="{{ url('tenant/frontend/frontend_assets') }}/css/plugins/maginific-popup.min.css" />
-    <link rel="stylesheet" href="{{ url('tenant/frontend/frontend_assets') }}/css/plugins/glightbox.min.css">
-    <link rel="stylesheet" href="{{ url('tenant/frontend/frontend_assets') }}/css/plugins/fancybox.css" />
-    <link rel="stylesheet" href="{{ url('tenant/frontend/frontend_assets') }}/css/plugins/nice-select.css" />
-    <link rel="stylesheet" href="{{ url('tenant/frontend/frontend_assets') }}/css/plugins/datepicker.css" />
-    <link rel="stylesheet" href="{{ url('tenant/frontend/frontend_assets') }}/css/plugins/icofont.css" />
-    <link rel="stylesheet" href="{{ url('tenant/frontend/frontend_assets') }}/css/plugins/uicons.css" />
-    <link rel="stylesheet" href="{{ url('tenant/frontend/frontend_assets') }}/css/style.css" />
-    <link rel="stylesheet" href="{{ url('tenant/frontend/frontend_assets') }}/css/responsive.css">
-    <link rel="stylesheet" href="{{ url('tenant/frontend/frontend_assets') }}/css/toastr.min.css">
-    <link rel="stylesheet"
-        href="{{ url('tenant/frontend/frontend_assets') }}/css/custom.css?v={{ rand(1000, 9999) }}" />
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/vendor/bootstrap.min.css" />
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/plugins/animate.min.css" />
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/plugins/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/plugins/owl.carousel.min.css" />
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/plugins/maginific-popup.min.css" />
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/plugins/glightbox.min.css">
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/plugins/fancybox.css" />
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/plugins/nice-select.css" />
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/plugins/datepicker.css" />
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/plugins/icofont.css" />
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/plugins/uicons.css" />
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/style.css" />
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/responsive.css">
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/toastr.min.css">
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/custom.css?v={{ rand(1000, 9999) }}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" />
 
     <script>
@@ -311,7 +297,7 @@
     @if ($generalInfo->messenger_chat_status)
         <a href="https://m.me/fejmo" target="_blank"
             style="position: fixed; right: 25px; width: 60px; bottom: 20px; z-index: 99999;">
-            <img src="{{ url('tenant/frontend/frontend_assets') }}/img/messenger_icon.png" style="width: 100px">
+            <img src="{{ url('tenant/frontend') }}/img/messenger_icon.png" style="width: 100px">
         </a>
     @endif
 
@@ -357,28 +343,28 @@
     <!-- End Popup Modal -->
 
     <!-- All Script JS Plugins here  -->
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/vendor/bootstrap.min.js" defer="defer"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/plugins/jquery.min.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/plugins/jquery-migrate.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/vendor/popper.js" defer="defer"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/plugins/modernizer.min.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/plugins/wow.min.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/plugins/jquery.counterup.min.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/plugins/waypoints.min.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/plugins/nice-select.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/plugins/jquery.min.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/plugins/swiper-bundle.min.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/plugins/glightbox.min.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/plugins/bootstrap-datepicker.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/plugins/glightbox.min.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/plugins/magnific-popup.min.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/plugins/owl.carousel.min.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/plugins/active.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/script.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/vendor/bootstrap.min.js" defer="defer"></script>
+    <script src="{{ url('tenant/frontend') }}/js/plugins/jquery.min.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/plugins/jquery-migrate.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/vendor/popper.js" defer="defer"></script>
+    <script src="{{ url('tenant/frontend') }}/js/plugins/modernizer.min.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/plugins/wow.min.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/plugins/jquery.counterup.min.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/plugins/waypoints.min.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/plugins/nice-select.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/plugins/jquery.min.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/plugins/swiper-bundle.min.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/plugins/glightbox.min.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/plugins/bootstrap-datepicker.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/plugins/glightbox.min.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/plugins/magnific-popup.min.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/plugins/owl.carousel.min.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/plugins/active.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/script.js"></script>
 
     <!-- SIMPLE Cart Sync System - replaces the broken unified system -->
-    <script src="{{ url('js/unified-stock-system.js') }}"></script>
-    <!-- SIMPLE SYSTEM DISABLED: <script src="{{ url('js/simple-cart-sync.js') }}"></script> -->
+    <script src="{{ url('tenant/frontend/js/unified-stock-system.js') }}"></script>
+    <!-- SIMPLE SYSTEM DISABLED: <script src="{{ url('tenant/frontend/js/simple-cart-sync.js') }}"></script> -->
 
 
     <!-- Popup Modal JS -->
@@ -727,7 +713,7 @@
 
     {!! $generalInfo->footer_script !!}
 
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/toastr.min.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/toastr.min.js"></script>
     {!! Toastr::message() !!}
 
 

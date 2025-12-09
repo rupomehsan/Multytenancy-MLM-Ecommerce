@@ -14,20 +14,24 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4 class="card-title mb-3">Child Category Create Form</h4>
-                        <a href="{{ route('ViewAllChildcategory')}}" class="btn btn-secondary">
+                        <a href="{{ route('ViewAllChildcategory') }}" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i>
                         </a>
                     </div>
 
-                    <form class="needs-validation" method="POST" action="{{url('save/new/childcategory')}}" enctype="multipart/form-data">
+                    <form class="needs-validation" method="POST" action="{{ url('save/new/childcategory') }}"
+                        enctype="multipart/form-data">
                         @csrf
 
                         <div class="form-group row">
-                            <label for="colFormLabe0" class="col-sm-2 col-form-label">Select Category <span class="text-danger">*</span></label>
+                            <label for="colFormLabe0" class="col-sm-2 col-form-label">Select Category <span
+                                    class="text-danger">*</span></label>
                             <div class="col-sm-10">
                                 <select name="category_id" class="form-control" id="colFormLabe0" required>
                                     @php
-                                        echo App\Models\Category::getDropDownList('name');
+                                        if ($category) {
+                                            echo $category;
+                                        }
                                     @endphp
                                 </select>
                                 <div class="invalid-feedback" style="display: block;">
@@ -39,7 +43,8 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="colFormLabe2" class="col-sm-2 col-form-label">Select Subcategory <span class="text-danger">*</span></label>
+                            <label for="colFormLabe2" class="col-sm-2 col-form-label">Select Subcategory <span
+                                    class="text-danger">*</span></label>
                             <div class="col-sm-10">
                                 <select name="subcategory_id" class="form-control" id="colFormLabe2" required>
                                     <option value="">Select One</option>
@@ -53,9 +58,11 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="colFormLabel" class="col-sm-2 col-form-label">Name <span class="text-danger">*</span></label>
+                            <label for="colFormLabel" class="col-sm-2 col-form-label">Name <span
+                                    class="text-danger">*</span></label>
                             <div class="col-sm-10">
-                                <input type="text" name="name" class="form-control" id="colFormLabel" placeholder="Child Category Title" required>
+                                <input type="text" name="name" class="form-control" id="colFormLabel"
+                                    placeholder="Child Category Title" required>
                                 <div class="invalid-feedback" style="display: block;">
                                     @error('name')
                                         {{ $message }}
@@ -76,30 +83,30 @@
 
 
 @section('footer_js')
-<script>
+    <script>
+        $(document).ready(function() {
 
-    $(document).ready(function () {
-
-        $('#colFormLabe0').on('change', function () {
-            var categoryId = this.value;
-            $("#colFormLabe2").html('');
-            $.ajax({
-                url: "{{url('/category/wise/subcategory')}}",
-                type: "POST",
-                data: {
-                    category_id: categoryId,
-                    _token: '{{csrf_token()}}'
-                },
-                dataType: 'json',
-                success: function (result) {
-                    $('#colFormLabe2').html('<option value="">Select Subcategory</option>');
-                    $.each(result, function (key, value) {
-                        $("#colFormLabe2").append('<option value="' + value.id + '">' + value.name + '</option>');
-                    });
-                }
+            $('#colFormLabe0').on('change', function() {
+                var categoryId = this.value;
+                $("#colFormLabe2").html('');
+                $.ajax({
+                    url: "{{ url('/category/wise/subcategory') }}",
+                    type: "POST",
+                    data: {
+                        category_id: categoryId,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    dataType: 'json',
+                    success: function(result) {
+                        $('#colFormLabe2').html('<option value="">Select Subcategory</option>');
+                        $.each(result, function(key, value) {
+                            $("#colFormLabe2").append('<option value="' + value.id +
+                                '">' + value.name + '</option>');
+                        });
+                    }
+                });
             });
-        });
 
-    });
-</script>
+        });
+    </script>
 @endsection

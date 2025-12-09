@@ -424,7 +424,7 @@
 @endsection
 
 @section('footer_js')
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/jquery.zoom.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/jquery.zoom.js"></script>
     <script>
         // Enhanced tab initialization
         function initializePackageTabs() {

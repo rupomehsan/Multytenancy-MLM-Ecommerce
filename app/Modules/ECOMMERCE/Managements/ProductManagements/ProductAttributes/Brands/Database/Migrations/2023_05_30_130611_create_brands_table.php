@@ -20,6 +20,7 @@ class CreateBrandsTable extends Migration
             $table->string('banner')->nullable();
             $table->string('categories')->nullable();
             $table->string('subcategories')->nullable();
+            $table->string('childcategories')->nullable();
             $table->tinyInteger('featured')->default(0)->comment("0=> Not Featured; 1=> Featured");
             $table->tinyInteger('status')->default(1)->comment("0=> Inactive; 1=> Active");
             $table->tinyInteger('serial')->default(1);

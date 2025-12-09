@@ -20,12 +20,12 @@ class SupportTicketController extends Controller
     public function supportTickets()
     {
         $supportTickets = DB::table('support_tickets')->where('support_taken_by', Auth::user()->id)->orderBy('id', 'desc')->paginate(10);
-        return view($this->baseUrl . 'dashboard.support_tickets', compact('supportTickets'));
+        return view($this->baseUrl . 'customer_panel.pages.support_tickets', compact('supportTickets'));
     }
 
     public function createTicket()
     {
-        return view($this->baseUrl . 'dashboard.create_ticket');
+        return view($this->baseUrl . 'customer_panel.pages.create_ticket');
     }
 
     public function saveSupportTicket(Request $request)
@@ -87,7 +87,7 @@ class SupportTicketController extends Controller
             ->orderBy('id', 'asc')
             ->get();
 
-        return view($this->baseUrl . 'dashboard.support_ticket_message', compact('supportTicket', 'supportTicketMessages'));
+        return view($this->baseUrl . 'customer_panel.pages.support_ticket_message', compact('supportTicket', 'supportTicketMessages'));
     }
 
     public function sendSupportMessage(Request $request)

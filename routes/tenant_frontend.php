@@ -20,15 +20,19 @@ use App\Http\Controllers\Tenant\Frontend\UserDashboardController;
 use App\Http\Controllers\Tenant\Frontend\SupportTicketController;
 use App\Http\Controllers\Tenant\Frontend\PaymentController;
 use Illuminate\Http\Request;
+
+use App\Http\Controllers\Tenant\Frontend\MlmController;
+
+
+
 /*
 |--------------------------------------------------------------------------
-| TENANT FRONTEND ROUTES
+| TENANT AUTHENTICATION ROUTES
 |--------------------------------------------------------------------------
 | Handles user : login, registration, password resets
 | and other auth-related endpoints.
 */
 
-Route::get('/', [FrontendController::class, 'index'])->name('Index');
 // Custom auth routes pointing to tenant frontend auth controllers
 // Login / Logout
 Route::get('login', [\App\Http\Controllers\Tenant\Frontend\Auth\LoginController::class, 'showLoginForm'])->name('login')->middleware('guest:customer');
@@ -64,6 +68,17 @@ Route::get('/forget/password', [ForgotPasswordController::class, 'userForgetPass
 //     Route::post('/change/forgotten/password', [ForgetPasswordController::class, 'changeForgetPassword'])->name('ChangeForgetPassword');
 // });
 
+
+/*
+|--------------------------------------------------------------------------
+| TENANT WEBSITE ROUTES
+|--------------------------------------------------------------------------
+| Handles user : frontend website routes
+| and other frontend-related endpoints.
+*/
+
+
+Route::get('/', [FrontendController::class, 'index'])->name('Index');
 
 Route::get('/load-flag-products', [FrontendController::class, 'loadFlagProducts']);
 
@@ -151,7 +166,15 @@ if (Schema::hasTable('general_infos')) {
 }
 
 
-// Customer authentication required routes
+
+/*
+|--------------------------------------------------------------------------
+| TENANT CUSTOMER ROUTES
+|--------------------------------------------------------------------------
+| Handles user : customer authenticated routes
+| and other customer-related endpoints.
+*/
+
 Route::middleware(['auth:customer'])->group(function () {
 
     Route::get('/user/verification', [HomeController::class, 'userVerification'])->name('UserVerification');
@@ -160,11 +183,6 @@ Route::middleware(['auth:customer'])->group(function () {
 
 
     Route::group(['middleware' => ['CheckUserVerification']], function () {
-
-        Route::post('submit/product/review', [HomeController::class, 'submitProductReview'])->name('SubmitProductReview');
-        Route::post('submit/product-question', [HomeController::class, 'submitProductQuestion'])->name('SubmitProductQuestion');
-        Route::get('add/to/wishlist/{slug}', [HomeController::class, 'addToWishlist'])->name('AddToWishlist');
-        Route::get('remove/from/wishlist/{slug}', [HomeController::class, 'removeFromWishlist'])->name('removeFromWishlist');
 
         if (Schema::hasTable('general_infos')) {
             $guestOrderStatus = DB::table('general_infos')->select('guest_checkout')->where('id', 1)->first();
@@ -180,6 +198,21 @@ Route::middleware(['auth:customer'])->group(function () {
         }
 
         Route::get('/customer/home', [HomeController::class, 'index'])->name('customer.home');
+        //mlm routes 
+        Route::get('/customer/mlm/referral-tree', [MlmController::class, 'referral_tree'])->name('customer.mlm.referral_tree');
+        Route::get('/customer/mlm/referral-lists', [MlmController::class, 'referral_list'])->name('customer.mlm.referral_list');
+        Route::get('/customer/mlm/commission-history', [MlmController::class, 'commission_history'])->name('customer.mlm.commission_history');
+        Route::get('/customer/mlm/earning-reports', [MlmController::class, 'earning_reports'])->name('customer.mlm.earning_reports');
+        Route::get('/customer/mlm/withdrawal-requests', [MlmController::class, 'withdrawal_requests'])->name('customer.mlm.withdrawal_requests');
+        Route::post('/customer/mlm/submit-withdrawal-request', [MlmController::class, 'submit_withdrawal_request'])->name('customer.mlm.submit_withdrawal_request');
+        //end mlm routes
+
+        Route::post('submit/product/review', [HomeController::class, 'submitProductReview'])->name('SubmitProductReview');
+        Route::post('submit/product-question', [HomeController::class, 'submitProductQuestion'])->name('SubmitProductQuestion');
+
+        Route::get('add/to/wishlist/{slug}', [HomeController::class, 'addToWishlist'])->name('AddToWishlist');
+        Route::get('remove/from/wishlist/{slug}', [HomeController::class, 'removeFromWishlist'])->name('removeFromWishlist');
+
         Route::get('/my/orders', [UserDashboardController::class, 'userDashboard'])->name('UserDashboard');
         Route::get('/order/details/{slug}', [UserDashboardController::class, 'orderDetails'])->name('OrderDetails');
         Route::get('/track/my/order/{order_no}', [UserDashboardController::class, 'trackMyOrder'])->name('TrackMyOrder');
@@ -210,15 +243,19 @@ Route::middleware(['auth:customer'])->group(function () {
         Route::get('/support/ticket/message/{slug}', [SupportTicketController::class, 'supportTicketMessage'])->name('SupportTicketMessage');
         Route::post('send/support/message', [SupportTicketController::class, 'sendSupportMessage'])->name('SendSupportMessage');
 
-
         Route::get('/my/delivery/orders', [DeliveryController::class, 'deliveryOrders'])->name('deliveryOrders');
         Route::post('/delivery/update-order-status', [DeliveryController::class, 'updateStatus'])->name('updateStatus');
-
         Route::POST('cancle/order/{slug}', [CheckoutController::class, 'cancelOrder'])->name('cancelOrder');
     });
-}); // End of auth:customer middleware group
+});
 
-
+/*
+|--------------------------------------------------------------------------
+| TENANT HELPER ROUTES
+|--------------------------------------------------------------------------
+| 
+| 
+*/
 
 Route::post('/save-fcm-token', function (Request $request) {
     $request->validate(['token' => 'required|string']);

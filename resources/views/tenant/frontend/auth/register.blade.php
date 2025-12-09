@@ -286,8 +286,7 @@
                     <div class="auth-card">
                         <div class="auth-card-head">
                             <div class="auth-card-head-icon">
-                                <img src="{{ url('tenant/frontend/frontend_assets') }}/img/icon/edit.svg"
-                                    alt="Registration" />
+                                <img src="{{ url('tenant/frontend') }}/img/icon/edit.svg" alt="Registration" />
                             </div>
                             <h4 class="auth-card-title">Register Account</h4>
                         </div>
@@ -369,8 +368,7 @@
                                     <span>or</span>
                                     <div class="auth-card-google-btn">
                                         <a target="_blank" href="{{ url('auth/google') }}">
-                                            <img src="{{ url('tenant/frontend/frontend_assets') }}/img/icon/google.svg"
-                                                alt="Google" />
+                                            <img src="{{ url('tenant/frontend') }}/img/icon/google.svg" alt="Google" />
                                             Register with Google
                                         </a>
                                     </div>
@@ -394,7 +392,7 @@
     <div id="confirmation-email-modal">
         {{-- <span id="close-icon" onclick="closeWidget()"><i class="fi-rr-cross-small"></i></span> --}}
         <div class="c-email-modal-icon">
-            <img src="{{ url('tenant/frontend/frontend_assets') }}/img/confirm-notification-icon.svg" alt="" />
+            <img src="{{ url('tenant/frontend') }}/img/confirm-notification-icon.svg" alt="" />
         </div>
         <div class="c-email-modal-content">
             <h4>Confirm Your Email</h4>

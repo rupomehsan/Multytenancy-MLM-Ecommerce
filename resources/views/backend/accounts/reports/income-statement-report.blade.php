@@ -1,9 +1,12 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .select2-container--default .select2-selection--single {
@@ -171,8 +174,8 @@
                                 <i class="feather-download"></i> EXCEL
                             </button>
                             <!-- <button type="button" class="btn btn-info" id="printBtn" disabled>
-                                <i class="feather-printer"></i> Print
-                            </button> -->
+                                            <i class="feather-printer"></i> Print
+                                        </button> -->
                         </div>
                     </div>
                 </form>
@@ -225,17 +228,17 @@
 @endsection
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/dataTables.bootstrap4.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/dataTables.buttons.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/buttons.bootstrap4.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/jszip.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/pdfmake.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/vfs_fonts.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/buttons.html5.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/buttons.print.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/dataTables.responsive.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/responsive.bootstrap4.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/dataTables.buttons.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/buttons.bootstrap4.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/jszip.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/pdfmake.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/vfs_fonts.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/buttons.html5.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/buttons.print.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/dataTables.responsive.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/responsive.bootstrap4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -251,7 +254,7 @@
             $('#to_date').val(today.toISOString().split('T')[0]);
             $('#from_date').val(firstDay.toISOString().split('T')[0]);
             $('#comparison_date').val(new Date(today.getFullYear() - 1, 5, 30).toISOString().split('T')[
-            0]); // June 30 of previous year
+                0]); // June 30 of previous year
 
             // Load initial data
             loadIncomeStatementData();

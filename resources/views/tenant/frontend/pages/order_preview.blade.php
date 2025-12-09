@@ -40,7 +40,7 @@
                                 <div class="auth-card verifyOTP-card">
                                     <div class="auth-card-head" style="margin-top: 0">
                                         <div class="auth-card-head-icon">
-                                            <img src="{{ url('tenant/frontend/frontend_assets') }}/img/order_successfull.svg"
+                                            <img src="{{ url('tenant/frontend') }}/img/order_successfull.svg"
                                                 alt="Order Successfull">
                                         </div>
                                         <h4 class="auth-card-title">Order Successful</h4>

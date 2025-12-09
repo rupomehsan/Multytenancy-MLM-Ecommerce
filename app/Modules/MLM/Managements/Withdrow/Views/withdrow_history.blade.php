@@ -26,17 +26,17 @@
             font-weight: 300;
 
             /* animation-name: rotate;
-                                                    animation-duration: 5s;
-                                                    animation-iteration-count: infinite;
-                                                    animation-timing-function: linear;
-                                                */
+                                                                    animation-duration: 5s;
+                                                                    animation-iteration-count: infinite;
+                                                                    animation-timing-function: linear;
+                                                                */
 
         }
 
         /* @keyframes rotate{
-                                                    from{ transform: rotate(-360deg); }
-                                                    to{ transform: rotate(360deg); }
-                                                } */
+                                                                    from{ transform: rotate(-360deg); }
+                                                                    to{ transform: rotate(360deg); }
+                                                                } */
     </style>
 @endsection
 
@@ -48,8 +48,58 @@
     Overview
 @endsection
 @section('content')
-    <h1>Well come to dashboard</h1>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Withdraw History</h4>
+
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered table-hover">
+                    <thead style="background:#17263A; color:white;">
+                        <tr>
+                            <th>#</th>
+                            <th>User Name</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Account Details</th>
+                            <th>Status</th>
+                            <th>Requested At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Rakib Hasan</td>
+                            <td>৳ 1500</td>
+                            <td>Bank Transfer</td>
+                            <td>DBBL — 122334455</td>
+                            <td><span class="badge bg-warning">Pending</span></td>
+                            <td>2025-12-01</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Shakil Ahmed</td>
+                            <td>৳ 1000</td>
+                            <td>bKash</td>
+                            <td>017XXXXXXXX</td>
+                            <td><span class="badge bg-success">Approved</span></td>
+                            <td>2025-12-02</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Tamim Khan</td>
+                            <td>৳ 800</td>
+                            <td>Nagad</td>
+                            <td>018XXXXXXXX</td>
+                            <td><span class="badge bg-danger">Rejected</span></td>
+                            <td>2025-12-03</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 @endsection
+
 
 @section('footer_js')
 @endsection

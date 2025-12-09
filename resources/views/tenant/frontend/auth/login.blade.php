@@ -43,7 +43,7 @@
                     <div class="auth-card">
                         <div class="auth-card-head">
                             <div class="auth-card-head-icon">
-                                <img src="{{ url('tenant/frontend/frontend_assets') }}/img/icon/lock.svg" alt="Login" />
+                                <img src="{{ url('tenant/frontend') }}/img/icon/lock.svg" alt="Login" />
                             </div>
                             <h4 class="auth-card-title">Sign in</h4>
                         </div>
@@ -97,8 +97,7 @@
                                     <span>or</span>
                                     <div class="auth-card-google-btn">
                                         <a href="{{ url('auth/google') }}">
-                                            <img src="{{ url('tenant/frontend/frontend_assets') }}/img/icon/google.svg"
-                                                alt="Google" />
+                                            <img src="{{ url('tenant/frontend') }}/img/icon/google.svg" alt="Google" />
                                             Sign in with Google
                                         </a>
                                     </div>

@@ -17,7 +17,7 @@
                         <a href="{{ env('ADMIN_URL') . '/productImages/' . $imageData['image'] }}"
                             data-lightbox="product_gallery">
                             <img class="product__media--preview__items--img lazy img-fluid p-2 border rounded"
-                                src="{{ url('tenant/frontend/frontend_assets') }}/img/product-load.gif"
+                                src="{{ url('tenant/frontend') }}/img/product-load.gif"
                                 data-src="{{ env('ADMIN_URL') . '/productImages/' . $imageData['image'] }}"
                                 alt="{{ $imageData['product_name'] }}" />
                         </a>
@@ -39,8 +39,8 @@
 @endsection
 
 @section('footer_js')
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/jquery.zoom.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/lightbox.min.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/jquery.zoom.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/lightbox.min.js"></script>
 
     <script>
         lightbox.option({

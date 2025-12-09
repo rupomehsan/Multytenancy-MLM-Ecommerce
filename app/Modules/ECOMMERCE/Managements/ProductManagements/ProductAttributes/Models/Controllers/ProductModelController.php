@@ -12,6 +12,7 @@ use Yajra\DataTables\DataTables;
 use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Models\Database\Models\ProductModel;
 
 use App\Http\Controllers\Controller;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Brands\Database\Models\Brand;
 
 class ProductModelController extends Controller
 {
@@ -53,7 +54,8 @@ class ProductModelController extends Controller
 
     public function addNewModel()
     {
-        return view('create');
+        $brands = Brand::getDropDownList('name');
+        return view('create', compact('brands'));
     }
 
     public function saveNewModel(Request $request)
@@ -89,7 +91,8 @@ class ProductModelController extends Controller
     public function editModel($slug)
     {
         $data = ProductModel::where('slug', $slug)->first();
-        return view('update', compact('data'));
+        $brands = Brand::getDropDownList('name', $data->brand_id);
+        return view('update', compact('data', 'brands'));
     }
 
     public function updateModel(Request $request)

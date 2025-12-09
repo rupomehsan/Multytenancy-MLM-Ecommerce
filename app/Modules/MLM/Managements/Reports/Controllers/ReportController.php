@@ -17,8 +17,44 @@ class ReportController extends Controller
     {
         $this->loadModuleViewPath('MLM/Managements/Reports');
     }
+
     public function index()
     {
         return view('index');
+    }
+
+    public function referral()
+    {
+        return view('referral');
+    }
+
+    public function commission()
+    {
+        return view('commission');
+    }
+
+    public function user_performance()
+    {
+        return view('user_performance');
+    }
+
+    public function top_earners()
+    {
+        return view('top_earners');
+    }
+
+    public function withdrawal()
+    {
+        return view('withdrawal');
+    }
+
+    public function activity_log()
+    {
+        return view('activity_log');
+    }
+
+    public function wallet_summary()
+    {
+        return view('wallet_summary');
     }
 }

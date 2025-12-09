@@ -1,8 +1,8 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
     <style>
         .select2-selection {
             height: 34px !important;
@@ -88,7 +88,9 @@
                                 <select name="categories[]" data-toggle="select2" class="form-control" id="categories"
                                     multiple>
                                     @php
-                                        echo App\Models\Category::getDropDownList('name');
+                                        if (isset($category)) {
+                                            echo $category;
+                                        }
                                     @endphp
                                 </select>
                             </div>
@@ -100,7 +102,9 @@
                                 <select name="subcategories[]" data-toggle="select2" class="form-control" id="subcategories"
                                     multiple>
                                     @php
-                                        echo App\Models\Subcategory::getDropDownList('name');
+                                        if (isset($subcategory)) {
+                                            echo $subcategory;
+                                        }
                                     @endphp
                                 </select>
                             </div>
@@ -112,7 +116,9 @@
                                 <select name="childcategories[]" data-toggle="select2" class="form-control"
                                     id="childcategories" multiple>
                                     @php
-                                        echo App\Models\ChildCategory::getDropDownList('name');
+                                        if (isset($childcategory)) {
+                                            echo $childcategory;
+                                        }
                                     @endphp
                                 </select>
                             </div>
@@ -130,9 +136,9 @@
 
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/dropify/dropify.min.js"></script>
-    <script src="{{ url('assets') }}/pages/fileuploads-demo.js"></script>
-    <script src="{{ url('assets') }}/plugins/select2/select2.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/dropify/dropify.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/pages/fileuploads-demo.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.js"></script>
     <script>
         $('[data-toggle="select2"]').select2();
     </script>

@@ -88,24 +88,6 @@ require __DIR__ . '/../Managements/PushNotification/Routes/Web.php';
 require __DIR__ . '/../Managements/DeliveryCharges/Routes/Web.php';
 // generate report
 require __DIR__ . '/../Managements/Reports/Routes/Web.php';
-// system routes for email config
-Route::get('/view/email/credential', [SystemController::class, 'viewEmailCredentials'])->name('ViewEmailCredentials');
-Route::get('/view/email/templates', [SystemController::class, 'viewEmailTemplates'])->name('ViewEmailTemplates');
-Route::get('/change/mail/template/status/{templateId}', [SystemController::class, 'changeMailTemplateStatus'])->name('ChangeMailTemplateStatus');
-Route::post('/save/new/email/configure', [SystemController::class, 'saveEmailCredential'])->name('SaveEmailCredential');
-Route::get('/delete/email/config/{slug}', [SystemController::class, 'deleteEmailCredential'])->name('DeleteEmailCredential');
-Route::get('/get/email/config/info/{slug}', [SystemController::class, 'getEmailCredentialInfo'])->name('GetEmailCredentialInfo');
-Route::post('/update/email/config', [SystemController::class, 'updateEmailCredentialInfo'])->name('UpdateEmailCredentialInfo');
-// system route for sms gateway
-Route::get('/setup/sms/gateways', [SystemController::class, 'viewSmsGateways'])->name('ViewSmsGateways');
-Route::post('/update/sms/gateway/info', [SystemController::class, 'updateSmsGatewayInfo'])->name('UpdateSmsGatewayInfo');
-Route::get('/change/gateway/status/{provider}', [SystemController::class, 'changeGatewayStatus'])->name('ChangeGatewayStatus');
-// system route for payment gateway
-Route::get('/setup/payment/gateways', [SystemController::class, 'viewPaymentGateways'])->name('ViewPaymentGateways');
-Route::post('/update/payment/gateway/info', [SystemController::class, 'updatePaymentGatewayInfo'])->name('UpdatePaymentGatewayInfo');
-Route::get('/change/payment/gateway/status/{provider}', [SystemController::class, 'changePaymentGatewayStatus'])->name('ChangePaymentGatewayStatus');
-
-
 // general info routes
 require __DIR__ . '/../Managements/WebsiteConfigurations/Routes/Web.php';
 
@@ -133,17 +115,17 @@ require __DIR__ . '/../Managements/WebSiteContentManagement/Videos/Routes/Web.ph
 require __DIR__ . '/../Managements/WebSiteContentManagement/FAQ/Routes/Web.php';
 
 
-    // // Product Color Management
-    // Route::get('/add/new/product-color', [ProductColorController::class, 'addNewProductColor'])->name('AddNewProductColor');
-    // Route::post('/save/new/product-color', [ProductColorController::class, 'saveNewProductColor'])->name('SaveNewProductColor');
-    // Route::get('/view/all/product-color', [ProductColorController::class, 'viewAllProductColor'])->name('ViewAllProductColor');
-    // Route::get('/delete/product-color/{slug}', [ProductColorController::class, 'deleteProductColor'])->name('DeleteProductColor');
-    // Route::get('/edit/product-color/{slug}', [ProductColorController::class, 'editProductColor'])->name('EditProductColor');
-    // Route::post('/update/product-color', [ProductColorController::class, 'updateProductColor'])->name('UpdateProductColor');
-    // // Product Size Management
-    // Route::get('/add/new/product-size', [ProductSizeController::class, 'addNewProductSize'])->name('AddNewProductSize');
-    // Route::post('/save/new/product-size', [ProductSizeController::class, 'saveNewProductSize'])->name('SaveNewProductSize');
-    // Route::get('/view/all/product-size', [ProductSizeController::class, 'viewAllProductSize'])->name('ViewAllProductSize');
-    // Route::get('/delete/product-size/{slug}', [ProductSizeController::class, 'deleteProductSize'])->name('DeleteProductSize');
-    // Route::get('/edit/product-size/{slug}', [ProductSizeController::class, 'editProductSize'])->name('EditProductSize');
-    // Route::post('/update/product-size', [ProductSizeController::class, 'updateProductSize'])->name('UpdateProductSize');
+// // Product Color Management
+// Route::get('/add/new/product-color', [ProductColorController::class, 'addNewProductColor'])->name('AddNewProductColor');
+// Route::post('/save/new/product-color', [ProductColorController::class, 'saveNewProductColor'])->name('SaveNewProductColor');
+// Route::get('/view/all/product-color', [ProductColorController::class, 'viewAllProductColor'])->name('ViewAllProductColor');
+// Route::get('/delete/product-color/{slug}', [ProductColorController::class, 'deleteProductColor'])->name('DeleteProductColor');
+// Route::get('/edit/product-color/{slug}', [ProductColorController::class, 'editProductColor'])->name('EditProductColor');
+// Route::post('/update/product-color', [ProductColorController::class, 'updateProductColor'])->name('UpdateProductColor');
+// // Product Size Management
+// Route::get('/add/new/product-size', [ProductSizeController::class, 'addNewProductSize'])->name('AddNewProductSize');
+// Route::post('/save/new/product-size', [ProductSizeController::class, 'saveNewProductSize'])->name('SaveNewProductSize');
+// Route::get('/view/all/product-size', [ProductSizeController::class, 'viewAllProductSize'])->name('ViewAllProductSize');
+// Route::get('/delete/product-size/{slug}', [ProductSizeController::class, 'deleteProductSize'])->name('DeleteProductSize');
+// Route::get('/edit/product-size/{slug}', [ProductSizeController::class, 'editProductSize'])->name('EditProductSize');
+// Route::post('/update/product-size', [ProductSizeController::class, 'updateProductSize'])->name('UpdateProductSize');

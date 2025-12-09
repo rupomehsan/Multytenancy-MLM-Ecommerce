@@ -92,6 +92,15 @@ class AppServiceProvider extends ServiceProvider
                 )
                 ->where('id', 1)
                 ->first();
+
+
+            // `generalInfo` is provided globally by AppServiceProvider via View::share('generalInfo', ...)
+            $categories = DB::table('categories')
+                ->select('name', 'id', 'slug', 'show_on_navbar')
+                ->where('status', 1)
+                ->orderBy('serial', 'asc')
+                ->get();
+            $custom_pages = DB::table('custom_pages')->where('status', 1)->orderBy('id', 'asc')->get();
         } catch (\Throwable $e) {
             $generalInfo = null;
         }
@@ -147,7 +156,21 @@ class AppServiceProvider extends ServiceProvider
             ];
         }
 
+
+
+
+        // Ensure categories and custom_pages are always defined (safe defaults)
+        if (! isset($categories) || ! $categories) {
+            $categories = collect();
+        }
+
+        if (! isset($custom_pages) || ! $custom_pages) {
+            $custom_pages = collect();
+        }
+
         View::share('generalInfo', $generalInfo);
+        View::share('categories', $categories);
+        View::share('custom_pages', $custom_pages);
 
         // Register SEO View Composer for all views
         // This makes the $seo service available in every Blade template

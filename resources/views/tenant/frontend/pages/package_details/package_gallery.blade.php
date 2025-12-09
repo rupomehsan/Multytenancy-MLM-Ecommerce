@@ -13,7 +13,7 @@
             <div class="swiper-slide">
                 <div class="product__media--preview__items image-container zoom zoomSingleImage">
                     <img class="product__media--preview__items--img lazy"
-                        src="{{ url('tenant/frontend/frontend_assets') }}/img/product-load.gif"
+                        src="{{ url('tenant/frontend') }}/img/product-load.gif"
                         data-src="{{ env('ADMIN_URL') . '/' . $package->image }}" alt="{{ $package->name }}" />
                 </div>
             </div>
@@ -23,7 +23,7 @@
                     <div class="swiper-slide">
                         <div class="product__media--preview__items image-container zoom zoomSingleImage">
                             <img class="product__media--preview__items--img lazy"
-                                src="{{ url('tenant/frontend/frontend_assets') }}/img/product-load.gif"
+                                src="{{ url('tenant/frontend') }}/img/product-load.gif"
                                 data-src="{{ env('ADMIN_URL') . '/productImages/' . $image->image }}"
                                 alt="{{ $package->name }}" />
                         </div>

@@ -61,7 +61,7 @@
                     <div class="auth-card">
                         <div class="auth-card-head">
                             <div class="auth-card-head-icon">
-                                <img src="{{ url('tenant/frontend/frontend_assets') }}/img/icon/edit.svg" alt="#" />
+                                <img src="{{ url('tenant/frontend') }}/img/icon/edit.svg" alt="#" />
                             </div>
                             <h4 class="auth-card-title">Change Password</h4>
                         </div>

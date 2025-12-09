@@ -73,8 +73,8 @@
 
 
 @section('footer_js')
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/jquery.zoom.js"></script>
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/lightbox.min.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/jquery.zoom.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/lightbox.min.js"></script>
     <!-- Magnific Popup JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
 

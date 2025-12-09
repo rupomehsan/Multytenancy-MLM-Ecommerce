@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
-
 <head>
     <meta charset="utf-8" />
     <title>Dashboard</title>
@@ -31,6 +29,107 @@
     <link href="{{ url('tenant/admin/assets') }}/css/custom.css" rel="stylesheet" type="text/css" />
     @yield('header_css')
     @yield('header_js')
+    <style>
+        :root {
+            --sidebar-width: 220px;
+            --topbar-h: 64px;
+        }
+
+        /* Resizable sidebar base styles (scoped to avoid conflicts) */
+        .vertical-menu {
+            width: var(--sidebar-width) !important;
+            position: fixed !important;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            overflow: visible;
+            transition: width 120ms linear;
+            z-index: 50
+        }
+
+        /* Ensure main content shifts to the right of sidebar */
+        .main-content {
+            margin-left: var(--sidebar-width) !important;
+            transition: margin-left 120ms linear
+        }
+
+        /* Make topbar fixed and aligned with main content (to the right of sidebar) */
+        #page-topbar {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: var(--topbar-h);
+            z-index: 90;
+            background: linear-gradient(180deg, #0b2a44, #0e2f4d);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Push page content below fixed topbar */
+
+        /* Drag handle */
+        .vertical-menu .drag-handle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            /* keep handle fully inside the sidebar */
+            width: 12px;
+            height: 100%;
+            cursor: col-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            /* make sure it's above scroll container */
+            background: transparent;
+            /* invisible but captures pointer */
+            touch-action: none;
+            /* allow smooth pointer events */
+        }
+
+        .vertical-menu .drag-handle .bar {
+            width: 3px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 2px;
+            transition: background 120ms
+        }
+
+        .vertical-menu .drag-handle:hover .bar {
+            background: rgba(255, 255, 255, 0.14)
+        }
+
+        /* Visual feedback while resizing */
+        .vertical-menu.resizing .drag-handle .bar {
+            background: var(--accent, #06b6d4)
+        }
+
+        /* Make sure the page content doesn't jump under the fixed sidebar on smaller widths */
+        @media (max-width: 800px) {
+            .vertical-menu {
+                position: relative !important;
+                width: var(--sidebar-width) !important
+            }
+
+            .main-content {
+                margin-left: 0 !important
+            }
+
+            #page-topbar {
+                left: 0;
+            }
+
+
+        }
+    </style>
+    <style>
+        /* Override any large-screen padding that pushes topbar content — keep it fixed at 0 */
+        @media (min-width: 992px) {
+            #page-topbar {
+                padding-left: 0 !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -73,6 +172,9 @@
 
                 </div>
                 <!-- Sidebar -->
+            </div>
+            <div class="drag-handle" aria-hidden="true">
+                <div class="bar"></div>
             </div>
         </div>
         <!-- Left Sidebar End -->
@@ -171,6 +273,87 @@
     <script src="{{ url('tenant/admin/assets') }}/js/toastr.min.js"></script>
 
     {!! Toastr::message() !!}
+
+    <script>
+        (function() {
+            const sidebar = document.querySelector('.vertical-menu');
+            if (!sidebar) return;
+
+            const storageKey = 'sidebarWidth';
+            const minW = 120,
+                maxW = 400;
+            const docEl = document.documentElement;
+
+            // Apply stored width (if any)
+            try {
+                const stored = localStorage.getItem(storageKey);
+                if (stored) {
+                    let w = parseInt(stored, 10);
+                    if (!isNaN(w)) {
+                        w = Math.max(minW, Math.min(maxW, w));
+                        docEl.style.setProperty('--sidebar-width', w + 'px');
+                    }
+                }
+            } catch (e) {
+                console.warn('sidebar restore failed', e)
+            }
+
+            // Ensure handle exists (in case server-side changes)
+            let handle = sidebar.querySelector('.drag-handle');
+            if (!handle) {
+                handle = document.createElement('div');
+                handle.className = 'drag-handle';
+                handle.innerHTML = '<div class="bar"></div>';
+                sidebar.appendChild(handle);
+            }
+
+            let dragging = false,
+                startX = 0,
+                startW = 0,
+                pointerId = null;
+
+            const onPointerDown = function(e) {
+                dragging = true;
+                pointerId = e.pointerId;
+                startX = e.clientX;
+                startW = sidebar.getBoundingClientRect().width;
+                sidebar.classList.add('resizing');
+                if (handle.setPointerCapture) handle.setPointerCapture(pointerId);
+                e.preventDefault();
+            };
+
+            const onPointerMove = function(e) {
+                if (!dragging) return;
+                const dx = e.clientX - startX;
+                let newW = Math.round(startW + dx);
+                newW = Math.max(minW, Math.min(maxW, newW));
+                docEl.style.setProperty('--sidebar-width', newW + 'px');
+            };
+
+            const onPointerUp = function(e) {
+                if (!dragging) return;
+                dragging = false;
+                sidebar.classList.remove('resizing');
+                try {
+                    if (handle.releasePointerCapture) handle.releasePointerCapture(pointerId);
+                } catch (e) {}
+                const finalW = Math.round(sidebar.getBoundingClientRect().width);
+                try {
+                    localStorage.setItem(storageKey, finalW);
+                } catch (e) {
+                    console.warn('save failed', e)
+                }
+            };
+
+            handle.addEventListener('pointerdown', onPointerDown);
+            window.addEventListener('pointermove', onPointerMove);
+            window.addEventListener('pointerup', onPointerUp);
+            // prevent text selection while dragging
+            window.addEventListener('selectstart', function(e) {
+                if (dragging) e.preventDefault();
+            });
+        })();
+    </script>
 
     @yield('footer_js')
 </body>

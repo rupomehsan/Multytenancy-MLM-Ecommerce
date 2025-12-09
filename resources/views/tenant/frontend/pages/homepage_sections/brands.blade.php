@@ -10,7 +10,7 @@
                         <a href="{{ url('shop') }}?brand={{ $brands->id }}" class="single-category">
                             <figure class="product__category-container" style="text-align: center">
                                 <div class="single-category-img">
-                                    <img src="{{ url('tenant/frontend/frontend_assets') }}/img/product-load.gif"
+                                    <img src="{{ url('tenant/frontend') }}/img/product-load.gif"
                                         data-src="{{ url(env('ADMIN_URL') . '/' . $brands->logo) }}" alt=""
                                         class="lazy" />
                                 </div>

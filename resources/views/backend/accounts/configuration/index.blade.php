@@ -1,9 +1,12 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
     <style>
         .card-header {
             background-color: #17263a;
@@ -91,21 +94,21 @@
 
 
                     <!-- <div class="card-header">
-                        <h3 class="card-title">
-                            <i class="fas fa-cogs"></i> Accounts Configuration
-                        </h3>
-                        <div class="card-tools">
-                            <a href="{{ route('accounts-configuration.create') }}" class="btn btn-primary btn-sm">
-                                <i class="fas fa-plus"></i> Add New Configuration
-                            </a>
-                            <form action="{{ route('accounts-configuration.reset') }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to reset all configurations to default? This will delete all existing configurations.')">
-                                @csrf
-                                <button type="submit" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-undo"></i> Reset to Default
-                                </button>
-                            </form>
-                        </div>
-                    </div> -->
+                                    <h3 class="card-title">
+                                        <i class="fas fa-cogs"></i> Accounts Configuration
+                                    </h3>
+                                    <div class="card-tools">
+                                        <a href="{{ route('accounts-configuration.create') }}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-plus"></i> Add New Configuration
+                                        </a>
+                                        <form action="{{ route('accounts-configuration.reset') }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to reset all configurations to default? This will delete all existing configurations.')">
+                                            @csrf
+                                            <button type="submit" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-undo"></i> Reset to Default
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div> -->
                     <div class="card-body">
                         @if (session('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -207,12 +210,12 @@
 
                             <!-- @if ($configurations->count() > 0)
     <div class="row mt-3">
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-success">
-                                        <i class="fas fa-save"></i> Update All Configurations
-                                    </button>
-                                </div>
-                            </div>
+                                            <div class="col-12">
+                                                <button type="submit" class="btn btn-success">
+                                                    <i class="fas fa-save"></i> Update All Configurations
+                                                </button>
+                                            </div>
+                                        </div>
     @endif -->
                         </form>
 

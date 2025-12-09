@@ -1,13 +1,13 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
     <link href="{{ url('multipleImgUploadPlugin') }}/image-uploader.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.css" rel="stylesheet"
-        type="text/css" />
-    <link href="{{ url('assets') }}/plugins/switchery/switchery.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/css/tagsinput.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.css"
+        rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/switchery/switchery.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/css/tagsinput.css" rel="stylesheet" type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
     <style>
         .select2-selection {
@@ -242,7 +242,9 @@
                                     <select name="category_id" data-toggle="select2" class="form-control"
                                         id="category_id" required>
                                         @php
-                                            echo App\Models\Category::getDropDownList('name');
+                                            if (isset($categories)) {
+                                                echo $categories;
+                                            }
                                         @endphp
                                     </select>
                                     <div class="invalid-feedback" style="display: block;">
@@ -290,7 +292,9 @@
                                             <select name="brand_id" data-toggle="select2" class="form-control"
                                                 id="brand_id">
                                                 @php
-                                                    echo App\Models\Brand::getDropDownList('name');
+                                                    if (isset($brands)) {
+                                                        echo $brands;
+                                                    }
                                                 @endphp
                                             </select>
                                             <div class="invalid-feedback" style="display: block;">
@@ -325,7 +329,9 @@
                                             <select name="flag_id" data-toggle="select2" class="form-control"
                                                 id="flag_id">
                                                 @php
-                                                    echo App\Models\Flag::getDropDownList('name');
+                                                    if (isset($flags)) {
+                                                        echo $flags;
+                                                    }
                                                 @endphp
                                             </select>
                                             <div class="invalid-feedback" style="display: block;">
@@ -342,7 +348,7 @@
                                             <select name="warrenty_id" data-toggle="select2" class="form-control"
                                                 id="warrenty_id">
                                                 @php
-                                                    echo App\Models\ProductWarrenty::getDropDownList('name');
+                                                    echo $warrenties;
                                                 @endphp
                                             </select>
 
@@ -361,7 +367,7 @@
                                                 <select name="unit_id" data-toggle="select2" class="form-control"
                                                     id="unit_id">
                                                     @php
-                                                        echo App\Models\Unit::getDropDownList('name');
+                                                        echo $units;
                                                     @endphp
                                                 </select>
                                                 <div class="invalid-feedback" style="display: block;">
@@ -603,9 +609,7 @@
                                                                         <select name="product_variant_color_id[]"
                                                                             data-toggle="select2" class="form-control">
                                                                             @php
-                                                                                echo App\Models\Color::getDropDownList(
-                                                                                    'name',
-                                                                                );
+                                                                                echo $colors;
                                                                             @endphp
                                                                         </select>
                                                                     </td>
@@ -616,9 +620,7 @@
                                                                         <select name="product_variant_unit_id[]"
                                                                             data-toggle="select2" class="form-control">
                                                                             @php
-                                                                                echo App\Models\Unit::getDropDownList(
-                                                                                    'name',
-                                                                                );
+                                                                                echo $units;
                                                                             @endphp
                                                                         </select>
                                                                     </td>
@@ -629,9 +631,7 @@
                                                                         <select name="product_variant_size_id[]"
                                                                             data-toggle="select2" class="form-control">
                                                                             @php
-                                                                                echo App\Models\ProductSize::getDropDownList(
-                                                                                    'name',
-                                                                                );
+                                                                                echo $product_sizes;
                                                                             @endphp
                                                                         </select>
                                                                     </td>
@@ -642,9 +642,7 @@
                                                                         <select name="product_variant_region_id[]"
                                                                             data-toggle="select2" class="form-control">
                                                                             @php
-                                                                                echo App\Models\Region::getDropDownList(
-                                                                                    'name',
-                                                                                );
+                                                                                echo $regions;
                                                                             @endphp
                                                                         </select>
                                                                     </td>
@@ -655,9 +653,7 @@
                                                                         <select name="product_variant_sim_id[]"
                                                                             data-toggle="select2" class="form-control">
                                                                             @php
-                                                                                echo App\Models\Sim::getDropDownList(
-                                                                                    'name',
-                                                                                );
+                                                                                echo $sim;
                                                                             @endphp
                                                                         </select>
                                                                     </td>
@@ -668,9 +664,7 @@
                                                                         <select name="product_variant_storage_type_id[]"
                                                                             data-toggle="select2" class="form-control">
                                                                             @php
-                                                                                echo App\Models\StorageType::getDropDownList(
-                                                                                    'ram',
-                                                                                );
+                                                                                echo $storage_types;
                                                                             @endphp
                                                                         </select>
                                                                     </td>
@@ -681,9 +675,7 @@
                                                                         <select name="product_variant_warrenty[]"
                                                                             data-toggle="select2" class="form-control">
                                                                             @php
-                                                                                echo App\Models\ProductWarrenty::getDropDownList(
-                                                                                    'name',
-                                                                                );
+                                                                                echo $product_warrenties;
                                                                             @endphp
                                                                         </select>
                                                                     </td>
@@ -695,9 +687,7 @@
                                                                             name="product_variant_device_condition_id[]"
                                                                             data-toggle="select2" class="form-control">
                                                                             @php
-                                                                                echo App\Models\DeviceCondition::getDropDownList(
-                                                                                    'name',
-                                                                                );
+                                                                                echo $device_conditions;
                                                                             @endphp
                                                                         </select>
                                                                     </td>
@@ -818,13 +808,14 @@
 
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/dropify/dropify.min.js"></script>
-    <script src="{{ url('assets') }}/pages/fileuploads-demo.js"></script>
-    <script src="{{ url('assets') }}/plugins/select2/select2.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/switchery/switchery.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
-    <script src="{{ url('multipleImgUploadPlugin') }}/image-uploader.min.js"></script>
-    <script src="{{ url('assets') }}/js/tagsinput.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/dropify/dropify.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/pages/fileuploads-demo.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/switchery/switchery.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js">
+    </script>
+    <script src="{{ asset('tenant/admin') }}/multipleImgUploadPlugin/image-uploader.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/js/tagsinput.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
     <script type="text/javascript">
@@ -927,23 +918,25 @@
             tabsize: 2,
             height: 300
         });
-        // CKEDITOR.replace('description', {
-        //     filebrowserUploadUrl: "{{ route('ckeditor.upload', ['_token' => csrf_token()]) }}",
-        //     filebrowserUploadMethod: 'form',
-        //     height: 250,
-        // });
+        {{--
+        CKEDITOR.replace('description', {
+            filebrowserUploadUrl: "{{ route('ckeditor.upload', ['_token' => csrf_token()]) }}",
+            filebrowserUploadMethod: 'form',
+            height: 250,
+        });
 
-        // CKEDITOR.replace('specification', {
-        //     filebrowserUploadUrl: "{{ route('ckeditor.upload', ['_token' => csrf_token()]) }}",
-        //     filebrowserUploadMethod: 'form',
-        //     height: 250,
-        // });
+        CKEDITOR.replace('specification', {
+            filebrowserUploadUrl: "{{ route('ckeditor.upload', ['_token' => csrf_token()]) }}",
+            filebrowserUploadMethod: 'form',
+            height: 250,
+        });
 
-        // CKEDITOR.replace('warrenty_policy', {
-        //     filebrowserUploadUrl: "{{ route('ckeditor.upload', ['_token' => csrf_token()]) }}",
-        //     filebrowserUploadMethod: 'form',
-        //     height: 250,
-        // });
+        CKEDITOR.replace('warrenty_policy', {
+            filebrowserUploadUrl: "{{ route('ckeditor.upload', ['_token' => csrf_token()]) }}",
+            filebrowserUploadMethod: 'form',
+            height: 250,
+        });
+        --}}
 
         $(document).ready(function() {
             $('#category_id').on('change', function() {

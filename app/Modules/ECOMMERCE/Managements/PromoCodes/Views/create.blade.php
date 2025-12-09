@@ -1,8 +1,8 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/css/jquery.datetimepicker.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
 @endsection
 
 @section('page_title')
@@ -158,9 +158,9 @@
 @endsection
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/dropify/dropify.min.js"></script>
-    <script src="{{ url('assets') }}/pages/fileuploads-demo.js"></script>
-    <script src="{{ url('assets') }}/js/jquery.datetimepicker.full.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/dropify/dropify.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/pages/fileuploads-demo.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/js/jquery.datetimepicker.full.min.js"></script>
     <script>
         $("#effective_date").datetimepicker({
             timepicker: false,

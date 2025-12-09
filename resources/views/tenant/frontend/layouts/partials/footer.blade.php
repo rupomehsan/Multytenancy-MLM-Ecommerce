@@ -21,13 +21,13 @@
                         @if ($generalInfo->play_store_link)
                             <a href="{{ $generalInfo->play_store_link }}" target="_blank" class="d-inline-block"><img
                                     class="lazy mb-3" style="margin-right: 5px" src=""
-                                    data-src="{{ url('tenant/frontend/frontend_assets') }}/img/google-play.svg"></a>
+                                    data-src="{{ url('tenant/frontend') }}/img/google-play.svg"></a>
                         @endif
 
                         @if ($generalInfo->app_store_link)
                             <a href="{{ $generalInfo->app_store_link }}" target="_blank" class="d-inline-block"><img
                                     class="lazy mb-3" src=""
-                                    data-src="{{ url('tenant/frontend/frontend_assets') }}/img/app-store.svg"></a>
+                                    data-src="{{ url('tenant/frontend') }}/img/app-store.svg"></a>
                         @endif
 
                         <div class="footer__social mt-2">

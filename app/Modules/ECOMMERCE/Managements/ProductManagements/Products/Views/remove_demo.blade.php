@@ -15,7 +15,7 @@
                     <h4 class="card-title mb-3">Remove Demo Products</h4>
                     <div class="row">
                         <div class="col-lg-5" style="border: 1px solid #fff5f5">
-                            <img src="{{ url('assets') }}/images/remove_demo_products.png" class="img-fluid">
+                            <img src="{{ asset('tenant/admin/assets') }}/images/remove_demo_products.png" class="img-fluid">
                         </div>
                         <div class="col-lg-7 p-5" style="background: #fff5f5">
                             <span style="font-size: 15px; color: #1e1e1e;">

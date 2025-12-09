@@ -1,10 +1,13 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
     <style>
         .card {
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -314,8 +317,8 @@
                                 <i class="fas fa-file-excel"></i> Export Excel
                             </button>
                             <!-- <button type="button" class="btn btn-warning" id="printBtn" disabled>
-                                <i class="fas fa-print"></i> Print Report
-                            </button> -->
+                                            <i class="fas fa-print"></i> Print Report
+                                        </button> -->
                         </div>
                     </div>
                 </form>
@@ -374,9 +377,9 @@
 @endsection
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/dataTables.bootstrap4.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/select2/select2.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         let reportData = [];

@@ -1,7 +1,7 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
     <style>
         .select2-selection {
             height: 34px !important;
@@ -105,7 +105,8 @@
                                             <option value="">Choose Product...</option>
                                             @foreach ($products as $product)
                                                 <option value="{{ $product->id }}">{{ $product->name }}
-                                                    (৳{{ $product->price }})</option>
+                                                    (৳{{ $product->price }})
+                                                </option>
                                             @endforeach
                                         </select>
                                         @error('product_id')
@@ -295,7 +296,7 @@
 @endsection
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/select2/select2.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.js"></script>
 
     <script type="text/javascript">
         $.ajaxSetup({

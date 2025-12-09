@@ -3,11 +3,10 @@
 namespace App\Modules\MLM\Managements\PassiveIncome\Controllers;
 
 use Brian2694\Toastr\Facades\Toastr;
-use Carbon\Carbon;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
+use App\Modules\MLM\Managements\PassiveIncome\Actions\Index as LoadIndexAction;
+use App\Modules\MLM\Managements\PassiveIncome\Actions\SavePassiveIncomeAction;
 
 
 
@@ -17,8 +16,24 @@ class PassiveIncomeController extends Controller
     {
         $this->loadModuleViewPath('MLM/Managements/PassiveIncome');
     }
-    public function index()
+    public function index(Request $request, LoadIndexAction $action)
     {
-        return view('index');
+        $data = $action->handle($request);
+
+        return view('index', $data);
+    }
+
+    /**
+     * Update or create passive income stats from the submitted form.
+     */
+    public function update(Request $request, SavePassiveIncomeAction $action)
+    {
+        $userId = auth()->check() ? auth()->id() : null;
+
+        $action->handle($request, $userId);
+
+        Toastr::success('Passive income stats and content saved successfully.');
+
+        return redirect()->route('mlm.passive.income');
     }
 }

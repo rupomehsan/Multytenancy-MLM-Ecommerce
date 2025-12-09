@@ -1,7 +1,7 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/css/spectrum.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/css/spectrum.min.css" rel="stylesheet" type="text/css" />
 @endsection
 
 @section('page_title')
@@ -117,7 +117,7 @@
 
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/js/spectrum.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/js/spectrum.min.js"></script>
     <script>
         $("#primary_color").spectrum({
             preferredFormat: 'hex',

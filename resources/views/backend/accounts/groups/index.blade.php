@@ -1,10 +1,13 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
     <style>
         .card {
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -287,15 +290,15 @@
                         </div>
 
                         <!-- <div class="form-group">
-                                <label for="note">Description</label>
-                                <textarea id="note" name="note" class="form-control @error('note') is-invalid @enderror"
-                                    placeholder="Enter additional details..." rows="3">{{ old('note') }}</textarea>
-                                @error('note')
+                                            <label for="note">Description</label>
+                                            <textarea id="note" name="note" class="form-control @error('note') is-invalid @enderror"
+                                                placeholder="Enter additional details..." rows="3">{{ old('note') }}</textarea>
+                                            @error('note')
         <div class="invalid-feedback d-block">
-                                            {{ $message }}
-                                        </div>
+                                                                    {{ $message }}
+                                                                </div>
     @enderror
-                            </div> -->
+                                        </div> -->
 
                         <div class="form-group text-right pt-3">
                             <button type="button" style="width: 130px;" class="btn btn-secondary m-2"
@@ -403,9 +406,9 @@
 @endsection
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/dataTables.bootstrap4.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/select2/select2.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -537,7 +540,7 @@
                 success: function(response) {
                     console.log('Success Response:', response);
                     toastr.success(editId ? 'Group updated successfully' :
-                    'Group created successfully');
+                        'Group created successfully');
                     location.reload();
                 },
                 error: function(xhr) {

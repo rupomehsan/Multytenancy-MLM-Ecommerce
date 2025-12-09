@@ -1,9 +1,9 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/css/spectrum.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('dataTable') }}/css/jquery.dataTables.min.css" rel="stylesheet">
-    <link href="{{ url('dataTable') }}/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="{{ asset('tenant/admin/assets') }}/css/spectrum.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/dataTable/css/jquery.dataTables.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('tenant/admin/dataTable/css/dataTables.bootstrap4.min.css') }} " rel="stylesheet">
     <style>
         .dataTables_wrapper .dataTables_paginate .paginate_button {
             padding: 0px;
@@ -148,10 +148,10 @@
 
 @section('footer_js')
     {{-- js code for data table --}}
-    <script src="{{ url('dataTable') }}/js/jquery.validate.js"></script>
-    <script src="{{ url('dataTable') }}/js/jquery.dataTables.min.js"></script>
-    <script src="{{ url('dataTable') }}/js/dataTables.bootstrap4.min.js"></script>
-    <script src="{{ url('assets') }}/js/spectrum.min.js"></script>
+    <script src="{{ asset('tenant/admin/dataTable/js/jquery.validate.js') }} "></script>
+    <script src="{{ asset('tenant/admin/dataTable/js/jquery.dataTables.min.js') }} "></script>
+    <script src="{{ asset('tenant/admin/dataTable/js/dataTables.bootstrap4.min.js') }} "></script>
+    <script src="{{ asset('tenant/admin/assets') }}/js/spectrum.min.js"></script>
 
     <script type="text/javascript">
         var table = $(".data-table").DataTable({

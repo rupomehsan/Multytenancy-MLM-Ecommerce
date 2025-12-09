@@ -126,9 +126,40 @@
     </li>
 
     <li>
-        <a href="{{ route('mlm.reports') }}" data-active-paths="{{ route('mlm.reports') }}">
+        <a href="javascript: void(0);" class="has-arrow">
             <i class="feather-bar-chart-2"></i> <span>MLM Reports</span>
         </a>
+        <ul class="sub-menu" aria-expanded="false">
+
+            <li>
+                <a href="{{ route('mlm.reports.referral') }}"
+                    data-active-paths="{{ route('mlm.reports.referral') }}">Referral Report</a>
+            </li>
+            <li>
+                <a href="{{ route('mlm.reports.commission') }}"
+                    data-active-paths="{{ route('mlm.reports.commission') }}">Commission Report</a>
+            </li>
+            <li>
+                <a href="{{ route('mlm.reports.user_performance') }}"
+                    data-active-paths="{{ route('mlm.reports.user_performance') }}">User Performance</a>
+            </li>
+            <li>
+                <a href="{{ route('mlm.reports.top_earners') }}"
+                    data-active-paths="{{ route('mlm.reports.top_earners') }}">Top Earners</a>
+            </li>
+            <li>
+                <a href="{{ route('mlm.reports.withdrawal') }}"
+                    data-active-paths="{{ route('mlm.reports.withdrawal') }}">Withdrawal Report</a>
+            </li>
+            <li>
+                <a href="{{ route('mlm.reports.activity_log') }}"
+                    data-active-paths="{{ route('mlm.reports.activity_log') }}">Activity Log</a>
+            </li>
+            <li>
+                <a href="{{ route('mlm.reports.wallet_summary') }}"
+                    data-active-paths="{{ route('mlm.reports.wallet_summary') }}">Wallet Summary</a>
+            </li>
+        </ul>
     </li>
     <li>
         <a href="{{ route('mlm.passive.income') }}" data-active-paths="{{ route('mlm.passive.income') }}">
@@ -174,7 +205,8 @@
             </li> --}}
 
             <li>
-                <a href="{{ url('/view/email/credential') }}" data-active-paths="{{ url('/view/email/credential') }}">
+                <a href="{{ url('/view/email/credential') }}"
+                    data-active-paths="{{ url('/view/email/credential') }}">
                     Email Configure (SMTP)
                 </a>
             </li>
@@ -189,167 +221,135 @@
         </ul>
     </li>
     <li>
-        <a href="javascript: void(0);" class="has-arrow"><i class="feather-settings"></i><span>Product
-                Attributes</span></a>
+        <a href="javascript: void(0);" class="has-arrow"><i class="feather-box"></i><span>Product
+                Management</span></a>
         <ul class="sub-menu" aria-expanded="false">
 
-            {{-- Fshion Insdustry --}}
-            @if (DB::table('config_setups')->where('code', 'product_size')->first())
-                <li>
-                    <a href="{{ url('/view/all/sizes') }}"
-                        data-active-paths="{{ url('/view/all/sizes') }},{{ url('/rearrange/size') }}">
-                        Product Sizes
-                    </a>
-                </li>
-            @endif
-
-            {{-- common --}}
-            @if (DB::table('config_setups')->where('code', 'color')->first())
-                <li>
-                    <a href="{{ url('/view/all/colors') }}" data-active-paths="{{ url('/view/all/colors') }}">
-                        Product Colors
-                    </a>
-                </li>
-            @endif
-
-            @if (DB::table('config_setups')->where('code', 'measurement_unit')->first())
-                <li>
-                    <a href="{{ url('/view/all/units') }}" data-active-paths="{{ url('/view/all/units') }}">
-                        Measurement Units
-                    </a>
-                </li>
-            @endif
-
+            {{-- Section: Products (Category/Subcategory/Child) --}}
             <li>
-                <a href="{{ url('/view/all/brands') }}"
-                    data-active-paths="{{ url('/view/all/brands') }},{{ url('/add/new/brand') }},{{ url('/rearrange/brands') }},{{ url('edit/brand/*') }}">
-                    Product Brands
-                </a>
+                <a href="javascript: void(0);" class="has-arrow">Product Categories</a>
+                <ul class="sub-menu" aria-expanded="false">
+                    <li>
+                        <a href="{{ url('/view/all/category') }}"
+                            data-active-paths="{{ url('/view/all/category') }},{{ url('/add/new/category') }},{{ url('/edit/category/*') }},{{ url('/rearrange/category') }}">
+                            <i class="feather-sliders"></i>
+                            <span>Category</span>
+                            <span style="color:lightgreen"
+                                title="Total Categories">({{ DB::table('categories')->count() }})</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/view/all/subcategory') }}"
+                            data-active-paths="{{ url('/view/all/subcategory') }},{{ url('/add/new/subcategory') }},{{ url('/edit/subcategory/*') }},{{ url('/rearrange/subcategory') }}">
+                            <i class="feather-command"></i>
+                            <span>Subcategory</span>
+                            <span style="color:lightgreen"
+                                title="Total Subcategories">({{ DB::table('subcategories')->count() }})</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/view/all/childcategory') }}"
+                            data-active-paths="{{ url('/view/all/childcategory') }},{{ url('/add/new/childcategory') }},{{ url('/edit/childcategory/*') }},{{ url('/rearrange/childcategory') }}">
+                            <i class="feather-git-pull-request"></i>
+                            <span>Child Category</span>
+                            <span style="color:lightgreen"
+                                title="Total Child Categories">({{ DB::table('child_categories')->count() }})</span>
+                        </a>
+                    </li>
+                </ul>
             </li>
+
+            {{-- Section: Attributes --}}
             <li>
-                <a href="{{ url('/view/all/models') }}"
-                    data-active-paths="{{ url('/view/all/models') }}, {{ url('add/new/model') }},{{ url('edit/model/*') }}">
-                    Models of Brand
-                </a>
+                <a href="javascript: void(0);" class="has-arrow">Product Attributes</a>
+                <ul class="sub-menu" aria-expanded="false">
+                    {{-- Fashion Industry / Sizes --}}
+                    @if (DB::table('config_setups')->where('code', 'product_size')->first())
+                        <li>
+                            <a href="{{ url('/view/all/sizes') }}"
+                                data-active-paths="{{ url('/view/all/sizes') }},{{ url('/rearrange/size') }}">Product
+                                Sizes</a>
+                        </li>
+                    @endif
+
+                    {{-- Common Attributes --}}
+                    @if (DB::table('config_setups')->where('code', 'color')->first())
+                        <li>
+                            <a href="{{ url('/view/all/colors') }}"
+                                data-active-paths="{{ url('/view/all/colors') }}">Product Colors</a>
+                        </li>
+                    @endif
+
+                    @if (DB::table('config_setups')->where('code', 'measurement_unit')->first())
+                        <li>
+                            <a href="{{ url('/view/all/units') }}"
+                                data-active-paths="{{ url('/view/all/units') }}">Measurement Units</a>
+                        </li>
+                    @endif
+
+                    <li>
+                        <a href="{{ url('/view/all/brands') }}"
+                            data-active-paths="{{ url('/view/all/brands') }},{{ url('/add/new/brand') }},{{ url('/rearrange/brands') }},{{ url('edit/brand/*') }}">Product
+                            Brands</a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/view/all/models') }}"
+                            data-active-paths="{{ url('/view/all/models') }}, {{ url('add/new/model') }},{{ url('edit/model/*') }}">Models
+                            of Brand</a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/view/all/flags') }}"
+                            data-active-paths="{{ url('/view/all/flags') }}">Product Flags</a>
+                    </li>
+                </ul>
             </li>
+
+            {{-- Section: Manage Products (listing, reviews, Q/A) --}}
             <li>
-                <a href="{{ url('/view/all/flags') }}" data-active-paths="{{ url('/view/all/flags') }}">
-                    Product Flags
-                </a>
+                <a href="javascript: void(0);" class="has-arrow">Manage Products</a>
+                <ul class="sub-menu" aria-expanded="false">
+                    <li>
+                        <a href="{{ url('/view/all/product') }}"
+                            data-active-paths="{{ url('/view/all/product') }},{{ url('/add/new/product') }},{{ url('/edit/product/*') }},{{ url('/rearrange/product') }}">
+                            View All Products
+                            <span style="color:lightgreen"
+                                title="Total Products">({{ DB::table('products')->where('is_package', false)->count() }})</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/view/product/reviews') }}"
+                            data-active-paths="{{ url('/view/product/reviews') }}">Products's Review
+                            <span style="color:goldenrod" title="Indicate Pending Review">(@php echo DB::table('product_reviews')->where('status', 0)->count(); @endphp)</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/view/product/question/answer') }}"
+                            data-active-paths="{{ url('/view/product/question/answer') }}">Product Ques/Ans
+                            <span style="color:goldenrod"
+                                title="Indicate Unanswered Questions">(@php
+                                    echo DB::table('product_question_answers')
+                                        ->whereNull('answer')
+                                        ->orWhere('answer', '=', '')
+                                        ->count();
+                                @endphp)</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ url('/package-products') }}"
+                            data-active-paths="{{ url('/package-products') }}, {{ url('/package-products/create') }}, {{ url('/package-products/*/edit') }}, {{ url('/package-products/*/manage-items') }}">
+                            <i class="feather-package"></i> Package Products
+                            <span style="color:lightgreen" title="Total Package Products">
+                                ({{ DB::table('products')->where('is_package', true)->count() }})
+                            </span>
+                        </a>
+                    </li>
+                </ul>
             </li>
+
         </ul>
     </li>
 
-    <li>
-        <a href="{{ url('/view/all/category') }}"
-            data-active-paths="{{ url('/view/all/category') }},{{ url('/add/new/category') }},{{ url('/edit/category/*') }},{{ url('/rearrange/category') }}">
-            <i class="feather-sliders"></i>
-            <span>Category</span>
-            <span style="color:lightgreen" title="Total Products">
-                ({{ DB::table('categories')->count() }})
-            </span>
-        </a>
-    </li>
-
-    <li>
-        <a href="{{ url('/view/all/subcategory') }}"
-            data-active-paths="{{ url('/view/all/subcategory') }},{{ url('/add/new/subcategory') }},{{ url('/edit/subcategory/*') }},{{ url('/rearrange/subcategory') }}">
-            <i class="feather-command"></i>
-            <span>Subcategory</span>
-            <span style="color:lightgreen" title="Total Products">
-                ({{ DB::table('subcategories')->count() }})
-            </span>
-        </a>
-        {{-- <ul class="sub-menu" aria-expanded="false">
-            <li><a href="{{ url('/add/new/subcategory') }}">Add New Subcategory</a></li>
-            <li><a href="{{ url('/view/all/subcategory') }}">View All Subcategories</a></li>
-        </ul> --}}
-    </li>
-    <li>
-        <a href="{{ url('/view/all/childcategory') }}"
-            data-active-paths="{{ url('/view/all/childcategory') }},{{ url('/add/new/childcategory') }},{{ url('/edit/childcategory/*') }},{{ url('/rearrange/childcategory') }}">
-            <i class="feather-git-pull-request"></i><span>Child Category</span>
-            <span style="color:lightgreen" title="Total Products">
-                ({{ DB::table('child_categories')->count() }})
-            </span>
-
-        </a>
-    </li>
-    <li>
-        <a href="javascript: void(0);" class="has-arrow">
-            <i class="feather-box"></i>
-            <span>Manage Products</span>
-        </a>
-        <ul class="sub-menu" aria-expanded="false">
-            {{-- <li>
-                <a href="{{ url('view/all/product-color') }}">
-                    View All Products Color
-                    <span style="color:lightgreen" title="Total Products">
-                        ({{DB::table('colors')->count()}})
-                    </span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ url('view/all/product-size') }}">
-                    View All Attribute
-                    <span style="color:lightgreen" title="Total Products">
-                        ({{DB::table('colors')->count()}})
-                    </span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ url('view/all/product-size-value') }}">
-                    View All Attribute Value
-                    <span style="color:lightgreen" title="Total Products">
-                        ({{DB::table('product_sizes')->count()}})
-                    </span>
-                </a>
-            </li> --}}
-            <li>
-                <a href="{{ url('/view/all/product') }}"
-                    data-active-paths="{{ url('/view/all/product') }},{{ url('/add/new/product') }},{{ url('/edit/product/*') }},{{ url('/rearrange/product') }}">
-                    View All Products
-                    <span style="color:lightgreen" title="Total Products">
-                        ({{ DB::table('products')->where('is_package', false)->count() }})
-                    </span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ url('/view/product/reviews') }}" data-active-paths="{{ url('/view/product/reviews') }}">
-                    Products's Review
-                    <span style="color:goldenrod" title="Indicate Pending Review">
-                        (@php
-                            echo DB::table('product_reviews')->where('status', 0)->count();
-                        @endphp)
-                    </span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ url('/view/product/question/answer') }}"
-                    data-active-paths="{{ url('/view/product/question/answer') }}">
-                    Product Ques/Ans
-                    <span style="color:goldenrod" title="Indicate Unanswered Questions">
-                        (@php
-                            echo DB::table('product_question_answers')
-                                ->whereNull('answer')
-                                ->orWhere('answer', '=', '')
-                                ->count();
-                        @endphp)
-                    </span>
-                </a>
-            </li>
-        </ul>
-    </li>
-
-    <li>
-        <a href="{{ url('/package-products') }}"
-            data-active-paths="{{ url('/package-products') }}, {{ url('/package-products/create') }}, {{ url('/package-products/*/edit') }}, {{ url('/package-products/*/manage-items') }}">
-            <i class="feather-package"></i> Package Products
-            <span style="color:lightgreen" title="Total Package Products">
-                ({{ DB::table('products')->where('is_package', true)->count() }})
-            </span>
-        </a>
-    </li>
 
 
     <li>
@@ -1611,7 +1611,7 @@
     /* Tree Structure for Submenus - Enhanced */
     .sub-menu {
         position: relative;
-        margin-left: 32px !important;
+        margin-left: 20px !important;
         padding-left: 24px !important;
         border-left: 2px solid rgba(102, 126, 234, 0.2) !important;
         background: linear-gradient(to right, rgba(102, 126, 234, 0.02) 0%, transparent 100%);
@@ -1730,15 +1730,46 @@
         border-left-color: rgba(102, 126, 234, 0.15) !important;
     }
 
-    /* Has-arrow indicator - Modern chevron */
-    .has-arrow::after {
-        border-color: #94a3b8 !important;
-        transition: all 0.3s ease !important;
+    /* Has-arrow indicator - Right-pointing triangle with smooth rotation */
+    .has-arrow {
+        position: relative;
+        padding-right: 32px !important;
+        color: #94a3b8;
+        /* arrow color is controlled via currentColor */
     }
 
+    .has-arrow::after {
+        content: '' !important;
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%) rotate(0deg);
+        transform-origin: center;
+        width: 0;
+        height: 0;
+        border-top: 6px solid transparent;
+        border-bottom: 6px solid transparent;
+        border-left: 8px solid currentColor;
+        transition: transform 0.18s ease, border-left-color 0.18s ease;
+    }
+
+    /* Rotate arrow down when submenu is expanded (by class or aria attribute) */
     li.mm-active>a.has-arrow::after,
+    a.has-arrow[aria-expanded="true"]::after {
+        transform: translateY(-50%) rotate(90deg) !important;
+    }
+
+    /* Hover changes arrow color only; when parent is active, keep arrow white */
+    a.has-arrow:hover {
+        color: #667eea !important;
+    }
+
     a.has-arrow:hover::after {
-        border-color: #667eea !important;
+        border-left-color: currentColor;
+    }
+
+    li.mm-active>a.has-arrow {
+        color: white !important;
     }
 
     /* Badge/Counter styling */

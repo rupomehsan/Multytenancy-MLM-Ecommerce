@@ -1,8 +1,8 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
     <style>
         .select2-selection {
             height: 34px !important;
@@ -89,9 +89,7 @@
                         <div class="form-group row">
                             <label for="categories" class="col-sm-2 col-form-label">Categories</label>
                             <div class="col-sm-10">
-                                @php
-                                    $categories = App\Models\Category::get();
-                                @endphp
+
                                 <select name="categories[]" data-toggle="select2" class="form-control" id="categories"
                                     multiple>
                                     @foreach ($categories as $category)
@@ -105,9 +103,7 @@
                         <div class="form-group row">
                             <label for="subcategories" class="col-sm-2 col-form-label">Subcategories</label>
                             <div class="col-sm-10">
-                                @php
-                                    $subcategories = App\Models\Subcategory::get();
-                                @endphp
+
                                 <select name="subcategories[]" data-toggle="select2" class="form-control" id="subcategories"
                                     multiple>
                                     @foreach ($subcategories as $subcategory)
@@ -122,9 +118,7 @@
                         <div class="form-group row">
                             <label for="childcategories" class="col-sm-2 col-form-label">Childcategories</label>
                             <div class="col-sm-10">
-                                @php
-                                    $childcategories = App\Models\ChildCategory::get();
-                                @endphp
+
                                 <select name="childcategories[]" data-toggle="select2" class="form-control"
                                     id="childcategories" multiple>
                                     @foreach ($childcategories as $childcategory)
@@ -189,9 +183,9 @@
 
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/dropify/dropify.min.js"></script>
-    <script src="{{ url('assets') }}/pages/fileuploads-demo.js"></script>
-    <script src="{{ url('assets') }}/plugins/select2/select2.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/dropify/dropify.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/pages/fileuploads-demo.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.js"></script>
     <script>
         $('[data-toggle="select2"]').select2();
 

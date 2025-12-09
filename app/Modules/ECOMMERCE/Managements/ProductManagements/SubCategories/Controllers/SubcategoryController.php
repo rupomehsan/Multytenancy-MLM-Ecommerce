@@ -14,7 +14,7 @@ use Yajra\DataTables\DataTables;
 
 use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\Product;
 use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Database\Models\Subcategory;
-
+use App\Modules\ECOMMERCE\Managements\ProductManagements\Categories\Database\Models\Category;
 use App\Http\Controllers\Controller;
 
 class SubcategoryController extends Controller
@@ -25,7 +25,8 @@ class SubcategoryController extends Controller
     }
     public function addNewSubcategory()
     {
-        return view('create');
+        $category =  Category::getDropDownList('name');
+        return view('create', compact('category'));
     }
 
     public function saveNewSubcategory(Request $request)
@@ -36,24 +37,34 @@ class SubcategoryController extends Controller
             'category_id' => 'required',
         ]);
 
+        // Ensure uploads directory exists
+        $uploadsDir = public_path('uploads/');
+        if (!file_exists($uploadsDir)) {
+            mkdir($uploadsDir, 0777, true);
+        }
+        $subcategoryImagesDir = public_path('uploads/subcategory_images/');
+        if (!file_exists($subcategoryImagesDir)) {
+            mkdir($subcategoryImagesDir, 0777, true);
+        }
+
         $icon = null;
         if ($request->hasFile('icon')) {
             $get_image = $request->file('icon');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('subcategory_images/');
+            $location = public_path('uploads/subcategory_images/');
             // Image::make($get_image)->save($location . $image_name);
             $get_image->move($location, $image_name);
-            $icon = "subcategory_images/" . $image_name;
+            $icon = "uploads/subcategory_images/" . $image_name;
         }
 
         $image = null;
         if ($request->hasFile('image')) {
             $get_image = $request->file('image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('subcategory_images/');
+            $location = public_path('uploads/subcategory_images/');
             // Image::make($get_image)->save($location . $image_name);
             $get_image->move($location, $image_name);
-            $image = "subcategory_images/" . $image_name;
+            $image = "uploads/subcategory_images/" . $image_name;
         }
 
         Subcategory::insert([
@@ -130,7 +141,8 @@ class SubcategoryController extends Controller
     public function editSubcategory($slug)
     {
         $subcategory = Subcategory::where('slug', $slug)->first();
-        return view('update', compact('subcategory'));
+        $category =  Category::getDropDownList('name', $subcategory->category_id);
+        return view('update', compact('subcategory', 'category'));
     }
 
     public function updateSubcategory(Request $request)
@@ -151,6 +163,16 @@ class SubcategoryController extends Controller
 
         $data = Subcategory::where('id', $request->id)->first();
 
+        // Ensure uploads directory exists
+        $uploadsDir = public_path('uploads/');
+        if (!file_exists($uploadsDir)) {
+            mkdir($uploadsDir, 0777, true);
+        }
+        $subcategoryImagesDir = public_path('uploads/subcategory_images/');
+        if (!file_exists($subcategoryImagesDir)) {
+            mkdir($subcategoryImagesDir, 0777, true);
+        }
+
         $icon = $data->icon;
         if ($request->hasFile('icon')) {
 
@@ -160,10 +182,10 @@ class SubcategoryController extends Controller
 
             $get_image = $request->file('icon');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('subcategory_images/');
+            $location = public_path('uploads/subcategory_images/');
             // Image::make($get_image)->save($location . $image_name, 80);
             $get_image->move($location, $image_name);
-            $icon = "subcategory_images/" . $image_name;
+            $icon = "uploads/subcategory_images/" . $image_name;
         }
 
         $image = $data->image;
@@ -175,10 +197,10 @@ class SubcategoryController extends Controller
 
             $get_image = $request->file('image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('subcategory_images/');
+            $location = public_path('uploads/subcategory_images/');
             // Image::make($get_image)->save($location . $image_name, 80);
             $get_image->move($location, $image_name);
-            $image = "subcategory_images/" . $image_name;
+            $image = "uploads/subcategory_images/" . $image_name;
         }
 
         Subcategory::where('id', $request->id)->update([

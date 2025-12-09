@@ -1,7 +1,7 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
 @endsection
 
 @section('page_title')
@@ -33,8 +33,11 @@
                                     class="text-danger">*</span></label>
                             <div class="col-sm-10">
                                 <select name="category_id" class="form-control" id="colFormLabe0" required>
+
                                     @php
-                                        echo App\Models\Category::getDropDownList('name', $subcategory->category_id);
+                                        if ($category) {
+                                            echo $category;
+                                        }
                                     @endphp
                                 </select>
                                 <div class="invalid-feedback" style="display: block;">
@@ -121,8 +124,8 @@
 
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/dropify/dropify.min.js"></script>
-    <script src="{{ url('assets') }}/pages/fileuploads-demo.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/dropify/dropify.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/pages/fileuploads-demo.js"></script>
     <script>
         @if ($subcategory->icon && file_exists(public_path($subcategory->icon)))
             $(".dropify-preview").eq(0).css("display", "block");

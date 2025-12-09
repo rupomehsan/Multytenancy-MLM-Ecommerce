@@ -16,7 +16,7 @@
                         <a href="{{ url('shop') }}?category={{ $featuredCategory->slug }}" class="single-category">
                             <figure class="product__category-container" style="text-align: center">
                                 <div class="single-category-img">
-                                    <img src="{{ url('tenant/frontend/frontend_assets') }}/img/product-load.gif"
+                                    <img src="{{ url('tenant/frontend') }}/img/product-load.gif"
                                         data-src="{{ url(env('ADMIN_URL') . '/' . $featuredCategory->icon) }}"
                                         alt="" class="lazy" />
                                 </div>
@@ -32,7 +32,7 @@
                                     class="single-category">
                                     <figure class="product__category-container" style="text-align: center">
                                         <div class="single-category-img">
-                                            <img src="{{ url('tenant/frontend/frontend_assets') }}/img/product-load.gif"
+                                            <img src="{{ url('tenant/frontend') }}/img/product-load.gif"
                                                 data-src="{{ url(env('ADMIN_URL') . '/' . $featuredSubcategory->icon) }}"
                                                 alt="" class="lazy" />
                                         </div>

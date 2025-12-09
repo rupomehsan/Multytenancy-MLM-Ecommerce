@@ -1,7 +1,7 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/dropify/dropify.min.css" rel="stylesheet" type="text/css" />
 @endsection
 
 @section('page_title')
@@ -37,7 +37,9 @@
                             <div class="col-sm-10">
                                 <select name="brand_id" class="form-control" id="colFormLabe0" required>
                                     @php
-                                        echo App\Models\Brand::getDropDownList('name', $data->brand_id);
+                                        if (isset($brands)) {
+                                            echo $brands;
+                                        }
                                     @endphp
                                 </select>
                                 <div class="invalid-feedback" style="display: block;">

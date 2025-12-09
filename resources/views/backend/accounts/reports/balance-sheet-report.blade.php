@@ -1,9 +1,12 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .select2-container--default .select2-selection--single {
@@ -178,8 +181,8 @@
                                 <i class="feather-download"></i> EXCEL
                             </button>
                             <!-- <button type="button" class="btn btn-info" id="printBtn" disabled>
-                                <i class="feather-printer"></i> Print
-                            </button> -->
+                                            <i class="feather-printer"></i> Print
+                                        </button> -->
                         </div>
                     </div>
                 </form>
@@ -191,7 +194,7 @@
             <!-- Company Header -->
             <div class="company-header">
                 <!-- <h3>Rural and Urban Poor's Partner for Social Advancement</h3>
-                <p>52, Solayman Nagor Basupara Khulna</p> -->
+                            <p>52, Solayman Nagor Basupara Khulna</p> -->
                 <h4>Statement of Financial Position</h4>
                 <p id="reportDateDisplay">As at <span id="reportDate"></span></p>
             </div>
@@ -234,17 +237,17 @@
 @endsection
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/dataTables.bootstrap4.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/dataTables.buttons.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/buttons.bootstrap4.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/jszip.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/pdfmake.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/vfs_fonts.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/buttons.html5.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/buttons.print.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/dataTables.responsive.min.js"></script>
-    <script src="{{ url('assets') }}/plugins/datatables/responsive.bootstrap4.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/dataTables.buttons.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/buttons.bootstrap4.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/jszip.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/pdfmake.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/vfs_fonts.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/buttons.html5.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/buttons.print.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/dataTables.responsive.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/datatables/responsive.bootstrap4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -261,7 +264,7 @@
             $('#fy_start').val(firstDay.toISOString().split('T')[0]);
             $('#fy_end').val(lastDay.toISOString().split('T')[0]);
             $('#comparison_date').val(new Date(today.getFullYear() - 1, 5, 30).toISOString().split('T')[
-            0]); // June 30 of previous year
+                0]); // June 30 of previous year
 
             // Load initial data
             loadBalanceSheetData();
@@ -591,7 +594,7 @@
             }
 
             const totalLiabilities = (reportData.liabilities.total_liabilities || 0) + (reportData.equity.total_equity ||
-            0);
+                0);
             wsData.push(['Total Liabilities & Equity', formatNumber(totalLiabilities), formatNumber(totalLiabilities),
                 formatNumber(totalLiabilities)
             ]);

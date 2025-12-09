@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
-
+use DB;
 
 use App\Modules\ECOMMERCE\Managements\Configurations\Database\Models\ConfigSetup;
 use App\Modules\ECOMMERCE\Managements\Configurations\Database\Models\DeviceCondition;
@@ -18,6 +18,12 @@ use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Sizes
 use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Units\Database\Models\Unit;
 use App\Models\Sim;
 
+
+use App\Modules\ECOMMERCE\Managements\SmsService\Database\Models\SmsGateway;
+use App\Models\PaymentGateway;
+use App\Modules\ECOMMERCE\Managements\Configurations\Actions\UpdatePaymentGatewayInfo;
+use App\Modules\Managements\MLM\Settings\Actions\Update;
+
 class ConfigController extends Controller
 {
     public function __construct()
@@ -26,8 +32,8 @@ class ConfigController extends Controller
     }
     public function configSetup()
     {
-        $techConfigs = ConfigSetup::where('industry', 'Tech')->orderBy('industry', 'desc')->get();
-        $fashionConfigs = ConfigSetup::where('industry', 'Fashion')->orWhere('industry', 'Common')->orderBy('industry', 'desc')->get();
+        $techConfigs = ConfigSetup::orderBy('industry', 'desc')->get();
+        $fashionConfigs = ConfigSetup::orderBy('industry', 'desc')->get();
         return view('setup', compact('techConfigs', 'fashionConfigs'));
     }
 
@@ -56,201 +62,8 @@ class ConfigController extends Controller
         return back();
     }
 
-    // falg methods
-    public function viewAllFlags(Request $request)
-    {
-        if ($request->ajax()) {
-
-            $data = Flag::orderBy('id', 'desc')->get();
-
-            return Datatables::of($data)
-                ->editColumn('status', function ($data) {
-                    if ($data->status == 1) {
-                        return 'Active';
-                    } else {
-                        return 'Inactive';
-                    }
-                })
-                ->editColumn('featured', function ($data) {
-                    if ($data->featured == 0) {
-                        return '<button class="btn btn-sm btn-danger rounded">Not Featured</button>';
-                    } else {
-                        return '<button class="btn btn-sm btn-success rounded">Featured</button>';
-                    }
-                })
-                ->editColumn('created_at', function ($data) {
-                    return date("Y-m-d h:i:s a", strtotime($data->created_at));
-                })
-                ->editColumn('icon', function ($data) {
-                    if ($data->icon && file_exists(public_path($data->icon)))
-                        return $data->icon;
-                })
-                ->addIndexColumn()
-                ->addColumn('action', function ($data) {
-                    $btn = ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->slug . '" data-original-title="Edit" class="mb-1 btn-sm btn-warning rounded editBtn"><i class="fas fa-edit"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->slug . '" data-original-title="Delete" class="btn-sm btn-danger rounded deleteBtn"><i class="fas fa-trash-alt"></i></a>';
-
-                    if ($data->featured == 0) {
-                        $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->id . '" title="Featured" data-original-title="Featured" class="btn-sm btn-success rounded featureBtn"><i class="feather-chevrons-up"></i></a>';
-                    } else {
-                        $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->id . '" title="Featured" data-original-title="Featured" class="btn-sm btn-danger rounded featureBtn"><i class="feather-chevrons-down"></i></a>';
-                    }
-
-                    return $btn;
-                })
-                ->rawColumns(['action', 'featured'])
-                ->make(true);
-        }
-        return view('flag');
-    }
-
-    public function deleteFlag($slug)
-    {
-        Flag::where('slug', $slug)->delete();
-        return response()->json(['success' => 'Deleted successfully.']);
-    }
-
-    public function getFlagInfo($slug)
-    {
-        $data = Flag::where('slug', $slug)->first();
-        return response()->json($data);
-    }
-
-    public function updateFlagInfo(Request $request)
-    {
-
-        $clean = preg_replace('/[^a-zA-Z0-9\s]/', '', strtolower($request->name)); //remove all non alpha numeric
-        $slug = preg_replace('!\s+!', '-', $clean);
-
-        $icon = Flag::where('slug', $request->flag_slug)->first()->icon;
-        if ($request->hasFile('icon')) {
-            $get_image = $request->file('icon');
-            $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('flag_icons/');
-            $get_image->move($location, $image_name);
-            $icon = "flag_icons/" . $image_name;
-        }
-
-        Flag::where('slug', $request->flag_slug)->update([
-            'name' => $request->name,
-            'icon' => $icon,
-            'slug' => $slug . "-" . str::random(5) . "-" . time(),
-            'status' => $request->flag_status,
-            'updated_at' => Carbon::now()
-        ]);
-        return response()->json(['success' => 'Updated successfully.']);
-    }
-
-    public function createNewFlag(Request $request)
-    {
-
-        $request->validate([
-            'name' => 'required|max:255',
-        ]);
-
-        $icon = null;
-        if ($request->hasFile('icon')) {
-            $get_image = $request->file('icon');
-            $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('flag_icons/');
-            $get_image->move($location, $image_name);
-            $icon = "flag_icons/" . $image_name;
-        }
-
-        $clean = preg_replace('/[^a-zA-Z0-9\s]/', '', strtolower($request->name)); //remove all non alpha numeric
-        $slug = preg_replace('!\s+!', '-', $clean);
-
-        Flag::insert([
-            'name' => $request->name,
-            'icon' => $icon,
-            'slug' => $slug . "-" . str::random(5) . "-" . time(),
-            'status' => 1,
-            'created_at' => Carbon::now()
-        ]);
-
-        return response()->json(['success' => 'Updated successfully.']);
-    }
-
-    public function featureFlag($id)
-    {
-        $data = Flag::where('id', $id)->first();
-        if ($data->featured == 0) {
-            $data->featured = 1;
-            $data->save();
-        } else {
-            $data->featured = 0;
-            $data->save();
-        }
-        return response()->json(['success' => 'Satatus Changed successfully.']);
-    }
 
 
-
-    // unit methods
-    public function viewAllUnits(Request $request)
-    {
-        if ($request->ajax()) {
-
-            $data = Unit::orderBy('id', 'desc')->get();
-
-            return Datatables::of($data)
-                ->editColumn('status', function ($data) {
-                    if ($data->status == 1) {
-                        return 'Active';
-                    } else {
-                        return 'Inactive';
-                    }
-                })
-                ->editColumn('created_at', function ($data) {
-                    return date("Y-m-d h:i:s a", strtotime($data->created_at));
-                })
-                ->addIndexColumn()
-                ->addColumn('action', function ($data) {
-                    $btn = ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->id . '" data-original-title="Edit" class="mb-1 btn-sm btn-warning rounded editBtn"><i class="fas fa-edit"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->id . '" data-original-title="Delete" class="btn-sm btn-danger rounded deleteBtn"><i class="fas fa-trash-alt"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action', 'icon'])
-                ->make(true);
-        }
-        return view('unit');
-    }
-
-    public function deleteUnit($id)
-    {
-        Unit::where('id', $id)->delete();
-        return response()->json(['success' => 'Deleted successfully.']);
-    }
-
-    public function getUnitInfo($id)
-    {
-        $data = Unit::where('id', $id)->first();
-        return response()->json($data);
-    }
-
-    public function updateUnitInfo(Request $request)
-    {
-        Unit::where('id', $request->flag_slug)->update([
-            'name' => $request->name,
-            'status' => $request->flag_status,
-            'updated_at' => Carbon::now()
-        ]);
-        return response()->json(['success' => 'Updated successfully.']);
-    }
-
-    public function createNewUnit(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|max:255',
-        ]);
-
-        Unit::insert([
-            'name' => $request->name,
-            'status' => 1,
-            'created_at' => Carbon::now()
-        ]);
-        return response()->json(['success' => 'Updated successfully.']);
-    }
 
 
     // sim methods
@@ -549,5 +362,135 @@ class ConfigController extends Controller
         }
         Toastr::success('Product Sizes are Rerranged', 'Success');
         return redirect('/view/all/sizes');
+    }
+
+
+
+    public function viewSmsGateways()
+    {
+        $gateways = SmsGateway::orderBy('id', 'asc')->get();
+        return view('sms_gateway', compact('gateways'));
+    }
+
+    public function updateSmsGatewayInfo(Request $request)
+    {
+        $provider = $request->provider;
+
+        DB::table('sms_gateways')->update([
+            'status' => 0,
+            'updated_at' => Carbon::now()
+        ]);
+
+        if ($provider == 'elitbuzz') { //ID 1 => Elitbuzz
+            SmsGateway::where('id', 1)->update([
+                'api_endpoint' => $request->api_endpoint,
+                'api_key' => $request->api_key,
+                'sender_id' => $request->sender_id,
+                'status' => 1,
+                'updated_at' => Carbon::now()
+            ]);
+        }
+
+        if ($provider == 'revesms') { //ID 2 => Revesms
+            SmsGateway::where('id', 2)->update([
+                'api_endpoint' => $request->api_endpoint,
+                'api_key' => $request->api_key,
+                'secret_key' => $request->secret_key,
+                'sender_id' => $request->sender_id,
+                'status' => 1,
+                'updated_at' => Carbon::now()
+            ]);
+        }
+
+        Toastr::success('Info Updated', 'Success');
+        return back();
+    }
+
+    public function changeGatewayStatus($provider)
+    {
+
+        DB::table('sms_gateways')->update([
+            'status' => 0,
+            'updated_at' => Carbon::now()
+        ]);
+
+        if ($provider == 'elitbuzz') { //ID 1 => Elitbuzz
+            SmsGateway::where('id', 1)->update([
+                'status' => 1,
+                'updated_at' => Carbon::now()
+            ]);
+        }
+
+        if ($provider == 'revesms') { //ID 2 => Revesms
+            SmsGateway::where('id', 2)->update([
+                'status' => 1,
+                'updated_at' => Carbon::now()
+            ]);
+        }
+
+        return response()->json(['success' => 'Updated Successfully.']);
+    }
+
+
+    // payment gateway
+    public function viewPaymentGateways()
+    {
+        $gateways = PaymentGateway::orderBy('id', 'asc')->get();
+        return view('payment_gateway', compact('gateways'));
+    }
+
+    public function updatePaymentGatewayInfo(Request $request)
+    {
+
+        $data = UpdatePaymentGatewayInfo::execute($request);
+        if ($data['status'] == 'success') {
+            Toastr::success('Payment Gateway Info Updated', 'Updated Successfully');
+            return back();
+        } else {
+            Toastr::error($data['message'], 'Failed to Update');
+            return back();
+        }
+    }
+
+    public function changePaymentGatewayStatus($provider)
+    {
+
+        if ($provider == 'ssl_commerz') { //ID 1 => ssl_commerz
+            $info = PaymentGateway::where('id', 1)->first();
+
+            PaymentGateway::where('id', 1)->update([
+                'status' => $info->status == 1 ? 0 : 1,
+                'updated_at' => Carbon::now()
+            ]);
+        }
+
+        if ($provider == 'stripe') { //ID 2 => stripe
+            $info = PaymentGateway::where('id', 2)->first();
+
+            PaymentGateway::where('id', 2)->update([
+                'status' => $info->status == 1 ? 0 : 1,
+                'updated_at' => Carbon::now()
+            ]);
+        }
+
+        if ($provider == 'bkash') { //ID 3 => bkash
+            $info = PaymentGateway::where('id', 3)->first();
+
+            PaymentGateway::where('id', 3)->update([
+                'status' => $info->status == 1 ? 0 : 1,
+                'updated_at' => Carbon::now()
+            ]);
+        }
+
+        if ($provider == 'amar_pay') { //ID 4 => amar_pay
+            $info = PaymentGateway::where('id', 4)->first();
+
+            PaymentGateway::where('id', 4)->update([
+                'status' => $info->status == 1 ? 0 : 1,
+                'updated_at' => Carbon::now()
+            ]);
+        }
+
+        return response()->json(['success' => 'Updated Successfully.']);
     }
 }

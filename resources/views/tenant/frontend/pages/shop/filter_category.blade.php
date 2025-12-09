@@ -7,7 +7,7 @@
                 <label class="widget__categories--menu__label d-flex align-items-center">
                     @if ($category->icon)
                         <img class="widget__categories--menu__img lazy"
-                            src="{{ url('tenant/frontend/frontend_assets') }}/img/product-load.gif"
+                            src="{{ url('tenant/frontend') }}/img/product-load.gif"
                             data-src="{{ url(env('ADMIN_URL') . '/' . $category->icon) }}" alt="" />
                     @endif
                     <span class="widget__categories--menu__text">{{ $category->name }}</span>
@@ -33,7 +33,7 @@
                                     <span>
                                         @if ($subcategory->icon)
                                             <img class="widget__categories--sub__menu--img lazy"
-                                                src="{{ url('tenant/frontend/frontend_assets') }}/img/product-load.gif"
+                                                src="{{ url('tenant/frontend') }}/img/product-load.gif"
                                                 data-src="{{ url(env('ADMIN_URL') . '/' . $subcategory->icon) }}"
                                                 alt="" />
                                         @endif

@@ -3,7 +3,7 @@
     <div class="section__heading flag_section" style="margin-bottom: 40px">
         <h2 class="section__heading--maintitle">{{ ucfirst($flag->name) }}</h2>
         <a href="{{ url('shop') }}/?category=&flag_id={{ $flag->id }}">
-            <img src="{{ url('tenant/frontend/frontend_assets') }}/img/product-load.gif"
+            <img src="{{ url('tenant/frontend') }}/img/product-load.gif"
                 data-src="{{ url(env('ADMIN_URL') . '/' . $flag->icon) }}" alt=""
                 class="lazy newArrival__items--img newArrival__primary--img" />
         </a>

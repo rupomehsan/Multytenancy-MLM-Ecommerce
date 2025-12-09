@@ -14,9 +14,9 @@ use App\Http\Controllers\Controller;
 
 use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Brands\Database\Models\Brand;
 use App\Modules\ECOMMERCE\Managements\ProductManagements\Categories\Database\Models\Category;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Database\Models\Subcategory;
 use App\Modules\ECOMMERCE\Managements\ProductManagements\ChildCategories\Database\Models\ChildCategory;
 use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\Product;
-use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Database\Models\Subcategory;
 
 class BrandController extends Controller
 {
@@ -29,7 +29,10 @@ class BrandController extends Controller
 
     public function addNewBrand(Request $request)
     {
-        return view('create');
+        $category =   Category::getDropDownList('name');
+        $subcategory =   Subcategory::getDropDownList('name');
+        $childcategory =   ChildCategory::getDropDownList('name');
+        return view('create', compact('category', 'subcategory', 'childcategory'));
     }
     public function viewAllBrands(Request $request)
     {
@@ -114,25 +117,32 @@ class BrandController extends Controller
 
             $get_image = $request->file('logo');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('brand_images/');
-
+            $location = public_path('uploads/brand_images/');
+            if (!file_exists($location)) {
+                mkdir($location, 0777, true);
+            }
             if ($get_image->getClientOriginalExtension() == 'svg') {
                 $get_image->move($location, $image_name);
             } else {
                 Image::make($get_image)->save($location . $image_name, 25);
             }
 
-            $logo = "brand_images/" . $image_name;
+            $logo = "uploads/brand_images/" . $image_name;
         }
 
         $banner = null;
         if ($request->hasFile('banner')) {
             $get_image = $request->file('banner');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('brand_images/');
+            $location = public_path('uploads/brand_images/');
+
+            if (!file_exists($location)) {
+                mkdir($location, 0777, true);
+            }
+
             // Image::make($get_image)->save($location . $image_name, 80);
             $get_image->move($location, $image_name);
-            $banner = "brand_images/" . $image_name;
+            $banner = "uploads/brand_images/" . $image_name;
         }
 
         Brand::insert([
@@ -168,7 +178,10 @@ class BrandController extends Controller
     public function editBrand($slug)
     {
         $data = Brand::where('slug', $slug)->first();
-        return view('update', compact('data'));
+        $categories =   Category::get();
+        $subcategories =   Subcategory::get();
+        $childcategories =   ChildCategory::get();
+        return view('update', compact('data', 'categories', 'subcategories', 'childcategories'));
     }
 
     public function updateBrand(Request $request)
@@ -215,10 +228,15 @@ class BrandController extends Controller
 
             $get_image = $request->file('banner');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('brand_images/');
+            $location = public_path('uploads/brand_images/');
+
+            if (!file_exists($location)) {
+                mkdir($location, 0777, true);
+            }
+
             // Image::make($get_image)->save($location . $image_name, 80);
             $get_image->move($location, $image_name);
-            $banner = "brand_images/" . $image_name;
+            $banner = "uploads/brand_images/" . $image_name;
         }
 
         Brand::where('id', $request->id)->update([
@@ -257,22 +275,24 @@ class BrandController extends Controller
         return redirect('/view/all/brands');
     }
 
-    // public function deleteBrand($slug){
-    //     $data = Brand::where('slug', $slug)->first();
-    //     if($data->logo){
-    //         if(file_exists(public_path($data->logo))){
-    //             unlink(public_path($data->logo));
-    //         }
-    //     }
-    //     if($data->banner){
-    //         if(file_exists(public_path($data->banner))){
-    //             unlink(public_path($data->banner));
-    //         }
-    //     }
+    public function deleteBrand($slug)
+    {
 
-    //     ProductModel::where('brand_id', $data->id)->delete();
-    //     $data->delete();
-    //     return response()->json(['success' => 'Brand Deleted Successfully.']);
-    // }
+        $data = Brand::where('slug', $slug)->first();
+        if ($data->logo) {
+            if (file_exists(public_path($data->logo))) {
+                unlink(public_path($data->logo));
+            }
+        }
 
+        if ($data->banner) {
+            if (file_exists(public_path($data->banner))) {
+                unlink(public_path($data->banner));
+            }
+        }
+
+        Product::where('brand_id', $data->id)->delete();
+        $data->delete();
+        return response()->json(['success' => 'Brand Deleted Successfully.']);
+    }
 }

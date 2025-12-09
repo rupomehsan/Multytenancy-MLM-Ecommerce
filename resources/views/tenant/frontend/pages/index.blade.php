@@ -36,7 +36,6 @@
 @section('header_css')
 @endsection
 
-
 @push('top_header')
     <div class="header__topbar bg__secondary">
         <div class="container-fluid">
@@ -46,15 +45,14 @@
                         {{-- debug dd removed: do not dump here in production --}}
                         <li class="header__shipping--text text-white">Welcome to {{ $generalInfo->company_name }}</li>
                         <li class="header__shipping--text text-white d-sm-2-none">
-                            <img class="header__shipping--text__icon"
-                                src="{{ url('tenant/frontend/frontend_assets') }}/img/icon/bus.png" alt="bus-icon" />
+                            <img class="header__shipping--text__icon" src="{{ url('tenant/frontend') }}/img/icon/bus.png"
+                                alt="bus-icon" />
                             <a class="header__shipping--text__link" href="{{ url('track/order') }}"> Track Your Order</a>
                         </li>
                         @foreach (explode(',', $generalInfo->email) as $email)
                             <li class="header__shipping--text text-white d-sm-2-none">
                                 <img class="header__shipping--text__icon"
-                                    src="{{ url('tenant/frontend/frontend_assets') }}/img/icon/email.png"
-                                    alt="email-icon" />
+                                    src="{{ url('tenant/frontend') }}/img/icon/email.png" alt="email-icon" />
                                 <a class="header__shipping--text__link"
                                     href="mailto:demo@gmail.com">{{ $email }}</a>
                             </li>
@@ -65,7 +63,6 @@
         </div>
     </div>
 @endpush
-
 
 @section('content')
 

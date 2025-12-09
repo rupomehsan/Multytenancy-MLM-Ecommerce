@@ -32,7 +32,9 @@
                             <div class="col-sm-10">
                                 <select name="category_id" class="form-control" id="colFormLabe0" required>
                                     @php
-                                        echo App\Models\Category::getDropDownList('name', $childcategory->category_id);
+                                        if ($category) {
+                                            echo $category;
+                                        }
                                     @endphp
                                 </select>
                                 <div class="invalid-feedback" style="display: block;">

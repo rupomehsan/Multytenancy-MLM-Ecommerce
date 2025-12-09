@@ -14,7 +14,7 @@ use DataTables;
 use App\Modules\ECOMMERCE\Managements\ProductManagements\ChildCategories\Database\Models\ChildCategory;
 use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\Product;
 use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Database\Models\Subcategory;
-
+use App\Modules\ECOMMERCE\Managements\ProductManagements\Categories\Database\Models\Category;
 use App\Http\Controllers\Controller;
 
 class ChildCategoryController extends Controller
@@ -25,7 +25,8 @@ class ChildCategoryController extends Controller
     }
     public function addNewChildcategory()
     {
-        return view('create');
+        $category =  Category::getDropDownList('name');
+        return view('create', compact('category'));
     }
 
     public function subcategoryCategoryWise(Request $request)
@@ -106,7 +107,8 @@ class ChildCategoryController extends Controller
     {
         $childcategory = ChildCategory::where('slug', $slug)->first();
         $subcategories = Subcategory::where('category_id', $childcategory->category_id)->select('name', 'id')->orderBy('name', 'asc')->get();
-        return view('update', compact('childcategory', 'subcategories'));
+        $category =  Category::getDropDownList('name', $childcategory->category_id);
+        return view('update', compact('childcategory', 'subcategories', 'category'));
     }
 
     public function updateChildcategory(Request $request)

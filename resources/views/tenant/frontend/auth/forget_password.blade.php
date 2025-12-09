@@ -40,8 +40,7 @@
                     <div class="auth-card">
                         <div class="auth-card-head">
                             <div class="auth-card-head-icon">
-                                <img src="{{ url('tenant/frontend/frontend_assets') }}/img/icon/edit.svg"
-                                    alt="Forget Password" />
+                                <img src="{{ url('tenant/frontend') }}/img/icon/edit.svg" alt="Forget Password" />
                             </div>
                             <h4 class="auth-card-title">Forgotten Password?</h4>
                         </div>

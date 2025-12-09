@@ -1,7 +1,7 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/switchery/switchery.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/switchery/switchery.min.css" rel="stylesheet" type="text/css" />
 @endsection
 
 @section('page_title')
@@ -198,7 +198,7 @@
 
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/switchery/switchery.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/switchery/switchery.min.js"></script>
     <script>
         $('[data-toggle="switchery"]').each(function(idx, obj) {
             new Switchery($(this)[0], $(this).data());

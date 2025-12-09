@@ -8,8 +8,8 @@
 @endsection
 
 @section('header_css')
-    <link href="{{ url('assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url('assets') }}/css/pos.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('tenant/admin/assets') }}/css/pos.css" rel="stylesheet" type="text/css" />
 @endsection
 
 @section('content')
@@ -321,7 +321,7 @@
 @endsection
 
 @section('footer_js')
-    <script src="{{ url('assets') }}/plugins/select2/select2.min.js"></script>
+    <script src="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.js"></script>
     <script>
         $('[data-toggle="select2"]').select2();
 

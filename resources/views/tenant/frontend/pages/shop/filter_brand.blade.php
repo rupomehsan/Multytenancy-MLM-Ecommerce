@@ -6,7 +6,7 @@
                 <label class="widget__form--check__label" for="check{{ $brand->slug }}">
                     @if ($brand->logo)
                         <img class="widget__categories--sub__menu--img lazy"
-                            src="{{ url('tenant/frontend/frontend_assets') }}/img/product-load.gif"
+                            src="{{ url('tenant/frontend') }}/img/product-load.gif"
                             data-src="{{ url(env('ADMIN_URL') . '/' . $brand->logo) }}" alt="" />
                     @endif
                     {{ $brand->name }}

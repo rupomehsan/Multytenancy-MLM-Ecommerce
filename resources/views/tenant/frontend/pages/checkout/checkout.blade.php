@@ -214,7 +214,7 @@
 @endsection
 
 @section('footer_js')
-    <script src="{{ url('tenant/frontend/frontend_assets') }}/js/plugins/select2.min.js"></script>
+    <script src="{{ url('tenant/frontend') }}/js/plugins/select2.min.js"></script>
     <script>
         $('[data-toggle="select2"]').select2();
 

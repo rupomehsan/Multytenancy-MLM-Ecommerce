@@ -8,11 +8,14 @@ use Sohibd\Laravelslug\Generate;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Image;
-use Yajra\DataTables\DataTables;
+
 
 use App\Modules\ECOMMERCE\Managements\ProductManagements\Categories\Database\Models\Category;
 
 use App\Http\Controllers\Controller;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\Categories\Actions\SaveNewCategory;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\Categories\Actions\ViewAllCategory;
+use Facade\FlareClient\View;
 
 class CategoryController extends Controller
 {
@@ -20,6 +23,8 @@ class CategoryController extends Controller
     {
         $this->loadModuleViewPath('ECOMMERCE/Managements/ProductManagements/Categories');
     }
+
+
     public function addNewCategory()
     {
         return view('create');
@@ -27,98 +32,24 @@ class CategoryController extends Controller
 
     public function saveNewCategory(Request $request)
     {
+        // Ensure uploads directory exists
 
-        $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:categories'],
-        ]);
 
-        $icon = null;
-        if ($request->hasFile('icon')) {
-            $get_image = $request->file('icon');
-            $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('category_images/');
-            // Image::make($get_image)->save($location . $image_name, 80);
-            $get_image->move($location, $image_name);
-            $icon = "category_images/" . $image_name;
+        $data = SaveNewCategory::execute($request);
+        if (isset($data['error'])) {
+            Toastr::error($data['error'], 'Failed');
+            return back();
+        } else {
+            Toastr::success('New Category has been Created', 'Success');
+            return redirect('/view/all/category');
         }
-
-        $categoryBanner = null;
-        if ($request->hasFile('banner_image')) {
-            $get_image = $request->file('banner_image');
-            $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('category_images/');
-            // Image::make($get_image)->save($location . $image_name, 80);
-            $get_image->move($location, $image_name);
-            $categoryBanner = "category_images/" . $image_name;
-        }
-
-        Category::insert([
-            'name' => $request->name,
-            'featured' => $request->featured ? $request->featured : 0,
-            'show_on_navbar' => $request->show_on_navbar ? $request->show_on_navbar : 1,
-            'icon' => $icon,
-            'banner_image' => $categoryBanner,
-            'slug' => Generate::Slug($request->name),
-            'status' => 1,
-            'serial' => Category::min('serial') - 1,
-            'created_at' => Carbon::now()
-        ]);
-
-        Toastr::success('Category has been Added', 'Success');
-        return back();
     }
 
     public function viewAllCategory(Request $request)
     {
+
         if ($request->ajax()) {
-            $data = Category::orderBy('serial', 'asc')->get();
-            return Datatables::of($data)
-                ->editColumn('status', function ($data) {
-                    if ($data->status == 1) {
-                        return '<span style="color:green; font-weight: 600">Active</span>';
-                    } else {
-                        return '<span style="color:#DF3554; font-weight: 600">Inactive</span>';
-                    }
-                })
-                ->editColumn('icon', function ($data) {
-                    if ($data->icon && file_exists(public_path($data->icon))) {
-                        return $data->icon;
-                    }
-                })
-                ->editColumn('banner_image', function ($data) {
-                    if ($data->banner_image && file_exists(public_path($data->banner_image))) {
-                        return $data->banner_image;
-                    }
-                })
-                ->editColumn('featured', function ($data) {
-                    if ($data->featured == 0) {
-                        return '<span class="badge badge-pill p-2 badge-danger" style="font-size: 11px; border-radius: 4px;">Not Featured</span>';
-                    } else {
-                        return '<span class="badge badge-pill p-2 badge-success" style="font-size: 11px; border-radius: 4px;">Featured</span>';
-                    }
-                })
-                ->editColumn('show_on_navbar', function ($data) {
-                    if ($data->show_on_navbar == 1) {
-                        return '<span class="badge badge-pill p-2 badge-success" style="font-size: 11px; border-radius: 4px;">Yes</span>';
-                    } else {
-                        return '<span class="badge badge-pill p-2 badge-danger" style="font-size: 11px; border-radius: 4px;">No</span>';
-                    }
-                })
-                ->addIndexColumn()
-                ->addColumn('action', function ($data) {
-                    $btn = ' <a href="' . url('edit/category') . '/' . $data->slug . '" class="mb-1 btn-sm btn-warning rounded"><i class="fas fa-edit"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->slug . '" data-original-title="Delete" class="btn-sm btn-danger rounded deleteBtn"><i class="fas fa-trash-alt"></i></a>';
-
-                    // if($data->featured == 0){
-                    //     $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$data->slug.'" title="Featured" data-original-title="Featured" class="btn-sm btn-success rounded featureBtn"><i class="feather-chevrons-up"></i></a>';
-                    // } else {
-                    //     $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$data->slug.'" title="Featured" data-original-title="Featured" class="btn-sm btn-danger rounded featureBtn"><i class="feather-chevrons-down"></i></a>';
-                    // }
-
-                    return $btn;
-                })
-                ->rawColumns(['action', 'icon', 'featured', 'show_on_navbar', 'status'])
-                ->make(true);
+            return ViewAllCategory::execute($request);
         }
         return view('view');
     }
@@ -176,6 +107,16 @@ class CategoryController extends Controller
 
         $data = Category::where('id', $request->id)->first();
 
+        // Ensure uploads directory exists
+        $uploadsDir = public_path('uploads/');
+        if (!file_exists($uploadsDir)) {
+            mkdir($uploadsDir, 0777, true);
+        }
+        $categoryImagesDir = public_path('uploads/category_images/');
+        if (!file_exists($categoryImagesDir)) {
+            mkdir($categoryImagesDir, 0777, true);
+        }
+
         $icon = $data->icon;
         if ($request->hasFile('icon')) {
 
@@ -185,10 +126,10 @@ class CategoryController extends Controller
 
             $get_image = $request->file('icon');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('category_images/');
+            $location = public_path('uploads/category_images/');
             // Image::make($get_image)->save($location . $image_name, 80);
             $get_image->move($location, $image_name);
-            $icon = "category_images/" . $image_name;
+            $icon = "uploads/category_images/" . $image_name;
         }
 
         $categoryBanner = $data->banner_image;
@@ -200,10 +141,10 @@ class CategoryController extends Controller
 
             $get_image = $request->file('banner_image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('category_images/');
+            $location = public_path('uploads/category_images/');
             // Image::make($get_image)->save($location . $image_name, 80);
             $get_image->move($location, $image_name);
-            $categoryBanner = "category_images/" . $image_name;
+            $categoryBanner = "uploads/category_images/" . $image_name;
         }
 
         Category::where('id', $request->id)->update([
