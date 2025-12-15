@@ -2,8 +2,9 @@
 
 namespace App\Modules\CRM\Managements\Customers\Database\Models;
 
-use App\Http\Controllers\Outlet\Models\CustomerSourceType;
-use App\Models\User;
+use App\Modules\CRM\Managements\CustomerSourceType\Database\Models\CustomerSourceType;
+use App\Modules\CRM\Managements\CustomerCategory\Database\Models\CustomerCategory;
+use App\Modules\ECOMMERCE\Managements\UserManagements\Users\Database\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

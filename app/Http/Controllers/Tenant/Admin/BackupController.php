@@ -103,6 +103,7 @@ class BackupController extends Controller
         // Try a list of possible locations for product images so backups still work
         // if files are stored under a tenant/admin subfolder (as you've created).
         $possible = [
+            public_path('uploads/productImages'),
             public_path('productImages'),
             public_path('tenant/admin/productImages'),
             public_path('tenant/admin/productiamges'), // tolerate common typo

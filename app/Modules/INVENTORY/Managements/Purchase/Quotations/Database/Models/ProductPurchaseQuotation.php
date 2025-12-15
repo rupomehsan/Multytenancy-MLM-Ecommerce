@@ -2,7 +2,7 @@
 
 namespace App\Modules\INVENTORY\Managements\Purchase\Quotations\Database\Models;
 
-use App\Models\User;
+use App\Modules\ECOMMERCE\Managements\UserManagements\Users\Database\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

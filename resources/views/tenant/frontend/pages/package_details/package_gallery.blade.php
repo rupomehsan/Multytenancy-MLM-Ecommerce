@@ -24,7 +24,7 @@
                         <div class="product__media--preview__items image-container zoom zoomSingleImage">
                             <img class="product__media--preview__items--img lazy"
                                 src="{{ url('tenant/frontend') }}/img/product-load.gif"
-                                data-src="{{ env('ADMIN_URL') . '/productImages/' . $image->image }}"
+                                data-src="{{ env('ADMIN_URL') . '/uploads/productImages/' . $image->image }}"
                                 alt="{{ $package->name }}" />
                         </div>
                     </div>
@@ -62,7 +62,7 @@
                         <div class="product__media--nav__items">
                             <img class="product__media--nav__items--img lazy" 
                                  src="{{url('frontend_assets')}}/img/product-load.gif" 
-                                 data-src="{{env('ADMIN_URL')."/productImages/".$image->image}}" alt="{{$package->name}}" />
+                                 data-src="{{env('ADMIN_URL')."/uploads/productImages/".$image->image}}" alt="{{$package->name}}" />
                         </div>
                     </div>
                 @endforeach

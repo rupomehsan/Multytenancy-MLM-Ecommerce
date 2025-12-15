@@ -37,7 +37,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.7.15/vue.min.js"></script>
     {{-- <script src="{{ asset('assets/js/vue.min.js') }}"></script> --}}
-    <script src="{{ asset('assets/js/purchase_vue.js') }}"></script>
+    <script src="{{ asset('tenant/admin/assets/js/purchase_vue.js') }}"></script>
 @endsection
 
 

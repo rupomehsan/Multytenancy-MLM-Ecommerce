@@ -11,9 +11,10 @@ use App\Http\Controllers\Controller;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 
 use App\Modules\ECOMMERCE\Managements\UserManagements\Users\Database\Models\User;
-use App\Models\EmailConfigure;
+use App\Modules\ECOMMERCE\Managements\Configurations\Database\Models\EmailConfigure as ModelsEmailConfigure;
 use App\Modules\ECOMMERCE\Managements\UserManagements\Users\Database\Models\UserActivity;
 
 class CustomerEcommerceController extends Controller
@@ -29,55 +30,63 @@ class CustomerEcommerceController extends Controller
 
     public function saveNewCustomerEcommerce(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'max:255', 'unique:users'],
             'address' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'max:255'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
-            // 'code' => ['required', 'string', 'max:255', 'unique:customer_sources,code'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp,webp', 'max:2048'],
         ]);
 
+        // handle image upload (keep public_path behavior for backward compatibility)
         $image = null;
         if ($request->hasFile('image')) {
-            $get_image = $request->file('image');
-            $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
+            $file = $request->file('image');
+            $image_name = Str::random(8) . '_' . time() . '.' . $file->getClientOriginalExtension();
             $location = public_path('userProfileImages/');
-            $get_image->move($location, $image_name);
-            $image = "userProfileImages/" . $image_name;
+            if (!file_exists($location)) {
+                mkdir($location, 0755, true);
+            }
+            $file->move($location, $image_name);
+            $image = 'userProfileImages/' . $image_name;
         }
 
-        $data = User::create([
-            'name' => request()->name,
-            'phone' => request()->phone,
-            'email' => request()->email,
-            'address' => request()->address,
-            'password' => \Illuminate\Support\Facades\Hash::make(request()->password),
-            'image' => $image ?? null,
-            'user_type' => config('role.customer'),
-            'verification_code' => Str::random(6),
+        // create user inside a transaction
+        try {
+            DB::beginTransaction();
 
-            'status' => 1,
-            'created_at' => Carbon::now()
-        ]);
+            $user = User::create([
+                'name' => $validated['name'],
+                'phone' => $validated['phone'],
+                'email' => $validated['email'],
+                'address' => $validated['address'],
+                'password' => Hash::make($validated['password']),
+                'image' => $image,
+                'user_type' => config('role.customer'),
+                'verification_code' => Str::random(6),
+                'status' => 1,
+                'created_at' => Carbon::now()
+            ]);
 
-        $emailConfig = EmailConfigure::where('status', 1)->orderBy('id', 'desc')->first();
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Toastr::error('Failed to create user: ' . $e->getMessage(), 'Error');
+            return back()->withInput();
+        }
 
+        // prepare dynamic mail config
+        $emailConfig = ModelsEmailConfigure::where('status', 1)->orderBy('id', 'desc')->first();
         if (!$emailConfig) {
-            return response()->json(['error' => 'No active email configuration found.']);
+            Toastr::warning('User created but no active email configuration found. Verification email not sent.', 'Warning');
+            return back();
         }
 
-        $userEmail = trim(request()->email);
-
-        if (!$userEmail) {
-            return response()->json(['error' => 'No email provided.']);
-        }
-        // Set mail config dynamically
         config([
             'mail.default' => 'smtp',
             'mail.mailers.smtp.transport' => 'smtp',
-            'mail.mailers.smtp.host' => trim($emailConfig->host), // e.g., smtp.gmail.com
+            'mail.mailers.smtp.host' => trim($emailConfig->host),
             'mail.mailers.smtp.port' => $emailConfig->port,
             'mail.mailers.smtp.username' => $emailConfig->email,
             'mail.mailers.smtp.password' => $emailConfig->password,
@@ -86,10 +95,11 @@ class CustomerEcommerceController extends Controller
             'mail.from.name' => $emailConfig->mail_from_name,
         ]);
 
+        // attempt sending verification email but do not fail the whole request if mail fails
         try {
-            Mail::to($userEmail)->send(new UserVerificationEmail($data));
+            Mail::to($user->email)->send(new UserVerificationEmail($user));
         } catch (\Exception $e) {
-            Toastr::error($e->getMessage(), '❌ Mail error');
+            Toastr::error('Mail error: ' . $e->getMessage(), '❌ Mail error');
         }
 
         Toastr::success('Added successfully!', 'Success');

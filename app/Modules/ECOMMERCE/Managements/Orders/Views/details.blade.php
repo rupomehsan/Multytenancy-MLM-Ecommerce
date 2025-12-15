@@ -49,11 +49,11 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col text-left">
-                            <h4 class="m-0">{{ $generalInfo->company_name }}</h4>
+                            <h4 class="m-0">{{ optional($generalInfo)->company_name ?? '' }}</h4>
                         </div>
                         <div class="col text-center">
-                            @if (file_exists(public_path($generalInfo->logo_dark)))
-                                <img src="{{ url($generalInfo->logo_dark) }}" alt="" height="50">
+                            @if (file_exists(public_path(optional($generalInfo)->logo_dark ?? '')) && optional($generalInfo)->logo_dark)
+                                <img src="{{ url(optional($generalInfo)->logo_dark ?? '') }}" alt="" height="50">
                             @endif
                         </div>
                         <div class="col text-right">

@@ -15,7 +15,7 @@ Route::get('/view/cancelled/orders', [OrderController::class, 'viewCancelledOrde
 Route::get('/view/picked/orders', [OrderController::class, 'viewPickedOrders'])->name('ViewPickedOrders');
 Route::get('/view/intransit/orders', [OrderController::class, 'viewIntransitOrders'])->name('ViewIntransitOrders');
 Route::get('/view/dispatch/orders', [OrderController::class, 'viewAllDispatchOrders'])->name('viewDispatchOrders');
-Route::get('/order/details/{slug}', [OrderController::class, 'orderDetails'])->name('OrderDetails');
+Route::get('/admin/order/details/{slug}', [OrderController::class, 'orderDetails'])->name('adminOrderDetails');
 Route::get('/cancel/order/{slug}', [OrderController::class, 'cancelOrder'])->name('CancelOrder');
 Route::get('/approve/order/{slug}', [OrderController::class, 'approveOrder'])->name('ApproveOrder');
 Route::get('/intransit/order/{slug}', [OrderController::class, 'intransitOrder'])->name('IntransitOrder');

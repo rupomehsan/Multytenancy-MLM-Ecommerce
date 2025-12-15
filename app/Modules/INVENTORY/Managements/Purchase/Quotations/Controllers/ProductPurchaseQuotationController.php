@@ -3,16 +3,7 @@
 namespace App\Modules\INVENTORY\Managements\Purchase\Quotations\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Inventory\Models\ProductSupplier;
-use App\Http\Controllers\Inventory\Models\ProductWarehouse;
-use App\Http\Controllers\Inventory\Models\ProductWarehouseRoom;
-use App\Http\Controllers\Inventory\Models\ProductWarehouseRoomCartoon;
-use App\Http\Controllers\Inventory\Models\ProductPurchaseOrder;
-use App\Http\Controllers\Inventory\Models\ProductPurchaseOrderProduct;
-use App\Http\Controllers\Inventory\Models\ProductPurchaseQuotation;
-use App\Http\Controllers\Inventory\Models\ProductPurchaseQuotationProduct;
-use App\Http\Controllers\Inventory\Models\ProductPurchaseOtherCharge;
-use App\Models\Product;
+
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -22,8 +13,26 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+
+
+use App\Modules\INVENTORY\Managements\Suppliers\Database\Models\ProductSupplier;
+use App\Modules\INVENTORY\Managements\WareHouse\Database\Models\ProductWarehouse;
+use App\Modules\INVENTORY\Managements\WareHouseRoom\Database\Models\ProductWarehouseRoom;
+use App\Modules\INVENTORY\Managements\WareHouseRoomCartoon\Database\Models\ProductWarehouseRoomCartoon;
+use App\Modules\INVENTORY\Managements\Purchase\PurchaseOrders\Database\Models\ProductPurchaseOrder;
+use App\Modules\INVENTORY\Managements\Purchase\PurchaseOrders\Database\Models\ProductPurchaseOrderProduct;
+use App\Modules\INVENTORY\Managements\Purchase\Quotations\Database\Models\ProductPurchaseQuotation;
+use App\Modules\INVENTORY\Managements\Purchase\Quotations\Database\Models\ProductPurchaseQuotationProduct;
+use App\Modules\INVENTORY\Managements\Purchase\PurchaseOrders\Database\Models\ProductStock;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\Product;
+use App\Modules\INVENTORY\Managements\Purchase\ChargeTypes\Database\Models\ProductPurchaseOtherCharge;
+
 class ProductPurchaseQuotationController extends Controller
 {
+    public function __construct()
+    {
+        $this->loadModuleViewPath('INVENTORY/Managements/Purchase/Quotations');
+    }
     public function addNewPurchaseProductQuotation()
     {
         $products = Product::where('status', 'active')->get();
@@ -32,7 +41,7 @@ class ProductPurchaseQuotationController extends Controller
         $productWarehouseRooms = ProductWarehouseRoom::where('status', 'active')->get();
         $productWarehouseRoomCartoons = ProductWarehouseRoomCartoon::where('status', 'active')->get();
         $other_charges_types = ProductPurchaseOtherCharge::where('status', 'active')->get();
-        return view('backend.purchase_product_quotation.create', compact('products', 'suppliers', 'productWarehouses', 'productWarehouseRooms', 'productWarehouseRoomCartoons', 'other_charges_types'));
+        return view('create', compact('products', 'suppliers', 'productWarehouses', 'productWarehouseRooms', 'productWarehouseRoomCartoons', 'other_charges_types'));
     }
 
     public function calc_other_charges($other_charges, $subtotal)
@@ -201,7 +210,7 @@ class ProductPurchaseQuotationController extends Controller
                 ->rawColumns(['is_ordered', 'action'])
                 ->make(true);
         }
-        return view('backend.purchase_product_quotation.view');
+        return view('view');
     }
 
 
@@ -216,7 +225,7 @@ class ProductPurchaseQuotationController extends Controller
         $suppliers = ProductSupplier::where('status', 'active')->get();
         $other_charges_types = ProductPurchaseOtherCharge::where('status', 'active')->get();
 
-        return view('backend.purchase_product_quotation.edit', compact('data', 'productWarehouses', 'productWarehouseRooms', 'productWarehouseRoomCartoon', 'suppliers', 'other_charges_types'));
+        return view('edit', compact('data', 'productWarehouses', 'productWarehouseRooms', 'productWarehouseRoomCartoon', 'suppliers', 'other_charges_types'));
     }
 
     public function apiEditPurchaseProduct($slug)
@@ -232,7 +241,7 @@ class ProductPurchaseQuotationController extends Controller
             'data' => $data,
         ]);
 
-        // return view('backend.purchase_product_quotation.edit', compact('data', 'productWarehouses', 'productWarehouseRooms', 'productWarehouseRoomCartoon', 'suppliers'));
+        // return view('edit', compact('data', 'productWarehouses', 'productWarehouseRooms', 'productWarehouseRoomCartoon', 'suppliers'));
     }
 
     public function updatePurchaseProductQuotation(Request $request)
@@ -373,7 +382,7 @@ class ProductPurchaseQuotationController extends Controller
 
         $other_charges_types = ProductPurchaseOtherCharge::where('status', 'active')->get();
 
-        return view('backend.purchase_product_quotation.order-invoice', compact('data', 'productWarehouses', 'productWarehouseRooms', 'productWarehouseRoomCartoon', 'suppliers', 'other_charges_types'));
+        return view('order-invoice', compact('data', 'productWarehouses', 'productWarehouseRooms', 'productWarehouseRoomCartoon', 'suppliers', 'other_charges_types'));
     }
 
 

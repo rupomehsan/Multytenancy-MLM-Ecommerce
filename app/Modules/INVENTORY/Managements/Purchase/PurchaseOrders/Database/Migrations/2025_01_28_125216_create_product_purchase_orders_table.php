@@ -26,7 +26,6 @@ class CreateProductPurchaseOrdersTable extends Migration
             $table->integer('discount_amount')->nullable();
             $table->decimal('calculated_discount_amount', 6, 2)->nullable();
             $table->enum('order_status', ['pending', 'received'])->default('pending');
-            // $table->string('other_charge_type', 100)->nullable();
             $table->string('other_charge_type', 100)->nullable();
             $table->decimal('other_charge_percentage', 6, 2)->nullable();
             $table->decimal('other_charge_amount', 10, 2)->nullable();
@@ -36,7 +35,7 @@ class CreateProductPurchaseOrdersTable extends Migration
             $table->text('note')->nullable();
             $table->string('code')->nullable();
             $table->string('reference')->nullable();
-
+            $table->string('payment_status')->nullable();
             $table->unsignedBigInteger('creator')->nullable();
             $table->string('slug',)->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');

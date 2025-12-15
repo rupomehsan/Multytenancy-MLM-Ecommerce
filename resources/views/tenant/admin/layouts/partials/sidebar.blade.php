@@ -355,7 +355,7 @@
     <li>
         <a href="javascript: void(0);" class="has-arrow">
             <i class="feather-shopping-cart"></i>
-            <span>Manage Orders</span>
+            <span>Order Management</span>
         </a>
         <ul class="sub-menu" aria-expanded="false">
             <li>

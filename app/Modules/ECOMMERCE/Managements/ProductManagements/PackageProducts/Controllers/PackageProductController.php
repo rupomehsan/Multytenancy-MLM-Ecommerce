@@ -107,6 +107,7 @@ class PackageProductController extends Controller
         $colors = Color::get();
         $sizes = ProductSize::orderBy('serial', 'asc')->get();
 
+
         return view('create', compact(
             'categories',
             'brands',
@@ -211,7 +212,10 @@ class PackageProductController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '.' . $image->extension();
-            $location = public_path('productImages/');
+            $location = public_path('uploads/productImages/');
+            if (!file_exists($location)) {
+                mkdir($location, 0755, true);
+            }
 
             if ($image->extension() == 'svg') {
                 $image->move($location, $imageName);
@@ -219,7 +223,7 @@ class PackageProductController extends Controller
                 Image::make($image)->save($location . $imageName, 60);
             }
 
-            $imageFileName = 'productImages/' . $imageName;
+            $imageFileName = 'uploads/productImages/' . $imageName;
         }
 
         // Generate slug
@@ -352,14 +356,17 @@ class PackageProductController extends Controller
 
             $image = $request->file('image');
             $imageName = time() . '.' . $image->extension();
-            $location = public_path('productImages/');
+            $location = public_path('uploads/productImages/');
+            if (!file_exists($location)) {
+                mkdir($location, 0755, true);
+            }
 
             if ($image->extension() == 'svg') {
                 $image->move($location, $imageName);
             } else {
                 Image::make($image)->save($location . $imageName, 60);
             }
-            $product->image = 'productImages/' . $imageName;
+            $product->image = 'uploads/productImages/' . $imageName;
         }
 
         $product->name = $request->name;
@@ -389,8 +396,8 @@ class PackageProductController extends Controller
         PackageProductItem::where('package_product_id', $id)->delete();
 
         // Delete image
-        if ($product->image && file_exists(public_path('productImages/' . $product->image))) {
-            unlink(public_path('productImages/' . $product->image));
+        if ($product->image && file_exists(public_path($product->image))) {
+            @unlink(public_path($product->image));
         }
 
         $product->delete();
@@ -509,8 +516,8 @@ class PackageProductController extends Controller
     public function removeItem($packageId, $itemId)
     {
         $item = PackageProductItem::findOrFail($itemId);
-        if ($item->product && $item->product->image && file_exists(public_path('productImages/' . $item->product->image))) {
-            unlink(public_path('productImages/' . $item->product->image));
+        if ($item->product && $item->product->image && file_exists(public_path($item->product->image))) {
+            @unlink(public_path($item->product->image));
         }
         $item->delete();
 

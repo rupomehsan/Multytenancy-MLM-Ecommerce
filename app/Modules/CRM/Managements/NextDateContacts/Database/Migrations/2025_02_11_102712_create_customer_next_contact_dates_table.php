@@ -17,9 +17,10 @@ class CreateCustomerNextContactDatesTable extends Migration
             $table->id();
 
             $table->unsignedBigInteger('customer_id')->nullable();
-            $table->date('next_date')->nullable();                       
+            $table->unsignedBigInteger('employee_id')->nullable();
+            $table->date('next_date')->nullable();
             $table->enum('contact_status', ['pending', 'missed', 'done'])->default('pending');
-            
+
             $table->unsignedBigInteger('creator')->nullable();
             $table->string('slug')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');

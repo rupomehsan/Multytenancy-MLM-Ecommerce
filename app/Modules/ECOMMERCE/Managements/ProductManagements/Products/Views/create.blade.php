@@ -357,6 +357,26 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="col-lg-6">
+                                            <div class="form-group">
+                                                <label for="flag_id">Flag</label>
+                                                <select name="flag_id" data-toggle="select2" class="form-control"
+                                                    id="flag_id">
+                                                    @php
+                                                        if (isset($flags)) {
+                                                            echo $flags;
+                                                        }
+                                                    @endphp
+                                                </select>
+                                                <div class="invalid-feedback" style="display: block;">
+                                                    @error('flag')
+                                                        {{ $message }}
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
 
@@ -585,24 +605,7 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-lg-6">
-                                            <div class="form-group">
-                                                <label for="flag_id">Flag</label>
-                                                <select name="flag_id" data-toggle="select2" class="form-control"
-                                                    id="flag_id">
-                                                    @php
-                                                        if (isset($flags)) {
-                                                            echo $flags;
-                                                        }
-                                                    @endphp
-                                                </select>
-                                                <div class="invalid-feedback" style="display: block;">
-                                                    @error('flag')
-                                                        {{ $message }}
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                        </div>
+
 
                                         <div class="col-lg-6" id="product_warrenty">
                                             <div class="form-group">

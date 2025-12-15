@@ -264,7 +264,7 @@
             if (confirm("Are You sure to Cancel !")) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('cancel/order') }}" + '/' + slug,
+                    url: "{{ url('admin/order/details') }}" + '/' + slug,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Order has been Cancelled", "Cancelled Successfully");

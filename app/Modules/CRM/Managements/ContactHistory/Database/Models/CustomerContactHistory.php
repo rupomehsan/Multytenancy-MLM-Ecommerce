@@ -4,8 +4,9 @@ namespace App\Modules\CRM\Managements\ContactHistory\Database\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
+
 use App\Modules\CRM\Managements\Customers\Database\Models\Customer;
+use App\Modules\ECOMMERCE\Managements\UserManagements\Users\Database\Models\User;
 
 class CustomerContactHistory extends Model
 {

@@ -45,6 +45,25 @@ class ProductController extends Controller
     {
         $this->loadModuleViewPath('ECOMMERCE/Managements/ProductManagements/Products');
     }
+
+    /**
+     * Ensure an upload directory exists under public/ and return its absolute path.
+     * Creates the directory if necessary with sane permissions.
+     *
+     * @param string $relativePath (e.g. 'uploads/productImages')
+     * @return string absolute path with trailing slash
+     */
+    private function ensureUploadDirExists($relativePath = 'uploads/productImages')
+    {
+        $location = public_path(rtrim($relativePath, '/') . '/');
+        if (!file_exists($location)) {
+            // try to create directory recursively
+            @mkdir($location, 0755, true);
+            // if mkdir succeeded, optionally try to set permissions
+            @chmod($location, 0755);
+        }
+        return $location;
+    }
     public function addNewProduct()
     {
         $categories = Category::getDropDownList('name');
@@ -101,7 +120,7 @@ class ProductController extends Controller
 
             $get_image = $request->file('image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('productImages/');
+            $location = $this->ensureUploadDirExists('uploads/productImages');
 
             if ($get_image->getClientOriginalExtension() == 'svg') {
                 $get_image->move($location, $image_name);
@@ -109,7 +128,7 @@ class ProductController extends Controller
                 Image::make($get_image)->save($location . $image_name, 60);
             }
 
-            $image = "productImages/" . $image_name;
+            $image = "uploads/productImages/" . $image_name;
         }
 
 
@@ -180,7 +199,7 @@ class ProductController extends Controller
                 $name = NULL;
                 if (isset($request->file('product_variant_image')[$i]) && $request->file('product_variant_image')[$i]) {
                     $name = time() . str::random(5) . '.' . $request->file('product_variant_image')[$i]->extension();
-                    $location = public_path('productImages/');
+                    $location = $this->ensureUploadDirExists('uploads/productImages');
                     $get_image = $request->file('product_variant_image')[$i];
 
                     if ($request->file('product_variant_image')[$i]->extension() == 'svg') {
@@ -231,7 +250,7 @@ class ProductController extends Controller
             if ($request->hasfile('photos')) {
                 foreach ($request->file('photos') as $file) {
                     $name = time() . str::random(5) . '.' . $file->extension();
-                    $location = public_path('productImages/');
+                    $location = $this->ensureUploadDirExists('uploads/productImages');
 
                     if ($file->extension() == 'svg') {
                         $file->move($location, $name);
@@ -382,8 +401,8 @@ class ProductController extends Controller
         $gallery = ProductImage::where('product_id', $data->id)->get();
         if (count($gallery) > 0 && $data->is_demo == 0) {
             foreach ($gallery as $img) {
-                if ($img->image && file_exists(public_path('productImages/' . $img->image))) {
-                    unlink(public_path('productImages/' . $img->image));
+                if ($img->image && file_exists(public_path($img->image))) {
+                    unlink(public_path($img->image));
                 }
                 $img->delete();
             }
@@ -392,8 +411,8 @@ class ProductController extends Controller
         $variants = ProductVariant::where('product_id', $data->id)->orderBy('id', 'asc')->get();
         if (count($variants) > 0 && $data->is_demo == 0) {
             foreach ($variants as $img) {
-                if ($img->image && file_exists(public_path('productImages/' . $img->image))) {
-                    unlink(public_path('productImages/' . $img->image));
+                if ($img->image && file_exists(public_path($img->image))) {
+                    unlink(public_path($img->image));
                 }
                 $img->delete();
             }
@@ -408,12 +427,48 @@ class ProductController extends Controller
     public function editProduct($slug)
     {
         $product = Product::where('slug', $slug)->first();
+
+        // Get all dropdown data with pre-selected values (same as create page but with selected values)
+        $categories = Category::getDropDownList('name', $product->category_id);
+        $brands = Brand::getDropDownList('name', $product->brand_id);
+        $flags = Flag::getDropDownList('name', $product->flag_id);
+        $warrenties = ProductWarrenty::getDropDownList('name', $product->warrenty_id);
+        $units = Unit::getDropDownList('name', $product->unit_id);
+        $colors = Color::getDropDownList('name');
+        $product_sizes = ProductSize::getDropDownList('name');
+        $regions = Region::getDropDownList('name');
+        $sim = Sim::getDropDownList('name');
+        $storage_types = StorageType::getDropDownList('ram');
+        $product_warrenties = ProductWarrenty::getDropDownList('name');
+        $device_conditions = DeviceCondition::getDropDownList('name');
+
+        // Get product-specific data
         $subcategories = Subcategory::where('category_id', $product->category_id)->select('name', 'id')->orderBy('name', 'asc')->get();
         $childcategories = ChildCategory::where('category_id', $product->category_id)->where('subcategory_id', $product->subcategory_id)->select('name', 'id')->orderBy('name', 'asc')->get();
         $productModels = Product::where('brand_id', $product->brand_id)->select('name', 'id')->orderBy('name', 'asc')->get();
         $gallery = ProductImage::where('product_id', $product->id)->get();
         $productVariants = ProductVariant::where('product_id', $product->id)->orderBy('id', 'asc')->get();
-        return view('update', compact('product', 'gallery', 'subcategories', 'childcategories', 'productModels', 'productVariants'));
+
+        return view('update', compact(
+            'product',
+            'gallery',
+            'subcategories',
+            'childcategories',
+            'productModels',
+            'productVariants',
+            'categories',
+            'brands',
+            'flags',
+            'warrenties',
+            'units',
+            'colors',
+            'product_sizes',
+            'regions',
+            'sim',
+            'storage_types',
+            'product_warrenties',
+            'device_conditions'
+        ));
     }
 
     public function updateProduct(Request $request)
@@ -436,7 +491,7 @@ class ProductController extends Controller
 
             $get_image = $request->file('image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('productImages/');
+            $location = $this->ensureUploadDirExists('uploads/productImages');
 
             if ($get_image->getClientOriginalExtension() == 'svg') {
                 $get_image->move($location, $image_name);
@@ -444,7 +499,7 @@ class ProductController extends Controller
                 Image::make($get_image)->save($location . $image_name, 60);
             }
 
-            $image = "productImages/" . $image_name;
+            $image = "uploads/productImages/" . $image_name;
         }
 
         $clean = preg_replace('/[^a-zA-Z0-9\s]/', '', strtolower($request->name)); //remove all non alpha numeric
@@ -497,8 +552,8 @@ class ProductController extends Controller
             $gallery = ProductImage::where('product_id', $request->id)->get();
             if (count($gallery) > 0) {
                 foreach ($gallery as $img) {
-                    if (file_exists(public_path('productImages/' . $img->image))) {
-                        unlink(public_path('productImages/' . $img->image));
+                    if (file_exists(public_path($img->image))) {
+                        unlink(public_path($img->image));
                     }
                     $img->delete();
                 }
@@ -536,7 +591,7 @@ class ProductController extends Controller
                     $name = $variantInfo->image;
                     if (isset($request->file('product_variant_image')[$i])) {
                         $name = time() . str::random(5) . '.' . $request->file('product_variant_image')[$i]->extension();
-                        $location = public_path('productImages/');
+                        $location = $this->ensureUploadDirExists('uploads/productImages');
                         $get_image = $request->file('product_variant_image')[$i];
 
                         if ($get_image->extension() == 'svg') {
@@ -566,7 +621,7 @@ class ProductController extends Controller
                     if (isset($request->file('product_variant_image')[$i]) && $request->file('product_variant_image')[$i]) {
                         $name = time() . str::random(5) . '.' . $request->file('product_variant_image')[$i]->extension();
 
-                        $location = public_path('productImages/');
+                        $location = $this->ensureUploadDirExists('uploads/productImages');
                         $get_image = $request->file('product_variant_image')[$i];
 
                         if ($get_image->extension() == 'svg') {
@@ -609,8 +664,8 @@ class ProductController extends Controller
             $variants = ProductVariant::where('product_id', $request->id)->orderBy('id', 'asc')->get();
             if (count($variants) > 0) {
                 foreach ($variants as $img) {
-                    if (file_exists(public_path('productImages/' . $img->image))) {
-                        unlink(public_path('productImages/' . $img->image));
+                    if (file_exists(public_path($img->image))) {
+                        unlink(public_path($img->image));
                     }
                     $img->delete();
                 }
@@ -626,8 +681,8 @@ class ProductController extends Controller
                 $gallery = ProductImage::where('product_id', $product->id)->get();
                 foreach ($gallery as $multipleImage) {
                     if (!in_array($multipleImage->id, $oldImageIdArray)) {
-                        if (file_exists(public_path('productImages/' . $multipleImage->image))) {
-                            unlink(public_path('productImages/' . $multipleImage->image));
+                        if (file_exists(public_path($multipleImage->image))) {
+                            unlink(public_path($multipleImage->image));
                         }
                         ProductImage::where('id', $multipleImage->id)->delete();
                     } else {
@@ -642,7 +697,7 @@ class ProductController extends Controller
             if ($request->hasfile('photos')) {
                 foreach ($request->file('photos') as $file) {
                     $name = time() . str::random(5) . '.' . $file->extension();
-                    $location = public_path('productImages/');
+                    $location = $this->ensureUploadDirExists('uploads/productImages');
 
                     if ($file->extension() == 'svg') {
                         $file->move($location, $name);
@@ -727,15 +782,37 @@ class ProductController extends Controller
 
     public function addAnotherVariant()
     {
-        $returnHTML = view('variant')->render();
+        // Prepare dropdown HTML from models so the view receives data from controller
+        $colors = Color::getDropDownList('name');
+        $units = Unit::getDropDownList('name');
+        $product_sizes = ProductSize::getDropDownList('name');
+        $regions = Region::getDropDownList('name');
+        $sim = Sim::getDropDownList('name');
+        $storage_types = StorageType::getDropDownList('ram');
+        $product_warrenties = ProductWarrenty::getDropDownList('name');
+        $device_conditions = DeviceCondition::getDropDownList('name');
+
+        $returnHTML = view('variant', compact(
+            'colors',
+            'units',
+            'product_sizes',
+            'regions',
+            'sim',
+            'storage_types',
+            'product_warrenties',
+            'device_conditions'
+        ))->render();
+
         return response()->json(['variant' => $returnHTML]);
     }
+
+
 
     public function deleteProductVariant($id)
     {
         $variant = ProductVariant::where('id', $id)->first();
-        if ($variant->image && file_exists(public_path('productImages/' . $variant->image))) {
-            unlink(public_path('productImages/' . $variant->image));
+        if ($variant->image && file_exists(public_path($variant->image))) {
+            unlink(public_path($variant->image));
         }
         $variant->delete();
         return response()->json(['success' => 'Deleted Successfully']);
@@ -849,7 +926,7 @@ class ProductController extends Controller
                 'model_id' => isset($modelId[0]) ? $modelId[0]->id : null,
                 'name' => $title,
                 'code' => rand(100, 999),
-                'image' => $request->product_type == 1 ? 'productImages/' . rand(1, 20) . '.png' : 'productImages/' . rand(21, 40) . '.png',
+                'image' => $request->product_type == 1 ? 'uploads/productImages/' . rand(1, 20) . '.png' : 'uploads/productImages/' . rand(21, 40) . '.png',
                 'multiple_images' => $i % 2 != 0 ? json_encode($multipleProductArray) : null,
                 'short_description' => $faker->text($maxNbChars = 200),
                 'description' => $faker->text($maxNbChars = 400),

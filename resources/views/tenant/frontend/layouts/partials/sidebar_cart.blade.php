@@ -47,7 +47,7 @@
                     <a
                         href="{{ url(isset($details['is_package']) && $details['is_package'] ? 'package/details' : 'product/details') }}/{{ $details['slug'] }}">
                         @if (isset($details['has_variant']) && $details['has_variant'])
-                            <img src="{{ url(env('ADMIN_URL') . '/productImages/' . $imageToShow) }}"
+                            <img src="{{ url(env('ADMIN_URL') . '/uploads/productImages/' . $imageToShow) }}"
                                 alt="product-img" />
                         @else
                             <img src="{{ url(env('ADMIN_URL') . '/' . $imageToShow) }}" alt="product-img" />

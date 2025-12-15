@@ -262,7 +262,7 @@
                                                     placeholder="Search products..." />
                                             </div>
                                             <div class="row" id="available_products">
-                                                @foreach (App\Models\Product::where('is_package', false)->where('status', 1)->get() as $product)
+                                                @foreach ($products as $product)
                                                     <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-3 product-item">
                                                         <div class="card product-card" style="cursor: pointer;"
                                                             data-product-id="{{ $product->id }}"

@@ -3,17 +3,6 @@
 namespace App\Modules\INVENTORY\Managements\Purchase\PurchaseOrders\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Inventory\Models\ProductSupplier;
-use App\Http\Controllers\Inventory\Models\ProductWarehouse;
-use App\Http\Controllers\Inventory\Models\ProductWarehouseRoom;
-use App\Http\Controllers\Inventory\Models\ProductWarehouseRoomCartoon;
-use App\Http\Controllers\Inventory\Models\ProductPurchaseOrder;
-use App\Http\Controllers\Inventory\Models\ProductPurchaseOrderProduct;
-use App\Http\Controllers\Inventory\Models\ProductPurchaseQuotation;
-use App\Http\Controllers\Inventory\Models\ProductPurchaseQuotationProduct;
-use App\Http\Controllers\Inventory\Models\ProductPurchaseOtherCharge;
-use App\Http\Controllers\Inventory\Models\ProductStock;
-use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
@@ -23,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Account\AccountsHelper;
+
+
 use App\Http\Controllers\Account\Models\AccountTransaction;
 use App\Http\Controllers\Account\Models\SubsidiaryLedger;
 use App\Http\Controllers\Account\Models\AccountTransactionDetail;
@@ -30,8 +21,25 @@ use App\Http\Controllers\Account\Models\SubsidiaryCalculation;
 use App\Http\Controllers\Account\Models\AccountsConfiguration;
 
 
+use App\Modules\INVENTORY\Managements\Suppliers\Database\Models\ProductSupplier;
+use App\Modules\INVENTORY\Managements\WareHouse\Database\Models\ProductWarehouse;
+use App\Modules\INVENTORY\Managements\WareHouseRoom\Database\Models\ProductWarehouseRoom;
+use App\Modules\INVENTORY\Managements\WareHouseRoomCartoon\Database\Models\ProductWarehouseRoomCartoon;
+use App\Modules\INVENTORY\Managements\Purchase\PurchaseOrders\Database\Models\ProductPurchaseOrder;
+use App\Modules\INVENTORY\Managements\Purchase\PurchaseOrders\Database\Models\ProductPurchaseOrderProduct;
+use App\Modules\INVENTORY\Managements\Purchase\Quotations\Database\Models\ProductPurchaseQuotation;
+use App\Modules\INVENTORY\Managements\Purchase\Quotations\Database\Models\ProductPurchaseQuotationProduct;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\Product;
+use App\Modules\INVENTORY\Managements\Purchase\ChargeTypes\Database\Models\ProductPurchaseOtherCharge;
+use App\Modules\INVENTORY\Managements\Purchase\PurchaseOrders\Database\Models\ProductStock;
+
+
 class ProductPurchaseOrderController extends Controller
 {
+    public function __construct()
+    {
+        $this->loadModuleViewPath('INVENTORY/Managements/Purchase/PurchaseOrders');
+    }
     public function addNewPurchaseProductOrder()
     {
         $products = Product::where('status', 'active')->get();
@@ -40,7 +48,7 @@ class ProductPurchaseOrderController extends Controller
         $productWarehouseRooms = ProductWarehouseRoom::where('status', 'active')->get();
         $productWarehouseRoomCartoons = ProductWarehouseRoomCartoon::where('status', 'active')->get();
         $other_charges_types = ProductPurchaseOtherCharge::where('status', 'active')->get();
-        return view('backend.purchase_product_order.create', compact('products', 'suppliers', 'productWarehouses', 'productWarehouseRooms', 'productWarehouseRoomCartoons', 'other_charges_types'));
+        return view('create', compact('products', 'suppliers', 'productWarehouses', 'productWarehouseRooms', 'productWarehouseRoomCartoons', 'other_charges_types'));
     }
 
     public function calc_other_charges($other_charges, $subtotal)
@@ -211,7 +219,7 @@ class ProductPurchaseOrderController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('backend.purchase_product_order.view');
+        return view('view');
     }
 
 
@@ -227,7 +235,7 @@ class ProductPurchaseOrderController extends Controller
 
         $other_charges_types = ProductPurchaseOtherCharge::where('status', 'active')->get();
 
-        return view('backend.purchase_product_order.edit', compact('data', 'productWarehouses', 'productWarehouseRooms', 'productWarehouseRoomCartoon', 'suppliers', 'other_charges_types'));
+        return view('edit', compact('data', 'productWarehouses', 'productWarehouseRooms', 'productWarehouseRoomCartoon', 'suppliers', 'other_charges_types'));
     }
 
     public function apiEditPurchaseProduct($slug)

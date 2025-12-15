@@ -91,6 +91,7 @@ class CustomerContactHistoryController extends Controller
         $user = auth()->user();
 
         if ($request->ajax()) {
+
             if ($user->user_type == 1) {
                 $data = CustomerContactHistory::with(['customer', 'employee'])
                     ->orderBy('id', 'DESC')
@@ -101,7 +102,7 @@ class CustomerContactHistoryController extends Controller
                     ->orderBy('id', 'DESC')
                     ->get();
             }
-            // dd($data->toArray());
+
             return Datatables::of($data)
                 // ->editColumn('status', function ($data) {
                 //     return $data->status == "active" ? 'Active' : 'Inactive';

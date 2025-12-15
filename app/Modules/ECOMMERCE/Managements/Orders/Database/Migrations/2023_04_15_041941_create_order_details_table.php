@@ -36,6 +36,7 @@ class CreateOrderDetailsTable extends Migration
             $table->unsignedBigInteger('warrenty_id')->comment("Variant")->nullable();
             $table->unsignedBigInteger('device_condition_id')->comment("Variant")->nullable();
             // added later end
+            $table->decimal('avg_cost_price', 10, 2)->nullable()->after('unit_price')->comment('Average cost price of the product at the time of order');
 
             $table->unsignedBigInteger('unit_id')->nullable();
             $table->double('qty');

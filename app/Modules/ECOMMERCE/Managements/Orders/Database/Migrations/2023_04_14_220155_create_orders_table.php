@@ -17,6 +17,7 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->string('order_no')->unique();
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('outlet_id')->nullable();
             $table->dateTime('order_date');
             $table->date('estimated_dd')->nullable();
             $table->dateTime('delivery_date')->nullable();
@@ -28,11 +29,19 @@ class CreateOrdersTable extends Migration
             $table->tinyInteger('order_status')->default(0)->comment('0=>pending/processing; 1=>confirmed; 2=>intransit; 3=>delivered; 4=>cancel');
             $table->double('sub_total')->default(0);
             $table->string('coupon_code')->nullable();
+            $table->string('reference_code')->nullable();
+            $table->unsignedBigInteger('customer_src_type_id')->nullable();
             $table->double('discount')->default(0);
             $table->double('delivery_fee')->default(0);
             $table->double('vat')->default(0);
             $table->double('tax')->default(0);
             $table->double('total')->default(0);
+            $table->double('round_off')->default(0);
+            $table->double('coupon_price')->default(0);
+            $table->string('invoice_no')->nullable();
+            $table->timestamp('invoice_date')->nullable();
+            $table->boolean('invoice_generated')->default(0);
+            $table->unsignedTinyInteger('order_from')->nullable()->comment('1=>web;2=>app;3=>pos');
             $table->longText('order_note')->comment("Order Note By Customer")->nullable();
             $table->longText('order_remarks')->comment("Special Note By Admin")->nullable();
             $table->string('slug')->unique();
@@ -40,6 +49,16 @@ class CreateOrdersTable extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
+
+        // Add foreign key to customer_source_types if that table exists
+        if (Schema::hasTable('customer_source_types')) {
+            Schema::table('orders', function (Blueprint $table) {
+                $table->foreign('customer_src_type_id')
+                    ->references('id')
+                    ->on('customer_source_types')
+                    ->onDelete('set null');
+            });
+        }
     }
 
     /**

@@ -14,11 +14,11 @@
                 @foreach ($images as $imageData)
                     <div class="col-md-3 mb-4 text-center">
                         <!-- Lightbox link on image -->
-                        <a href="{{ env('ADMIN_URL') . '/productImages/' . $imageData['image'] }}"
+                        <a href="{{ env('ADMIN_URL') . '/uploads/productImages/' . $imageData['image'] }}"
                             data-lightbox="product_gallery">
                             <img class="product__media--preview__items--img lazy img-fluid p-2 border rounded"
                                 src="{{ url('tenant/frontend') }}/img/product-load.gif"
-                                data-src="{{ env('ADMIN_URL') . '/productImages/' . $imageData['image'] }}"
+                                data-src="{{ env('ADMIN_URL') . '/uploads/productImages/' . $imageData['image'] }}"
                                 alt="{{ $imageData['product_name'] }}" />
                         </a>
                         <!-- Product details link on title -->

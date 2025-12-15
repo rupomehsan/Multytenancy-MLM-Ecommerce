@@ -262,8 +262,8 @@
                                                             for="option_color_{{ $variant->color_id }}"
                                                             title="{{ $variant->color_name }}">
 
-                                                            {{-- <img src="{{ env('ADMIN_URL') . '/productImages/' . $variant->image }}"
-                                                                data-src="{{ env('ADMIN_URL') . '/productImages/' . $variant->image }}"
+                                                            {{-- <img src="{{ env('ADMIN_URL') . '/uploads/productImages/' . $variant->image }}"
+                                                                data-src="{{ env('ADMIN_URL') . '/uploads/productImages/' . $variant->image }}"
                                                                 alt="" class="width_height"> --}}
 
                                                         </label>
