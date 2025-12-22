@@ -1224,57 +1224,81 @@
         </a>
     </li>
     <li>
-        <a href="{{ url('/download/product/files/backup') }}"
-            data-active-paths="{{ url('/download/product/files/backup') }}"
-            onclick="return confirm('Are you sure you want to download the product images backup?');">
-            <i class="feather-image"></i>Product Images Backup</a>
-    </li>
-    <li>
-        <a href="{{ url('/download/user/files/backup') }}"
-            data-active-paths="{{ url('/download/user/files/backup') }}"
-            onclick="return confirm('Are you sure you want to download the user images backup?');">
-            <i class="feather-user"></i>User Images Backup</a>
-    </li>
-    <li>
-        <a href="{{ url('/download/banner/files/backup') }}"
-            data-active-paths="{{ url('/download/banner/files/backup') }}"
-            onclick="return confirm('Are you sure you want to download the banner images backup?');">
-            <i class="feather-layers"></i>Banner Images Backup</a>
-    </li>
-    <li>
-        <a href="{{ url('/download/category/files/backup') }}"
-            data-active-paths="{{ url('/download/category/files/backup') }}"
-            onclick="return confirm('Are you sure you want to download the category icon backup?');">
-            <i class="feather-grid"></i>Category Icon Backup</a>
-    </li>
-    <li>
-        <a href="{{ url('/download/subcategory/files/backup') }}" data-active-paths=""
-            onclick="return confirm('Are you sure you want to download the subcategory backup?');">
-            <i class="feather-list"></i>Subcategory Backup</a>
-    </li>
-    <li>
-        <a href="{{ url('/download/flag/files/backup') }}"
-            data-active-paths="{{ url('/download/flag/files/backup') }}"
-            onclick="return confirm('Are you sure you want to download the flag icon backup?');">
-            <i class="feather-flag"></i>Flag Icon Backup</a>
-    </li>
-    <li>
-        <a href="{{ url('/download/ticket/files/backup') }}"
-            data-active-paths="{{ url('/download/ticket/files/backup') }}"
-            onclick="return confirm('Are you sure you want to download the ticket files backup?');">
-            <i class="feather-file"></i>Ticket Files Backup</a>
-    </li>
-    <li>
-        <a href="{{ url('/download/blog/files/backup') }}"
-            data-active-paths="{{ url('/download/blog/files/backup') }}"
-            onclick="return confirm('Are you sure you want to download the blog files backup?');">
-            <i class="feather-file-text"></i>Blog Files Backup</a>
-    </li>
-    <li>
-        <a href="{{ url('/download/other/files/backup') }}"
-            data-active-paths="{{ url('/download/other/files/backup') }}"
-            onclick="return confirm('Are you sure you want to download the other images backup?');">
-            <i class="feather-folder"></i>Other Images Backup</a>
+        <a href="javascript: void(0);" class="has-arrow">
+            <i class="feather-image"></i>
+            <span>Images Backup</span>
+        </a>
+        <ul class="sub-menu" aria-expanded="false">
+            <li>
+                <a href="{{ url('/download/all/images/backup') }}"
+                    data-active-paths="{{ url('/download/all/images/backup') }}"
+                    onclick="return confirm('Are you sure you want to download all images backup? This may take some time.');">
+                    All Images Backup
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('/download/product/files/backup') }}"
+                    data-active-paths="{{ url('/download/product/files/backup') }}"
+                    onclick="return confirm('Are you sure you want to download the product images backup?');">
+                    Product Images
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('/download/user/files/backup') }}"
+                    data-active-paths="{{ url('/download/user/files/backup') }}"
+                    onclick="return confirm('Are you sure you want to download the user images backup?');">
+                    User Images
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('/download/banner/files/backup') }}"
+                    data-active-paths="{{ url('/download/banner/files/backup') }}"
+                    onclick="return confirm('Are you sure you want to download the banner images backup?');">
+                    Banner Images
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('/download/category/files/backup') }}"
+                    data-active-paths="{{ url('/download/category/files/backup') }}"
+                    onclick="return confirm('Are you sure you want to download the category icon backup?');">
+                    Category Icons
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('/download/subcategory/files/backup') }}"
+                    onclick="return confirm('Are you sure you want to download the subcategory backup?');">
+                    Subcategory Images
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('/download/flag/files/backup') }}"
+                    data-active-paths="{{ url('/download/flag/files/backup') }}"
+                    onclick="return confirm('Are you sure you want to download the flag icon backup?');">
+                    Flag Icons
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('/download/ticket/files/backup') }}"
+                    data-active-paths="{{ url('/download/ticket/files/backup') }}"
+                    onclick="return confirm('Are you sure you want to download the ticket files backup?');">
+                    Ticket Files
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('/download/blog/files/backup') }}"
+                    data-active-paths="{{ url('/download/blog/files/backup') }}"
+                    onclick="return confirm('Are you sure you want to download the blog files backup?');">
+                    Blog Images
+                </a>
+            </li>
+            <li>
+                <a href="{{ url('/download/other/files/backup') }}"
+                    data-active-paths="{{ url('/download/other/files/backup') }}"
+                    onclick="return confirm('Are you sure you want to download the other images backup?');">
+                    Other Images
+                </a>
+            </li>
+        </ul>
     </li>
 
 

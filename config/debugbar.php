@@ -14,10 +14,11 @@ return [
      |
      */
 
-    'enabled' => env('DEBUGBAR_ENABLED', null),
+    'enabled' => env('DEBUGBAR_ENABLED', false),
     'except' => [
         'telescope*',
         'horizon*',
+        '*', // Disable for all frontend routes
     ],
 
     /*

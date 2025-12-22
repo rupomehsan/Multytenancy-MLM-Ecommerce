@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 use Intervention\Image\Facades\Image;
 
-use App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Banners\Models\Banner;
+use App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Banners\Database\Models\Banner;
 use App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Banners\Database\Models\PromotionalBanner;
 
 use App\Http\Controllers\Controller;
@@ -53,6 +53,7 @@ class BannerController extends Controller
 
     public function saveNewSlider(Request $request)
     {
+
         $request->validate([
             'image' => 'required',
         ]);
@@ -61,16 +62,19 @@ class BannerController extends Controller
         if ($request->hasFile('image')) {
             $get_image = $request->file('image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('banner/');
+            $location = public_path('uploads/banner/');
 
-            // $get_image->move($location, $image_name);
+            if (!file_exists($location)) {
+                mkdir($location, 0755, true);
+            }
+
             if ($get_image->getClientOriginalExtension() == 'svg') {
                 $get_image->move($location, $image_name);
             } else {
                 Image::make($get_image)->save($location . $image_name, 60);
             }
 
-            $image = "banner/" . $image_name;
+            $image = "uploads/banner/" . $image_name;
         }
 
         Banner::insert([
@@ -130,16 +134,19 @@ class BannerController extends Controller
 
             $get_image = $request->file('image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('banner/');
+            $location = public_path('uploads/banner/');
 
-            // $get_image->move($location, $image_name);
+            if (!file_exists($location)) {
+                mkdir($location, 0755, true);
+            }
+
             if ($get_image->getClientOriginalExtension() == 'svg') {
                 $get_image->move($location, $image_name);
             } else {
                 Image::make($get_image)->save($location . $image_name, 60);
             }
 
-            $image = "banner/" . $image_name;
+            $image = "uploads/banner/" . $image_name;
         }
 
         $data->image = $image;
@@ -227,16 +234,15 @@ class BannerController extends Controller
         if ($request->hasFile('image')) {
             $get_image = $request->file('image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('banner/');
+            $location = public_path('uploads/banner/');
 
-            // $get_image->move($location, $image_name);
             if ($get_image->getClientOriginalExtension() == 'svg') {
                 $get_image->move($location, $image_name);
             } else {
                 Image::make($get_image)->save($location . $image_name, 60);
             }
 
-            $image = "banner/" . $image_name;
+            $image = "uploads/banner/" . $image_name;
         }
 
         Banner::insert([
@@ -364,14 +370,18 @@ class BannerController extends Controller
 
             $get_image = $request->file('icon');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('banner/');
-            // $get_image->move($location, $image_name);
+            $location = public_path('uploads/banner/');
+
+            if (!file_exists($location)) {
+                mkdir($location, 0755, true);
+            }
+
             if ($get_image->getClientOriginalExtension() == 'svg') {
                 $get_image->move($location, $image_name);
             } else {
                 Image::make($get_image)->save($location . $image_name, 60);
             }
-            $icon = "banner/" . $image_name;
+            $icon = "uploads/banner/" . $image_name;
         }
 
         $product_image = request()->product_image ?? ($data->product_image ?? "");
@@ -383,14 +393,18 @@ class BannerController extends Controller
 
             $get_image = $request->file('product_image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('banner/');
-            // $get_image->move($location, $image_name);
+            $location = public_path('uploads/banner/');
+
+            if (!file_exists($location)) {
+                mkdir($location, 0755, true);
+            }
+
             if ($get_image->getClientOriginalExtension() == 'svg') {
                 $get_image->move($location, $image_name);
             } else {
                 Image::make($get_image)->save($location . $image_name, 60);
             }
-            $product_image = "banner/" . $image_name;
+            $product_image = "uploads/banner/" . $image_name;
         }
 
         $background_image = request()->background_image ?? ($data->background_image ?? "");
@@ -402,14 +416,18 @@ class BannerController extends Controller
 
             $get_image = $request->file('background_image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('banner/');
-            // $get_image->move($location, $image_name);
+            $location = public_path('uploads/banner/');
+
+            if (!file_exists($location)) {
+                mkdir($location, 0755, true);
+            }
+
             if ($get_image->getClientOriginalExtension() == 'svg') {
                 $get_image->move($location, $image_name);
             } else {
                 Image::make($get_image)->save($location . $image_name, 60);
             }
-            $background_image = "banner/" . $image_name;
+            $background_image = "uploads/banner/" . $image_name;
         }
 
 

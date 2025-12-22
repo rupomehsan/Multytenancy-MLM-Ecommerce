@@ -138,12 +138,12 @@
 
     <style>
         :root {
-            --primary-color: {{ $generalInfo->primary_color }};
-            --secondary-color: {{ $generalInfo->secondary_color }};
-            --tertiary-color: {{ $generalInfo->tertiary_color }};
-            --title-color: {{ $generalInfo->title_color }};
-            --paragraph-color: {{ $generalInfo->paragraph_color }};
-            --border-color: {{ $generalInfo->border_color }};
+            --primary-color: {{ optional($generalInfo)->primary_color ?? '#007bff' }};
+            --secondary-color: {{ optional($generalInfo)->secondary_color ?? '#6c757d' }};
+            --tertiary-color: {{ optional($generalInfo)->tertiary_color ?? '#ffffff' }};
+            --title-color: {{ optional($generalInfo)->title_color ?? '#212529' }};
+            --paragraph-color: {{ optional($generalInfo)->paragraph_color ?? '#6c757d' }};
+            --border-color: {{ optional($generalInfo)->border_color ?? '#dee2e6' }};
         }
 
         .toast {
@@ -159,12 +159,12 @@
         .active>.page-link,
         .page-link.active {
             color: white !important;
-            background-color: {{ $generalInfo->primary_color }} !important;
-            border-color: {{ $generalInfo->primary_color }} !important;
+            background-color: {{ optional($generalInfo)->primary_color ?? '#007bff' }} !important;
+            border-color: {{ optional($generalInfo)->primary_color ?? '#007bff' }} !important;
         }
 
         .page-link {
-            color: {{ $generalInfo->primary_color }} !important;
+            color: {{ optional($generalInfo)->primary_color ?? '#007bff' }} !important;
         }
 
         /* default pagination end */
@@ -193,10 +193,10 @@
             color: var(--alert-color);
         }
 
-        {!! $generalInfo->custom_css !!}
+        {!! optional($generalInfo)->custom_css ?? '' !!}
     </style>
 
-    @if ($generalInfo->google_tag_manager_status)
+    @if (optional($generalInfo)->google_tag_manager_status)
         <!-- Google Tag Manager -->
         <script>
             (function(w, d, s, l, i) {
@@ -212,14 +212,15 @@
                 j.src =
                     'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
                 f.parentNode.insertBefore(j, f);
-            })(window, document, 'script', 'dataLayer', '{{ $generalInfo->google_tag_manager_id }}');
+            })(window, document, 'script', 'dataLayer', '{{ optional($generalInfo)->google_tag_manager_id ?? '' }}');
         </script>
         <!-- End Google Tag Manager-->
     @endif
 
-    @if ($generalInfo->google_analytic_status)
+    @if (optional($generalInfo)->google_analytic_status)
         <!-- Google tag (gtag.js) google analytics -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id={{ $generalInfo->google_analytic_tracking_id }}"
+        <script async
+            src="https://www.googletagmanager.com/gtag/js?id={{ optional($generalInfo)->google_analytic_tracking_id ?? '' }}"
             type="53191a76ba85f8f784cbe351-text/javascript"></script>
         <script type="53191a76ba85f8f784cbe351-text/javascript">
             window.dataLayer = window.dataLayer || [];
@@ -228,11 +229,11 @@
                 dataLayer.push(arguments);
             }
             gtag('js', new Date());
-            gtag('config', '{{$generalInfo->google_analytic_tracking_id}}');
+            gtag('config','{{ optional($generalInfo)->google_analytic_tracking_id ?? '' }}');
         </script>
     @endif
 
-    @if ($generalInfo->fb_pixel_status)
+    @if (optional($generalInfo)->fb_pixel_status)
         <!-- Facebook Pixel Code -->
         <script>
             ! function(f, b, e, v, n, t, s) {
@@ -253,17 +254,17 @@
                 s.parentNode.insertBefore(t, s)
             }(window, document, 'script',
                 'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '{{ $generalInfo->fb_pixel_app_id }}');
+            fbq('init', '{{ optional($generalInfo)->fb_pixel_app_id ?? '' }}');
             fbq('track', 'PageView');
         </script>
         <noscript>
             <img height="1" width="1" style="display:none"
-                src="https://www.facebook.com/tr?id={{ $generalInfo->fb_pixel_app_id }}&ev=PageView&noscript=1" />
+                src="https://www.facebook.com/tr?id={{ optional($generalInfo)->fb_pixel_app_id ?? '' }}&ev=PageView&noscript=1" />
         </noscript>
         <!-- End Facebook Pixel Code -->
     @endif
 
-    @if ($generalInfo->tawk_chat_status)
+    @if (optional($generalInfo)->tawk_chat_status)
         <!--Start of Tawk.to Script-->
         <script type="text/javascript">
             var Tawk_API = Tawk_API || {},
@@ -272,7 +273,7 @@
                 var s1 = document.createElement("script"),
                     s0 = document.getElementsByTagName("script")[0];
                 s1.async = true;
-                s1.src = '{{ $generalInfo->tawk_chat_link }}';
+                s1.src = '{{ optional($generalInfo)->tawk_chat_link ?? '' }}';
                 s1.charset = 'UTF-8';
                 s1.setAttribute('crossorigin', '*');
                 s0.parentNode.insertBefore(s1, s0);
@@ -281,20 +282,21 @@
         <!--End of Tawk.to Script-->
     @endif
 
-    {!! $generalInfo->header_script !!}
+    {!! optional($generalInfo)->header_script ?? '' !!}
 
 </head>
 
 <body>
 
-    @if ($generalInfo->google_tag_manager_status)
+    @if (optional($generalInfo)->google_tag_manager_status)
         <!-- Google Tag Manager (noscript) -->
-        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ $generalInfo->google_tag_manager_id }}"
+        <noscript><iframe
+                src="https://www.googletagmanager.com/ns.html?id={{ optional($generalInfo)->google_tag_manager_id ?? '' }}"
                 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <!-- End Google Tag Manager (noscript) -->
     @endif
 
-    @if ($generalInfo->messenger_chat_status)
+    @if (optional($generalInfo)->messenger_chat_status)
         <a href="https://m.me/fejmo" target="_blank"
             style="position: fixed; right: 25px; width: 60px; bottom: 20px; z-index: 99999;">
             <img src="{{ url('tenant/frontend') }}/img/messenger_icon.png" style="width: 100px">
@@ -711,7 +713,7 @@
         });
     </script>
 
-    {!! $generalInfo->footer_script !!}
+    {!! optional($generalInfo)->footer_script ?? '' !!}
 
     <script src="{{ url('tenant/frontend') }}/js/toastr.min.js"></script>
     {!! Toastr::message() !!}

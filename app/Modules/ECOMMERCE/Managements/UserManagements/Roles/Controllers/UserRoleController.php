@@ -14,7 +14,7 @@ use App\Modules\ECOMMERCE\Managements\UserManagements\Roles\Database\Models\Role
 use App\Modules\ECOMMERCE\Managements\UserManagements\Users\Database\Models\User;
 use App\Modules\ECOMMERCE\Managements\UserManagements\Roles\Database\Models\UserRole;
 use App\Modules\ECOMMERCE\Managements\UserManagements\Roles\Database\Models\UserRolePermission;
-
+use App\Modules\ECOMMERCE\Managements\UserManagements\Roles\Controllers\PermissionRoutesController;
 
 class UserRoleController extends Controller
 {
@@ -50,7 +50,20 @@ class UserRoleController extends Controller
 
     public function newUserRole()
     {
-        return view('user_role_create');
+        // Get routes organized by Module > Groups > Routes structure
+        $permissionController = new PermissionRoutesController();
+        $moduleGroupRoutes = [];
+        try {
+            $moduleGroupRoutes = $permissionController->getRoutesByModuleAndGroup();
+        } catch (\Throwable $e) {
+            // If helper/controller fails, keep $moduleGroupRoutes empty and log the error
+            \Log::error('Failed to get module group routes: ' . $e->getMessage());
+        }
+
+        // Check if 'home' route exists and mark it as checked
+        $homeRoute = PermissionRoutes::where('route', 'home')->first();
+
+        return view('user_role_create', compact('moduleGroupRoutes', 'homeRoute'));
     }
 
     public function saveUserRole(Request $request)
@@ -93,8 +106,32 @@ class UserRoleController extends Controller
 
     public function EditUserRole($id)
     {
+        $moduleGroupRoutes = [];
+        $permissionController = new PermissionRoutesController();
+        try {
+            $moduleGroupRoutes = $permissionController->getRoutesByModuleAndGroup();
+        } catch (\Throwable $e) {
+            // If helper/controller fails, keep $moduleGroupRoutes empty and log the error
+            \Log::error('Failed to get module group routes: ' . $e->getMessage());
+        }
+
+        // Check if 'home' route exists and mark it as checked
+        $homeRoute = PermissionRoutes::where('route', 'home')->first();
         $userRoleInfo = UserRole::where('id', $id)->first();
-        return view('user_role_edit', compact('userRoleInfo'));
+
+        // compute selected permissions for this role (safe if role not found)
+        $selectedPermissions = [];
+        if ($userRoleInfo) {
+            try {
+                $selectedPermissions = RolePermission::where('role_id', $userRoleInfo->id)
+                    ->pluck('permission_id')
+                    ->toArray();
+            } catch (\Throwable $e) {
+                \Log::error('Failed to fetch selected permissions for role ' . $id . ': ' . $e->getMessage());
+            }
+        }
+
+        return view('user_role_edit', compact('userRoleInfo', 'moduleGroupRoutes', 'homeRoute', 'selectedPermissions'));
     }
 
     public function UpdateUserRole(Request $request)
@@ -200,7 +237,53 @@ class UserRoleController extends Controller
     public function assignRolePermission($id)
     {
         $userId = $id;
-        return view('user_role_permission_assign', compact('userId'));
+
+        // Load roles and prepare display data for the view
+        $userRoles = UserRole::orderBy('id', 'desc')->get();
+        $rolesForView = [];
+        foreach ($userRoles as $role) {
+            $permissions = [];
+            try {
+                $permissions = RolePermission::where('role_id', $role->id)->pluck('route_name')->toArray();
+            } catch (\Throwable $e) {
+                \Log::error('Failed to fetch role permissions for role ' . $role->id . ': ' . $e->getMessage());
+            }
+
+            // Check whether this role is already assigned to the user
+            $assigned = false;
+            try {
+                $assigned = UserRolePermission::where('user_id', $userId)->where('role_id', $role->id)->exists();
+            } catch (\Throwable $e) {
+                \Log::error('Failed to check user role assignment for user ' . $userId . ' role ' . $role->id . ': ' . $e->getMessage());
+            }
+
+            $rolesForView[] = (object) [
+                'id' => $role->id,
+                'name' => $role->name,
+                'permissionsUnderRole' => implode(', ', $permissions),
+                'assigned' => $assigned,
+            ];
+        }
+
+        // Prepare permissions and module/group routes for permission assignment section
+        $moduleGroupRoutes = [];
+        try {
+            $permissionController = new PermissionRoutesController();
+            $moduleGroupRoutes = $permissionController->getRoutesByModuleAndGroup();
+        } catch (\Throwable $e) {
+            \Log::error('Failed to get module group routes: ' . $e->getMessage());
+        }
+
+        $userPermissions = [];
+        try {
+            $userPermissions = UserRolePermission::where('user_id', $userId)->pluck('permission_id')->toArray();
+        } catch (\Throwable $e) {
+            \Log::error('Failed to fetch user permissions for user ' . $userId . ': ' . $e->getMessage());
+        }
+
+        $homeRoute = PermissionRoutes::where('route', 'home')->first();
+
+        return view('user_role_permission_assign', compact('userId', 'rolesForView', 'moduleGroupRoutes', 'userPermissions', 'homeRoute'));
     }
 
     public function SaveAssignedRolePermission(Request $request)

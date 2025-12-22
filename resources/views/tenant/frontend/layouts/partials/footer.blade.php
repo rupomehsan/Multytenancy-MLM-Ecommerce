@@ -15,18 +15,18 @@
                     </h2>
                     <div class="footer__widget--inner">
                         <p class="footer__widget--desc text-ofwhite mb-20">
-                            {{ $generalInfo->short_description }}
+                            {{ optional($generalInfo)->short_description ?? '' }}
                         </p>
 
-                        @if ($generalInfo->play_store_link)
-                            <a href="{{ $generalInfo->play_store_link }}" target="_blank" class="d-inline-block"><img
-                                    class="lazy mb-3" style="margin-right: 5px" src=""
+                        @if (optional($generalInfo)->play_store_link)
+                            <a href="{{ optional($generalInfo)->play_store_link }}" target="_blank"
+                                class="d-inline-block"><img class="lazy mb-3" style="margin-right: 5px" src=""
                                     data-src="{{ url('tenant/frontend') }}/img/google-play.svg"></a>
                         @endif
 
-                        @if ($generalInfo->app_store_link)
-                            <a href="{{ $generalInfo->app_store_link }}" target="_blank" class="d-inline-block"><img
-                                    class="lazy mb-3" src=""
+                        @if (optional($generalInfo)->app_store_link)
+                            <a href="{{ optional($generalInfo)->app_store_link }}" target="_blank"
+                                class="d-inline-block"><img class="lazy mb-3" src=""
                                     data-src="{{ url('tenant/frontend') }}/img/app-store.svg"></a>
                         @endif
 
@@ -35,7 +35,7 @@
 
                             <ul class="social__shear d-flex">
 
-                                @if ($generalInfo && $generalInfo->facebook)
+                                @if (optional($generalInfo)->facebook)
                                     <li class="social__shear--list">
                                         <a class="social__shear--list__icon" target="_blank"
                                             href="{{ $generalInfo->facebook }}">
@@ -50,7 +50,7 @@
                                     </li>
                                 @endif
 
-                                @if ($generalInfo && $generalInfo->twitter)
+                                @if (optional($generalInfo)->twitter)
                                     <li class="social__shear--list">
                                         <a class="social__shear--list__icon" target="_blank"
                                             href="{{ $generalInfo->twitter }}">
@@ -65,7 +65,7 @@
                                     </li>
                                 @endif
 
-                                @if ($generalInfo && $generalInfo->instagram)
+                                @if (optional($generalInfo)->instagram)
                                     <li class="social__shear--list">
                                         <a class="social__shear--list__icon" target="_blank"
                                             href="{{ $generalInfo->instagram }}">
@@ -80,7 +80,7 @@
                                     </li>
                                 @endif
 
-                                @if ($generalInfo && $generalInfo->youtube)
+                                @if (optional($generalInfo)->youtube)
                                     <li class="social__shear--list">
                                         <a class="social__shear--list__icon" target="_blank"
                                             href="{{ $generalInfo->youtube }}">
@@ -223,17 +223,18 @@
                 </div>
             </div>
 
-            @if ($generalInfo && $generalInfo->payment_banner)
+            @if (optional($generalInfo)->payment_banner)
                 <div class="footer__payment text-right">
-                    <img class="display-block" src="/{{ $generalInfo->payment_banner }}" alt="Paymenmt Banner" />
+                    <img class="display-block" src="/{{ optional($generalInfo)->payment_banner }}"
+                        alt="Payment Banner" />
                 </div>
             @endif
 
-            @if ($generalInfo && $generalInfo->footer_copyright_text)
+            @if (optional($generalInfo)->footer_copyright_text)
                 <div class="footer__bottom d-flex justify-content-center align-items-center w-auto">
                     <p class="copyright__content text-ofwhite m-0">
-                        {{ $generalInfo->footer_copyright_text }} | Developed by <a href="https://techparkit.org/"
-                            target="_blank">Tech Park IT Ltd.</a>
+                        {{ optional($generalInfo)->footer_copyright_text }} | Developed by <a
+                            href="https://techparkit.org/" target="_blank">Tech Park IT Ltd.</a>
                     </p>
                 </div>
             @endif

@@ -7,9 +7,7 @@
             <div class="p-3 p-md-5 my-5 mx-auto">
                 <div class="text-center">
                     <a href="{{ url('/login') }}" class="d-block mb-5">
-                        @php
-                            $generalInfo = DB::table('general_infos')->where('id', 1)->select('company_name')->first();
-                        @endphp
+                        {{-- $generalInfo is provided globally by AppServiceProvider --}}
                         <h3>{{ $generalInfo->company_name ?? '' }}</h3>
                         <h3>Admin Panel</h3>
                     </a>

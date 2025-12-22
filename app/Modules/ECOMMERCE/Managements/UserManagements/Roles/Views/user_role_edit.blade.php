@@ -50,17 +50,7 @@
 
                         <hr>
 
-                        @php
-                            use Illuminate\Support\Str;
-                            // Get selected permissions for this role
-                            $selectedPermissions = App\Models\RolePermission::where('role_id', $userRoleInfo->id)
-                                ->pluck('permission_id')
-                                ->toArray();
-                            // Get routes organized by Module > Groups > Routes structure
-                            $permissionController = new App\Http\Controllers\PermissionRoutesController();
-                            $moduleGroupRoutes = $permissionController->getRoutesByModuleAndGroup();
-                            $homeRoute = App\Models\PermissionRoutes::where('route', 'home')->first();
-                        @endphp
+                      
 
                         <h4 class="card-title mb-4 mt-4">Assign Permission to this Role</h4>
 

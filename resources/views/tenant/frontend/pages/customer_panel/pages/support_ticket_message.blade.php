@@ -5,10 +5,7 @@
 @endsection
 
 @push('site-seo')
-    @php
-    $generalInfo = DB::table('general_infos')
-    ->select('meta_title', 'company_name', 'fav_icon')
-    // using shared $generalInfo provided by AppServiceProvider
+    {{-- $generalInfo is provided globally by AppServiceProvider --}}
 @endpush
 
 @section('header_css')

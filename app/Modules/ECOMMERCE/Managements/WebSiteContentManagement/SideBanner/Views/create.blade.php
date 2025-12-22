@@ -42,6 +42,11 @@
                                         <span class="text-danger">*</span></label>
                                     <input type="file" name="banner_img" class="dropify" data-height="250"
                                         data-max-file-size="1M" accept="image/*" />
+                                    <div class="invalid-feedback" style="display: block;">
+                                        @error('banner_img')
+                                            {{ $message }}
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-lg-7">

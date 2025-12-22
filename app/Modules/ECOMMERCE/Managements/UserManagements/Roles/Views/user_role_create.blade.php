@@ -50,16 +50,7 @@
 
                         <hr>
 
-                        @php
-                            use Illuminate\Support\Str;
 
-                            // Get routes organized by Module > Groups > Routes structure
-                            $permissionController = new App\Http\Controllers\PermissionRoutesController();
-                            $moduleGroupRoutes = $permissionController->getRoutesByModuleAndGroup();
-
-                            // Check if 'home' route exists and mark it as checked
-                            $homeRoute = App\Models\PermissionRoutes::where('route', 'home')->first();
-                        @endphp
 
                         <h4 class="card-title mb-4 mt-4">Assign Permission to this Role</h4>
 

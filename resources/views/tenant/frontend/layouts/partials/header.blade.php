@@ -20,7 +20,8 @@
                         <h1 class="main__logo--title">
                             <a class="main__logo--link" href="{{ url('/') }}">
                                 <img class="main__logo--img" style="max-width: 220px; max-height: 62px;"
-                                    src="{{ $generalInfo->logo_dark }}" alt="{{ $generalInfo->company_name }}" />
+                                    src="{{ optional($generalInfo)->logo_dark ? url(optional($generalInfo)->logo_dark) : '' }}"
+                                    alt="{{ optional($generalInfo)->company_name ?? config('app.name') }}" />
                             </a>
                         </h1>
                     </div>
@@ -338,8 +339,9 @@
             <div class="offcanvas__inner">
                 <div class="offcanvas__logo">
                     <a class="offcanvas__logo_link" href="{{ url('/') }}">
-                        <img src="{{ url(env('ADMIN_URL') . '/' . $generalInfo->logo_dark) }}"
-                            alt="{{ $generalInfo->company_name }}" width="158" height="36" />
+                        <img src="{{ optional($generalInfo)->logo_dark ? url(env('ADMIN_URL') . '/' . optional($generalInfo)->logo_dark) : '' }}"
+                            alt="{{ optional($generalInfo)->company_name ?? config('app.name') }}" width="158"
+                            height="36" />
                     </a>
                     <button class="offcanvas__close--btn" data-offcanvas>close</button>
                 </div>

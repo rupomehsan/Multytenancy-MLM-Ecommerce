@@ -22,12 +22,7 @@
 @endsection
 
 @push('site-seo')
-    @php
-        $generalInfo = DB::table('general_infos')
-            ->select('meta_title', 'company_name', 'fav_icon')
-            ->where('id', 1)
-            ->first();
-    @endphp
+    {{-- $generalInfo is provided globally by AppServiceProvider --}}
     <title>
         @if ($generalInfo && $generalInfo->meta_title)
             {{ $generalInfo->meta_title }}

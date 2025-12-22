@@ -34,10 +34,16 @@ class CustomPageController extends Controller
         if ($request->hasFile('image')) {
             $get_image = $request->file('image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('custom_pages/');
+            $relativeDir = 'uploads/custom_pages/';
+            $location = public_path($relativeDir);
+
+            if (!\Illuminate\Support\Facades\File::exists($location)) {
+                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
+            }
+
             // Image::make($get_image)->save($location . $image_name, 80);
             $get_image->move($location, $image_name);
-            $image = "custom_pages/" . $image_name;
+            $image = $relativeDir . $image_name;
         }
 
 
@@ -122,10 +128,16 @@ class CustomPageController extends Controller
 
             $get_image = $request->file('image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('custom_pages/');
+            $relativeDir = 'uploads/custom_pages/';
+            $location = public_path($relativeDir);
+
+            if (!\Illuminate\Support\Facades\File::exists($location)) {
+                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
+            }
+
             // Image::make($get_image)->save($location . $image_name, 80);
             $get_image->move($location, $image_name);
-            $image = "custom_pages/" . $image_name;
+            $image = $relativeDir . $image_name;
         }
 
         $slug = Generate::Slug($request->page_title);

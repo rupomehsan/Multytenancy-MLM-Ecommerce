@@ -61,12 +61,12 @@
                                             <label for="category_id">Category<span class="text-danger">*</span></label>
                                             <select name="category_id" data-toggle="select2" class="form-control"
                                                 id="category_id" required>
-                                                @php
-                                                    echo App\Models\BlogCategory::getDropDownList(
+                                                {!! isset($categoriesDropdown)
+                                                    ? $categoriesDropdown
+                                                    : \App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\BlogManagements\BlogCategory\Database\Models\BlogCategory::getDropDownList(
                                                         'name',
                                                         $data->category_id,
-                                                    );
-                                                @endphp
+                                                    ) !!}
                                             </select>
                                             <div class="invalid-feedback" style="display: block;">
                                                 @error('category_id')
@@ -75,87 +75,96 @@
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="title">Blog Title <span class="text-danger">*</span></label>
-                                            <input type="text" id="title" name="title" class="form-control"
-                                                value="{{ $data->title }}" placeholder="Enter Product Title Here" required>
-                                            <div class="invalid-feedback" style="display: block;">
-                                                @error('title')
-                                                    {{ $message }}
-                                                @enderror
+                                        <div>
+                                            <div class="form-group ">
+                                                <label for="title">Blog Title <span class="text-danger">*</span></label>
+                                                <input type="text" id="title" name="title" class="form-control"
+                                                    value="{{ $data->title }}" placeholder="Enter Product Title Here"
+                                                    required>
+                                                <div class="invalid-feedback" style="display: block;">
+                                                    @error('title')
+                                                        {{ $message }}
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="short_description">Short Description</label>
+                                                <textarea id="short_description" name="short_description" class="form-control"
+                                                    placeholder="Enter Short Description Here">{{ $data->short_description }}</textarea>
+                                                <div class="invalid-feedback" style="display: block;">
+                                                    @error('short_description')
+                                                        {{ $message }}
+                                                    @enderror
+                                                </div>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="form-group">
-                                            <label for="short_description">Short Description</label>
-                                            <textarea id="short_description" name="short_description" class="form-control"
-                                                placeholder="Enter Short Description Here">{{ $data->short_description }}</textarea>
-                                            <div class="invalid-feedback" style="display: block;">
-                                                @error('short_description')
-                                                    {{ $message }}
-                                                @enderror
-                                            </div>
+
+
+
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description">Full Description</label>
+                                <textarea id="description" name="description" class="form-control">{!! $data->description !!}</textarea>
+                                <div class="invalid-feedback" style="display: block;">
+                                    @error('short_description')
+                                        {{ $message }}
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-9">
+                                    <div class="form-group">
+                                        <label for="tags">Tags (for search result)</label>
+                                        <input type="text" name="tags" value="{{ $data->tags }}"
+                                            class="form-control" data-role="tagsinput">
+                                        <div class="invalid-feedback" style="display: block;">
+                                            @error('tags')
+                                                {{ $message }}
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="form-group">
-                                    <label for="description">Full Description</label>
-                                    <textarea id="description" name="description" class="form-control">{!! $data->description !!}</textarea>
-                                    <div class="invalid-feedback" style="display: block;">
-                                        @error('short_description')
-                                            {{ $message }}
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-lg-9">
-                                        <div class="form-group">
-                                            <label for="tags">Tags (for search result)</label>
-                                            <input type="text" name="tags" value="{{ $data->tags }}"
-                                                class="form-control" data-role="tagsinput">
-                                            <div class="invalid-feedback" style="display: block;">
-                                                @error('tags')
-                                                    {{ $message }}
-                                                @enderror
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3">
-                                        <div class="form-group">
-                                            <label for="status">Status</label>
-                                            <select name="status" class="form-control" id="status" required>
-                                                <option value="">Select One</option>
-                                                <option value="1" @if ($data->status == 1) selected @endif>
-                                                    Active</option>
-                                                <option value="0" @if ($data->status == 0) selected @endif>
-                                                    Inactive</option>
-                                            </select>
-                                            <div class="invalid-feedback" style="display: block;">
-                                                @error('status')
-                                                    {{ $message }}
-                                                @enderror
-                                            </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label for="status">Status</label>
+                                        <select name="status" class="form-control" id="status" required>
+                                            <option value="">Select One</option>
+                                            <option value="1" @if ($data->status == 1) selected @endif>
+                                                Active</option>
+                                            <option value="0" @if ($data->status == 0) selected @endif>
+                                                Inactive</option>
+                                        </select>
+                                        <div class="invalid-feedback" style="display: block;">
+                                            @error('status')
+                                                {{ $message }}
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-
-                        <div class="form-group text-center pt-3">
-                            <a href="{{ url('view/all/blogs') }}" style="width: 130px;"
-                                class="btn btn-danger d-inline-block text-white m-2" type="submit"><i
-                                    class="mdi mdi-cancel"></i> Cancel</a>
-                            <button class="btn btn-primary m-2" style="width: 130px;" type="submit"><i
-                                    class="fas fa-save"></i> Update Blog</button>
-                        </div>
-
-                    </form>
                 </div>
+
+
+                <div class="form-group text-center pt-3">
+                    <a href="{{ url('view/all/blogs') }}" style="width: 130px;"
+                        class="btn btn-danger d-inline-block text-white m-2" type="submit"><i
+                            class="mdi mdi-cancel"></i>
+                        Cancel</a>
+                    <button class="btn btn-primary m-2" style="width: 130px;" type="submit"><i class="fas fa-save"></i>
+                        Update Blog</button>
+                </div>
+
+                </form>
             </div>
         </div>
+    </div>
     </div>
 @endsection
 

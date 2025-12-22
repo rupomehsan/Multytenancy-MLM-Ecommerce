@@ -29,6 +29,120 @@ class BackupController extends Controller
         return null;
     }
 
+    /**
+     * Create a reliable ZIP backup of files from a directory
+     * Returns download response or redirects back with error
+     */
+    private function createBackupZip($sourceDir, $zipFileName, $errorMessage = 'No files found')
+    {
+        if (!File::isDirectory($sourceDir)) {
+            Toastr::error($errorMessage, 'Error');
+            return back();
+        }
+
+        $files = File::files($sourceDir);
+
+        if (count($files) === 0) {
+            Toastr::error($errorMessage, 'Error');
+            return back();
+        }
+
+        // Store ZIP in storage/app/backups
+        $storagePath = storage_path('app/backups');
+        if (!File::exists($storagePath)) {
+            File::makeDirectory($storagePath, 0755, true);
+        }
+
+        $zipPath = $storagePath . '/' . $zipFileName;
+
+        // Remove old zip if exists and wait a bit
+        if (file_exists($zipPath)) {
+            @unlink($zipPath);
+            clearstatcache();
+            usleep(50000); // 0.05 seconds
+        }
+
+        $zip = new ZipArchive();
+        $openResult = $zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+
+        if ($openResult !== true) {
+            Toastr::error('Failed to create ZIP file. Error: ' . $openResult, 'Error');
+            return back();
+        }
+
+        $fileCount = 0;
+
+        foreach ($files as $file) {
+            try {
+                $filePath = $file->getRealPath();
+
+                if (!file_exists($filePath) || !is_readable($filePath) || !is_file($filePath)) {
+                    continue;
+                }
+
+                // Use just the filename, not full path
+                $result = $zip->addFile($filePath, basename($filePath));
+
+                if ($result) {
+                    $fileCount++;
+                }
+            } catch (\Exception $e) {
+                // Skip files that cause errors
+                continue;
+            }
+        }
+
+        // Critical: ensure ZIP is closed properly
+        if (!$zip->close()) {
+            Toastr::error('Failed to finalize ZIP file', 'Error');
+            return back();
+        }
+
+        // Clear stat cache after closing
+        clearstatcache();
+
+        // Wait for filesystem to sync
+        usleep(100000); // 0.1 seconds
+
+        if ($fileCount === 0) {
+            if (file_exists($zipPath)) {
+                @unlink($zipPath);
+            }
+            Toastr::error($errorMessage, 'Error');
+            return back();
+        }
+
+        // Verify ZIP exists and has valid size
+        if (!file_exists($zipPath)) {
+            Toastr::error('ZIP file was not created', 'Error');
+            return back();
+        }
+
+        $fileSize = filesize($zipPath);
+        if ($fileSize < 22) {
+            @unlink($zipPath);
+            Toastr::error('ZIP file is corrupted (too small)', 'Error');
+            return back();
+        }
+
+        // Final validation: try to open the ZIP to verify it's valid
+        $testZip = new ZipArchive();
+        $testResult = $testZip->open($zipPath, ZipArchive::CHECKCONS);
+
+        if ($testResult !== true) {
+            @unlink($zipPath);
+            Toastr::error('ZIP file validation failed. Error: ' . $testResult, 'Error');
+            return back();
+        }
+        $testZip->close();
+
+        // Return download response
+        return response()->download($zipPath, $zipFileName, [
+            'Content-Type' => 'application/zip',
+            'Content-Disposition' => 'attachment; filename="' . $zipFileName . '"',
+        ])->deleteFileAfterSend(true);
+    }
+
     public function downloadDBBackup()
     {
 
@@ -97,308 +211,233 @@ class BackupController extends Controller
 
     public function downloadProductFilesBackup()
     {
-        $zip = new ZipArchive;
-        $fileName = 'ProductImagesBackup.zip';
-
-        // Try a list of possible locations for product images so backups still work
-        // if files are stored under a tenant/admin subfolder (as you've created).
-        $possible = [
-            public_path('uploads/productImages'),
-            public_path('productImages'),
-            public_path('tenant/admin/productImages'),
-            public_path('tenant/admin/productiamges'), // tolerate common typo
-        ];
-
-        $productDir = null;
-        foreach ($possible as $dir) {
-            if (File::isDirectory($dir) && count(File::files($dir)) > 0) {
-                $productDir = $dir;
-                break;
-            }
-        }
+        $productDir = $this->locatePublicDir([
+            'uploads/productImages',
+            'productImages',
+            'uploads/productiamges',
+        ]);
 
         if (is_null($productDir)) {
-            Toastr::error('No Product Images Found in expected locations', 'Error');
+            Toastr::error('No Product Images Found', 'Error');
             return back();
         }
 
-        if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE) {
-            $files = File::files($productDir);
-            foreach ($files as $key => $value) {
-                $relativeNameInZipFile = basename($value);
-                $zip->addFile($value, $relativeNameInZipFile);
-            }
-            $zip->close();
-        }
-
-        // return response()->download(public_path($fileName));
-        if (file_exists(public_path($fileName))) {
-            return response()->download(public_path($fileName));
-        } else {
-            Toastr::error('No Product Images Found', 'Success');
-            return back();
-        }
+        return $this->createBackupZip($productDir, 'ProductImagesBackup.zip', 'No Product Images Found');
     }
 
     public function downloadUserFilesBackup()
     {
-        $zip = new ZipArchive;
-        $fileName = 'UserImagesBackup.zip';
-        // Try several likely locations for user profile images (support tenant/admin path)
-        $possible = [
-            public_path('userProfileImages'),
-            public_path('tenant/admin/userProfileImages'),
-            public_path('tenant/admin/userprofileimages'),
-            public_path('tenant/admin/userProfileimages'),
-        ];
-
-        $userDir = null;
-        foreach ($possible as $dir) {
-            if (File::isDirectory($dir) && count(File::files($dir)) > 0) {
-                $userDir = $dir;
-                break;
-            }
-        }
+        $userDir = $this->locatePublicDir([
+            'uploads/userProfileImages',
+            'userProfileImages',
+            'uploads/userprofileimages',
+        ]);
 
         if (is_null($userDir)) {
-            Toastr::error('No User Images Found in expected locations', 'Error');
+            Toastr::error('No User Images Found', 'Error');
             return back();
         }
 
-        if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE) {
-            $files = File::files($userDir);
-            foreach ($files as $key => $value) {
-                $relativeNameInZipFile = basename($value);
-                $zip->addFile($value, $relativeNameInZipFile);
-            }
-            $zip->close();
-        }
-
-        if (file_exists(public_path($fileName))) {
-            return response()->download(public_path($fileName));
-        } else {
-            Toastr::error('Failed to create user images backup', 'Error');
-            return back();
-        }
+        return $this->createBackupZip($userDir, 'UserImagesBackup.zip', 'No User Images Found');
     }
 
     public function downloadBannerFilesBackup()
     {
-        $zip = new ZipArchive;
-        $fileName = 'BannerImagesBackup.zip';
-        $dir = $this->locatePublicDir(['banner', 'tenant/admin/banner']);
+        $dir = $this->locatePublicDir(['uploads/banner_img', 'banner', 'uploads/banner']);
         if (is_null($dir)) {
-            Toastr::error('No Banner Images Found in expected locations', 'Error');
+            Toastr::error('No Banner Images Found', 'Error');
             return back();
         }
 
-        if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE) {
-            $files = File::files($dir);
-            foreach ($files as $key => $value) {
-                $relativeNameInZipFile = basename($value);
-                $zip->addFile($value, $relativeNameInZipFile);
-            }
-            $zip->close();
-        }
-
-        if (file_exists(public_path($fileName))) {
-            return response()->download(public_path($fileName));
-        } else {
-            Toastr::error('Failed to create banner images backup', 'Error');
-            return back();
-        }
+        return $this->createBackupZip($dir, 'BannerImagesBackup.zip', 'No Banner Images Found');
     }
 
     public function downloadCategoryFilesBackup()
     {
-        $zip = new ZipArchive;
-        $fileName = 'CategoryImagesBackup.zip';
-        $dir = $this->locatePublicDir(['category_images', 'tenant/admin/category_images']);
+        $dir = $this->locatePublicDir(['uploads/category_images', 'category_images']);
         if (is_null($dir)) {
-            Toastr::error('No Category Images Found in expected locations', 'Error');
+            Toastr::error('No Category Images Found', 'Error');
             return back();
         }
 
-        if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE) {
-            $files = File::files($dir);
-            foreach ($files as $key => $value) {
-                $relativeNameInZipFile = basename($value);
-                $zip->addFile($value, $relativeNameInZipFile);
-            }
-            $zip->close();
-        }
-
-        if (file_exists(public_path($fileName))) {
-            return response()->download(public_path($fileName));
-        } else {
-            Toastr::error('Failed to create category images backup', 'Error');
-            return back();
-        }
+        return $this->createBackupZip($dir, 'CategoryImagesBackup.zip', 'No Category Images Found');
     }
 
     public function downloadSubcategoryFilesBackup()
     {
-        $zip = new ZipArchive;
-        $fileName = 'SubcategoryImagesBackup.zip';
-        $dir = $this->locatePublicDir(['subcategory_images', 'tenant/admin/subcategory_images']);
+        $dir = $this->locatePublicDir(['uploads/subcategory_images', 'subcategory_images']);
         if (is_null($dir)) {
-            Toastr::error('No Subcategory Images Found in expected locations', 'Error');
+            Toastr::error('No Subcategory Images Found', 'Error');
             return back();
         }
 
-        if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE) {
-            $files = File::files($dir);
-            foreach ($files as $key => $value) {
-                $relativeNameInZipFile = basename($value);
-                $zip->addFile($value, $relativeNameInZipFile);
-            }
-            $zip->close();
-        }
-
-        if (file_exists(public_path($fileName))) {
-            return response()->download(public_path($fileName));
-        } else {
-            Toastr::error('Failed to create subcategory images backup', 'Error');
-            return back();
-        }
+        return $this->createBackupZip($dir, 'SubcategoryImagesBackup.zip', 'No Subcategory Images Found');
     }
 
     public function downloadTicketFilesBackup()
     {
-        $zip = new ZipArchive;
-        $fileName = 'TicketFilesBackup.zip';
-        $dir = $this->locatePublicDir(['support_ticket_attachments', 'tenant/admin/support_ticket_attachments']);
+        $dir = $this->locatePublicDir(['uploads/support_ticket_attachments', 'support_ticket_attachments']);
         if (is_null($dir)) {
-            Toastr::error('No Ticket Attachments Found in expected locations', 'Error');
+            Toastr::error('No Ticket Attachments Found', 'Error');
             return back();
         }
 
-        if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE) {
-            $files = File::files($dir);
-            foreach ($files as $key => $value) {
-                $relativeNameInZipFile = basename($value);
-                $zip->addFile($value, $relativeNameInZipFile);
-            }
-            $zip->close();
-        }
-
-        if (file_exists(public_path($fileName))) {
-            return response()->download(public_path($fileName));
-        } else {
-            Toastr::error('Failed to create ticket files backup', 'Error');
-            return back();
-        }
+        return $this->createBackupZip($dir, 'TicketFilesBackup.zip', 'No Ticket Files Found');
     }
 
     public function downloadBlogFilesBackup()
     {
-        $zip = new ZipArchive;
-        $fileName = 'BlogFilesBackup.zip';
-        $dir = $this->locatePublicDir(['blogImages', 'tenant/admin/blogImages']);
+        $dir = $this->locatePublicDir(['uploads/blogImages', 'blogImages']);
         if (is_null($dir)) {
-            Toastr::error('No Blog Images Found in expected locations', 'Error');
+            Toastr::error('No Blog Images Found', 'Error');
             return back();
         }
 
-        if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE) {
-            $files = File::files($dir);
-            foreach ($files as $key => $value) {
-                $relativeNameInZipFile = basename($value);
-                $zip->addFile($value, $relativeNameInZipFile);
-            }
-            $zip->close();
-        }
-
-        if (file_exists(public_path($fileName))) {
-            return response()->download(public_path($fileName));
-        } else {
-            Toastr::error('Failed to create blog images backup', 'Error');
-            return back();
-        }
+        return $this->createBackupZip($dir, 'BlogFilesBackup.zip', 'No Blog Images Found');
     }
 
     public function downloadOtherFilesBackup()
     {
-        $zip = new ZipArchive;
-        $fileName = 'OtherImagesBackup.zip';
-        $dir = $this->locatePublicDir(['images', 'tenant/admin/images']);
+        $dir = $this->locatePublicDir(['uploads/images', 'images']);
         if (is_null($dir)) {
-            Toastr::error('No Other Images Found in expected locations', 'Error');
+            Toastr::error('No Other Images Found', 'Error');
             return back();
         }
 
-        if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE) {
-            $files = File::files($dir);
-            foreach ($files as $key => $value) {
-                $relativeNameInZipFile = basename($value);
-                $zip->addFile($value, $relativeNameInZipFile);
-            }
-            $zip->close();
-        }
-
-        if (file_exists(public_path($fileName))) {
-            return response()->download(public_path($fileName));
-        } else {
-            Toastr::error('Failed to create other images backup', 'Error');
-            return back();
-        }
+        return $this->createBackupZip($dir, 'OtherImagesBackup.zip', 'No Other Images Found');
     }
 
     public function downloadFlagFilesBackup()
     {
-        $zip = new ZipArchive;
-        $fileName = 'FlagImagesBackup.zip';
-        $dir = $this->locatePublicDir(['flag_icons', 'tenant/admin/flag_icons']);
+        $dir = $this->locatePublicDir(['uploads/flag_icons', 'flag_icons']);
         if (is_null($dir)) {
-            Toastr::error('No Flag Icons Found in expected locations', 'Error');
+            Toastr::error('No Flag Icons Found', 'Error');
             return back();
         }
 
-        if ($zip->open(public_path($fileName), ZipArchive::CREATE) === TRUE) {
-            $files = File::files($dir);
-            foreach ($files as $key => $value) {
-                $relativeNameInZipFile = basename($value);
-                $zip->addFile($value, $relativeNameInZipFile);
+        return $this->createBackupZip($dir, 'FlagImagesBackup.zip', 'No Flag Icons Found');
+    }
+
+    public function downloadAllImagesBackup()
+    {
+        $uploadsPath = public_path('uploads');
+
+        // Check if uploads directory exists
+        if (!File::isDirectory($uploadsPath)) {
+            Toastr::error('Uploads directory not found', 'Error');
+            return back();
+        }
+
+        $timestamp = date('Y-m-d_H-i-s');
+        $masterZipName = 'AllImagesBackup_' . $timestamp . '.zip';
+
+        // Store ZIP in storage/app to avoid scanning it
+        $storagePath = storage_path('app/backups');
+
+        // Create backup directory if not exists
+        if (!File::exists($storagePath)) {
+            File::makeDirectory($storagePath, 0755, true);
+        }
+
+        $masterZipPath = $storagePath . '/' . $masterZipName;
+
+        // Remove old zip if exists
+        if (file_exists($masterZipPath)) {
+            @unlink($masterZipPath);
+        }
+
+        $zip = new ZipArchive();
+        $result = $zip->open($masterZipPath, ZipArchive::CREATE);
+
+        if ($result !== true) {
+            Toastr::error('Cannot create ZIP file. Error code: ' . $result, 'Error');
+            return back();
+        }
+
+        $hasFiles = false;
+        $fileCount = 0;
+
+        // Get all subdirectories in uploads folder
+        $directories = File::directories($uploadsPath);
+
+        foreach ($directories as $dir) {
+            $folderName = basename($dir);
+
+            // Get all files in this subdirectory
+            if (!File::isDirectory($dir)) {
+                continue;
             }
-            $zip->close();
+
+            $files = File::allFiles($dir); // Use allFiles to get files recursively
+
+            foreach ($files as $file) {
+                $filePath = $file->getRealPath();
+
+                // Skip if not readable or is a directory
+                if (!is_file($filePath) || !is_readable($filePath)) {
+                    continue;
+                }
+
+                // Get relative path from the subdirectory
+                $relativePath = $file->getRelativePathname();
+
+                // Create proper path in ZIP: foldername/relativepath
+                $zipPath = $folderName . '/' . $relativePath;
+
+                // Normalize path separators for cross-platform compatibility
+                $zipPath = str_replace('\\', '/', $zipPath);
+
+                if ($zip->addFile($filePath, $zipPath)) {
+                    $hasFiles = true;
+                    $fileCount++;
+                }
+            }
         }
 
-        if (file_exists(public_path($fileName))) {
-            return response()->download(public_path($fileName));
-        } else {
-            Toastr::error('Failed to create flag icons backup', 'Error');
+        // Close the zip file - MUST close before any file operations
+        if (!$zip->close()) {
+            Toastr::error('Failed to finalize ZIP file', 'Error');
             return back();
         }
 
-        // $storagePath = storage_path('app');
-        // $zipFileName = 'storage.zip';
-        // $zipFilePath = storage_path($zipFileName);
+        // Clear file stat cache
+        clearstatcache();
 
-        // // Create a new zip archive
-        // $zip = new ZipArchive;
-        // if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
-        //     // Add all files and directories in the storage folder to the zip archive
-        //     $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($storagePath));
-        //     foreach ($files as $file) {
-        //         if (!$file->isDir()) {
-        //             $filePath = $file->getRealPath();
-        //             $relativePath = 'storage/' . substr($filePath, strlen($storagePath) + 1);
-        //             $zip->addFile($filePath, $relativePath);
-        //         }
-        //     }
+        if (!$hasFiles) {
+            if (file_exists($masterZipPath)) {
+                @unlink($masterZipPath);
+            }
+            Toastr::error('No files found in uploads subdirectories', 'Error');
+            return back();
+        }
 
-        //     // Close the zip archive
-        //     $zip->close();
+        // Verify the ZIP was created and is valid
+        if (!file_exists($masterZipPath)) {
+            Toastr::error('ZIP file creation failed', 'Error');
+            return back();
+        }
 
-        //     // Set appropriate headers for the download
-        //     $headers = [
-        //         'Content-Type' => 'application/octet-stream',
-        //         'Content-Disposition' => 'attachment; filename=' . $zipFileName,
-        //     ];
+        $fileSize = filesize($masterZipPath);
+        if ($fileSize < 22) {
+            @unlink($masterZipPath);
+            Toastr::error('ZIP file is too small (corrupted)', 'Error');
+            return back();
+        }
 
-        //     // Return the zip file as a response
-        //     return response()->download($zipFilePath, $zipFileName, $headers);
-        // }
-        // return back()->with('error', 'Failed to create the zip archive.');
+        // Test if ZIP can be opened
+        $testZip = new ZipArchive();
+        if ($testZip->open($masterZipPath, ZipArchive::CHECKCONS) !== true) {
+            @unlink($masterZipPath);
+            Toastr::error('ZIP file is corrupted and cannot be opened', 'Error');
+            return back();
+        }
+        $testZip->close();
+
+        Toastr::success('Backup created: ' . $fileCount . ' files (' . round($fileSize / 1024 / 1024, 2) . ' MB)', 'Success');
+
+        // Download the file
+        return response()->download($masterZipPath, $masterZipName, [
+            'Content-Type' => 'application/zip',
+        ])->deleteFileAfterSend(true);
     }
 }

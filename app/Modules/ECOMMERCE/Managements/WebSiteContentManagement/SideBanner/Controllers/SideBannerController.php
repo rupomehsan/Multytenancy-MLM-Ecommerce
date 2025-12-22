@@ -26,6 +26,7 @@ class SideBannerController extends Controller
 
     public function saveNewSideBanner(Request $request)
     {
+
         $request->validate([
             'banner_img' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'banner_link' => 'nullable|url',
@@ -37,17 +38,23 @@ class SideBannerController extends Controller
         $image = null;
         if ($request->hasFile('banner_img')) {
             $get_image = $request->file('banner_img');
-            $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('banner_img/');
+            $image_name = Str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
+            $relativeDir = 'uploads/banner_img/';
+            $location = public_path($relativeDir);
+            if (!file_exists($location)) {
+                mkdir($location, 0755, true);
+            }
             $get_image->move($location, $image_name);
-            $image = "banner_img/" . $image_name;
+            $image = $relativeDir . $image_name;
         }
 
-
         $slug = Generate::Slug($request->banner_link);
+        if (empty($slug)) {
+            $slug = Str::slug($request->title ?? Str::random(6));
+        }
         $sameSlugCount = SideBanner::where('slug', $slug)->count();
         if ($sameSlugCount > 0) {
-            $slug .= "-" . $sameSlugCount + 1;
+            $slug .= "-" . ($sameSlugCount + 1);
         }
 
         SideBanner::insert([
@@ -101,9 +108,9 @@ class SideBannerController extends Controller
     public function deleteSideBanner($slug)
     {
         $data = SideBanner::where('slug', $slug)->first();
-        if ($data->image) {
-            if (file_exists(public_path($data->image))) {
-                unlink(public_path($data->image));
+        if ($data && $data->banner_img) {
+            if (file_exists(public_path($data->banner_img))) {
+                unlink(public_path($data->banner_img));
             }
         }
         $data->delete();
@@ -113,6 +120,12 @@ class SideBannerController extends Controller
     public function editSideBanner($slug)
     {
         $data = SideBanner::where('slug', $slug)->first();
+
+        if (!$data) {
+            Toastr::error('Side Banner not found', 'Error');
+            return redirect('view/all/side-banner');
+        }
+
         return view('update', compact('data'));
     }
 
@@ -136,17 +149,24 @@ class SideBannerController extends Controller
             }
 
             $get_image = $request->file('banner_img');
-            $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('banner_img/');
+            $image_name = Str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
+            $relativeDir = 'uploads/banner_img/';
+            $location = public_path($relativeDir);
+            if (!file_exists($location)) {
+                mkdir($location, 0755, true);
+            }
             // Image::make($get_image)->save($location . $image_name, 80);
             $get_image->move($location, $image_name);
-            $image = "banner_img/" . $image_name;
+            $image = $relativeDir . $image_name;
         }
 
         $slug = Generate::Slug($request->banner_link);
+        if (empty($slug)) {
+            $slug = Str::slug($request->title ?? Str::random(6));
+        }
         $sameSlugCount = SideBanner::where('slug', $slug)->where('id', '!=', $request->custom_id)->count();
         if ($sameSlugCount > 0) {
-            $slug .= "-" . $sameSlugCount + 1;
+            $slug .= "-" . ($sameSlugCount + 1);
         }
 
         SideBanner::where('id', $request->custom_id)->update([

@@ -1,12 +1,7 @@
 @extends('tenant.frontend.layouts.app')
 
 @push('site-seo')
-    @php
-        $generalInfo = DB::table('general_infos')
-            ->select('meta_title', 'company_name', 'fav_icon')
-            ->where('id', 1)
-            ->first();
-    @endphp
+    {{-- $generalInfo is provided globally by AppServiceProvider --}}
     <title>Package Products - {{ $generalInfo->company_name ?? 'TPMart' }}</title>
     @if ($generalInfo && $generalInfo->fav_icon)
         <link rel="icon" href="{{ env('ADMIN_URL') . '/' . $generalInfo->fav_icon }}" type="image/x-icon" />

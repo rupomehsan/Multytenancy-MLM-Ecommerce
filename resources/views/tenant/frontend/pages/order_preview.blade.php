@@ -1,23 +1,7 @@
 @extends('tenant.frontend.layouts.app')
 
 @push('site-seo')
-    @php
-        $generalInfo = DB::table('general_infos')
-            ->select(
-                'meta_title',
-                'meta_og_title',
-                'meta_keywords',
-                'meta_description',
-                'meta_og_description',
-                'meta_og_image',
-                'company_name',
-                'fav_icon',
-                'google_tag_manager_status',
-                'google_tag_manager_id',
-            )
-            ->where('id', 1)
-            ->first();
-    @endphp
+    {{-- $generalInfo is provided globally by AppServiceProvider --}}
     <meta name="keywords" content="{{ $generalInfo ? $generalInfo->meta_keywords : '' }}" />
     <meta name="description" content="{{ $generalInfo ? $generalInfo->meta_description : '' }}" />
     <meta name="author" content="{{ $generalInfo ? $generalInfo->company_name : '' }}">

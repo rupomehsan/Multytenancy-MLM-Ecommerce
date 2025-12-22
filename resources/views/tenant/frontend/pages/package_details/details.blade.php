@@ -1,12 +1,7 @@
 @extends('tenant.frontend.layouts.app')
 
 @push('site-seo')
-    @php
-        $generalInfo = DB::table('general_infos')
-            ->select('fav_icon', 'company_name', 'google_tag_manager_status', 'google_tag_manager_id')
-            ->where('id', 1)
-            ->first();
-    @endphp
+    {{-- $generalInfo is provided globally by AppServiceProvider --}}
 
     <meta name="keywords" content="{{ $package ? $package->meta_keywords : '' }}" />
     <meta name="description" content="{{ $package ? $package->meta_description : '' }}" />

@@ -49,16 +49,23 @@ class OutletController extends Controller
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $get_image) {
                 $image_name = Str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-                $location = public_path('outletImages/'); // Folder path within the public directory
+                // Save under public/uploads/outletImages to keep uploads organized
+                $relativeDir = 'uploads/outletImages/';
+                $location = public_path($relativeDir);
 
-                if ($get_image->getClientOriginalExtension() == 'svg') {
+                // Ensure directory exists
+                if (!File::exists($location)) {
+                    File::makeDirectory($location, 0755, true);
+                }
+
+                if (strtolower($get_image->getClientOriginalExtension()) == 'svg') {
                     $get_image->move($location, $image_name);
                 } else {
                     $image = Image::make($get_image)->encode('jpg', 60); // Encode to jpg (60% quality)
                     $image->save($location . $image_name);
                 }
 
-                $images[] = "outletImages/" . $image_name;
+                $images[] = $relativeDir . $image_name;
             }
         }
 
@@ -159,16 +166,23 @@ class OutletController extends Controller
             // Add new images
             foreach ($request->file('images') as $get_image) {
                 $image_name = Str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-                $location = public_path('outletImages/'); // Folder path within the public directory
+                // Save under public/uploads/outletImages to keep uploads organized
+                $relativeDir = 'uploads/outletImages/';
+                $location = public_path($relativeDir);
 
-                if ($get_image->getClientOriginalExtension() == 'svg') {
+                // Ensure directory exists
+                if (!File::exists($location)) {
+                    File::makeDirectory($location, 0755, true);
+                }
+
+                if (strtolower($get_image->getClientOriginalExtension()) == 'svg') {
                     $get_image->move($location, $image_name);
                 } else {
                     $image = Image::make($get_image)->encode('jpg', 60); // Encode to jpg (60% quality)
                     $image->save($location . $image_name);
                 }
 
-                $images[] = "outletImages/" . $image_name; // Add the new image to the images array
+                $images[] = $relativeDir . $image_name; // Add the new image to the images array
             }
         }
 

@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-@php
-    $generalInfo = DB::table('general_infos')->where('id', 1)->select('fav_icon')->first();
-@endphp
+{{-- $generalInfo is provided globally by AppServiceProvider to all views --}}
 
 <head>
     <meta charset="utf-8" />

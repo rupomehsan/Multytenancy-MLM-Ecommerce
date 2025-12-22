@@ -169,9 +169,15 @@ class BlogController extends Controller
         if ($request->hasFile('image')) {
             $get_image = $request->file('image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('blogImages/');
+            $relativeDir = 'uploads/blogImages/';
+            $location = public_path($relativeDir);
+
+            if (!\Illuminate\Support\Facades\File::exists($location)) {
+                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
+            }
+
             $get_image->move($location, $image_name);
-            $image = "blogImages/" . $image_name;
+            $image = $relativeDir . $image_name;
         }
 
         $clean = preg_replace('/[^a-zA-Z0-9\s]/', '', strtolower($request->title)); //remove all non alpha numeric
@@ -242,7 +248,15 @@ class BlogController extends Controller
     public function editBlog($slug)
     {
         $data = Blog::where('slug', $slug)->first();
-        return view('edit', compact('data'));
+
+        if (!$data) {
+            Toastr::error('Blog not found', 'Error');
+            return redirect()->back();
+        }
+
+        $categoriesDropdown = BlogCategory::getDropDownList('name', $data->category_id);
+
+        return view('edit', compact('data', 'categoriesDropdown'));
     }
 
     public function updateBlog(Request $request)
@@ -265,9 +279,15 @@ class BlogController extends Controller
 
             $get_image = $request->file('image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('blogImages/');
+            $relativeDir = 'uploads/blogImages/';
+            $location = public_path($relativeDir);
+
+            if (!\Illuminate\Support\Facades\File::exists($location)) {
+                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
+            }
+
             $get_image->move($location, $image_name);
-            $image = "blogImages/" . $image_name;
+            $image = $relativeDir . $image_name;
         }
 
         $clean = preg_replace('/[^a-zA-Z0-9\s]/', '', strtolower($request->title)); //remove all non alpha numeric

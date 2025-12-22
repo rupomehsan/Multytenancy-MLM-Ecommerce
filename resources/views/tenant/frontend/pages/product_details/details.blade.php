@@ -2,12 +2,7 @@
 
 
 @push('site-seo')
-    @php
-        $generalInfo = DB::table('general_infos')
-            ->select('fav_icon', 'company_name', 'google_tag_manager_status', 'google_tag_manager_id')
-            ->where('id', 1)
-            ->first();
-    @endphp
+    {{-- $generalInfo is provided globally by AppServiceProvider --}}
 
     <meta name="keywords" content="{{ $product ? $product->meta_keywords : '' }}" />
     <meta name="description" content="{{ $product ? $product->meta_description : '' }}" />

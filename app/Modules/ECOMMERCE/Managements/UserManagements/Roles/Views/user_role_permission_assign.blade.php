@@ -23,36 +23,22 @@
                         @csrf
                         <input type="hidden" name="user_id" value="{{ $userId }}">
 
-                        @php
-                            $userRoles = App\Models\UserRole::orderBy('id', 'desc')->get();
-                        @endphp
 
                         <div class="row">
                             <div class="col-lg-12">
-                                @foreach ($userRoles as $userRoles)
-                                    @php
-                                        $permissionsUnderRole = '';
-                                        $rolePermissions = App\Models\RolePermission::where(
-                                            'role_id',
-                                            $userRoles->id,
-                                        )->get();
-                                        foreach ($rolePermissions as $rolePermission) {
-                                            $permissionsUnderRole .= $rolePermission->route_name . ', ';
-                                        }
-                                    @endphp
+                                @foreach ($rolesForView as $role)
                                     <div class="form-group border-bottom">
                                         <table>
                                             <tr>
                                                 <td style="padding-right: 10px; vertical-align: middle;">
-                                                    <input type="checkbox" @if (App\Models\UserRolePermission::where('user_id', $userId)->where('role_id', $userRoles->id)->exists()) checked @endif
-                                                        data-size="small" id="role{{ $userRoles->id }}"
-                                                        value="{{ $userRoles->id }}" name="role_id[]"
-                                                        data-toggle="switchery" data-color="#08da82"
-                                                        data-secondary-color="#df3554" />
+                                                    <input type="checkbox" @if ($role->assigned) checked @endif
+                                                        data-size="small" id="role{{ $role->id }}"
+                                                        value="{{ $role->id }}" name="role_id[]" data-toggle="switchery"
+                                                        data-color="#08da82" data-secondary-color="#df3554" />
                                                 </td>
                                                 <td style="padding-top: 5px; vertical-align: middle;">
-                                                    <label for="role{{ $userRoles->id }}" style="cursor: pointer">
-                                                        {{ $userRoles->name }} [ {{ rtrim($permissionsUnderRole, ', ') }} ]
+                                                    <label for="role{{ $role->id }}" style="cursor: pointer">
+                                                        {{ $role->name }} [ {{ $role->permissionsUnderRole }} ]
                                                     </label>
                                                 </td>
                                             </tr>
@@ -63,16 +49,7 @@
                         </div>
 
 
-                        @php
-                            use Illuminate\Support\Str;
-                            // Get all permissions organized by module and group
-                            $permissionController = new App\Http\Controllers\PermissionRoutesController();
-                            $moduleGroupRoutes = $permissionController->getRoutesByModuleAndGroup();
-                            $userPermissions = App\Models\UserRolePermission::where('user_id', $userId)
-                                ->pluck('permission_id')
-                                ->toArray();
-                            $homeRoute = App\Models\PermissionRoutes::where('route', 'home')->first();
-                        @endphp
+                        {{-- moduleGroupRoutes, userPermissions and homeRoute are provided by the controller --}}
 
                         <h4 class="card-title mb-4 mt-4">Assign Permission to this User</h4>
 
@@ -85,11 +62,12 @@
                         <div class="accordion" id="moduleAccordion">
                             @foreach ($moduleGroupRoutes as $moduleName => $moduleData)
                                 <div class="card">
-                                    <div class="card-header" id="heading{{ Str::slug($moduleName) }}">
+                                    <div class="card-header" id="heading{{ \Illuminate\Support\Str::slug($moduleName) }}">
                                         <h5 class="mb-0">
                                             <button class="btn btn-link" type="button" data-toggle="collapse"
-                                                data-target="#collapse{{ Str::slug($moduleName) }}" aria-expanded="true"
-                                                aria-controls="collapse{{ Str::slug($moduleName) }}">
+                                                data-target="#collapse{{ \Illuminate\Support\Str::slug($moduleName) }}"
+                                                aria-expanded="true"
+                                                aria-controls="collapse{{ \Illuminate\Support\Str::slug($moduleName) }}">
                                                 <i class="fas fa-cube text-primary"></i>
                                                 <strong>{{ ucwords(str_replace(['-', '_'], ' ', $moduleName)) }}
                                                     Module</strong>
@@ -99,8 +77,9 @@
                                             </button>
                                         </h5>
                                     </div>
-                                    <div id="collapse{{ Str::slug($moduleName) }}" class="collapse show"
-                                        aria-labelledby="heading{{ Str::slug($moduleName) }}">
+                                    <div id="collapse{{ \Illuminate\Support\Str::slug($moduleName) }}"
+                                        class="collapse show"
+                                        aria-labelledby="heading{{ \Illuminate\Support\Str::slug($moduleName) }}">
                                         <div class="card-body">
                                             @foreach ($moduleData['groups'] as $groupName => $groupData)
                                                 <div class="mb-4">
@@ -112,13 +91,14 @@
                                                                 routes</span>
                                                         </h6>
                                                         <input type="checkbox" class="ml-3 group-switchery"
-                                                            data-group="group-{{ Str::slug($moduleName . '-' . $groupName) }}"
+                                                            data-group="group-{{ \Illuminate\Support\Str::slug($moduleName . '-' . $groupName) }}"
                                                             data-size="small" data-toggle="switchery" data-color="#08da82"
                                                             data-secondary-color="#df3554" style="margin-left: 15px;" />
                                                         <span class="ml-2 text-muted" style="font-size:13px;">All</span>
 
                                                     </div>
-                                                    <div class="row group-{{ Str::slug($moduleName . '-' . $groupName) }}">
+                                                    <div
+                                                        class="row group-{{ \Illuminate\Support\Str::slug($moduleName . '-' . $groupName) }}">
                                                         @foreach ($groupData['routes'] as $index => $permissionRoute)
                                                             @if ($permissionRoute->route == 'home')
                                                                 @continue
@@ -169,6 +149,7 @@
         </div>
     </div>
 @endsection
+
 
 
 @section('footer_js')

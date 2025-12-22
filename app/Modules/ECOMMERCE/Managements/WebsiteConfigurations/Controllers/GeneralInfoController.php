@@ -26,7 +26,7 @@ class GeneralInfoController extends Controller
     }
     public function aboutUsPage()
     {
-        $data = AboutUs::where('id', 1)->first();
+        $data = AboutUs::first();
         return view('about_us', compact('data'));
     }
 
@@ -42,9 +42,15 @@ class GeneralInfoController extends Controller
 
             $get_image = $request->file('banner_bg');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('uploads/about_us/');
+            $relativeDir = 'uploads/about_us/';
+            $location = public_path($relativeDir);
+
+            if (!\Illuminate\Support\Facades\File::exists($location)) {
+                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
+            }
+
             $get_image->move($location, $image_name);
-            $banner_bg = "uploads/about_us/" . $image_name;
+            $banner_bg = $relativeDir . $image_name;
         }
 
 
@@ -57,9 +63,15 @@ class GeneralInfoController extends Controller
 
             $get_image = $request->file('image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('uploads/about_us/');
+            $relativeDir = 'uploads/about_us/';
+            $location = public_path($relativeDir);
+
+            if (!\Illuminate\Support\Facades\File::exists($location)) {
+                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
+            }
+
             $get_image->move($location, $image_name);
-            $image = "uploads/about_us/" . $image_name;
+            $image = $relativeDir . $image_name;
         }
 
         if ($data) {
@@ -94,13 +106,13 @@ class GeneralInfoController extends Controller
 
     public function generalInfo(Request $request)
     {
-        $data = GeneralInfo::where('id', 1)->first() ?? new GeneralInfo();
+        $data = GeneralInfo::first() ?? new GeneralInfo();
         return view('info', compact('data'));
     }
 
     public function updateGeneralInfo(Request $request)
     {
-        $data = GeneralInfo::where('id', 1)->first();
+        $data = GeneralInfo::first() ?? new GeneralInfo();
 
         $image = $data->logo;
         if ($request->hasFile('logo')) {
@@ -111,9 +123,15 @@ class GeneralInfoController extends Controller
 
             $get_image = $request->file('logo');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('company_logo/');
+            $relativeDir = 'uploads/company_logo/';
+            $location = public_path($relativeDir);
+
+            if (!\Illuminate\Support\Facades\File::exists($location)) {
+                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
+            }
+
             $get_image->move($location, $image_name);
-            $image = "company_logo/" . $image_name;
+            $image = $relativeDir . $image_name;
         }
 
         $imageDark = $data->logo_dark;
@@ -125,9 +143,15 @@ class GeneralInfoController extends Controller
 
             $get_image = $request->file('logo_dark');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('company_logo/');
+            $relativeDir = 'uploads/company_logo/';
+            $location = public_path($relativeDir);
+
+            if (!\Illuminate\Support\Facades\File::exists($location)) {
+                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
+            }
+
             $get_image->move($location, $image_name);
-            $imageDark = "company_logo/" . $image_name;
+            $imageDark = $relativeDir . $image_name;
         }
 
 
@@ -140,9 +164,15 @@ class GeneralInfoController extends Controller
 
             $get_image = $request->file('fav_icon');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('company_logo/');
+            $relativeDir = 'uploads/company_logo/';
+            $location = public_path($relativeDir);
+
+            if (!\Illuminate\Support\Facades\File::exists($location)) {
+                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
+            }
+
             $get_image->move($location, $image_name);
-            $favIcon = "company_logo/" . $image_name;
+            $favIcon = $relativeDir . $image_name;
         }
 
         $paymentBanner = $data->payment_banner;
@@ -154,34 +184,42 @@ class GeneralInfoController extends Controller
 
             $get_image = $request->file('payment_banner');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('company_logo/');
+            $relativeDir = 'uploads/company_logo/';
+            $location = public_path($relativeDir);
 
-            if ($get_image->getClientOriginalExtension() == 'svg') {
+            if (!\Illuminate\Support\Facades\File::exists($location)) {
+                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
+            }
+
+            if (strtolower($get_image->getClientOriginalExtension()) == 'svg') {
                 $get_image->move($location, $image_name);
             } else {
                 Image::make($get_image)->save($location . $image_name, 25);
             }
 
-            $paymentBanner = "company_logo/" . $image_name;
+            $paymentBanner = $relativeDir . $image_name;
         }
 
-        GeneralInfo::where('id', 1)->update([
-            'logo' => $image,
-            'logo_dark' => $imageDark,
-            'fav_icon' => $favIcon,
-            'tab_title' => $request->tab_title,
-            'company_name' => $request->company_name,
-            'short_description' => $request->short_description,
-            'contact' => $request->contact,
-            'email' => $request->email,
-            'address' => $request->address,
-            'google_map_link' => $request->google_map_link,
-            'play_store_link' => $request->play_store_link,
-            'app_store_link' => $request->app_store_link,
-            'footer_copyright_text' => $request->footer_copyright_text,
-            'payment_banner' => $paymentBanner,
-            'updated_at' => Carbon::now()
-        ]);
+        GeneralInfo::updateOrCreate(
+            ['id' => 1],
+            [
+                'logo' => $image,
+                'logo_dark' => $imageDark,
+                'fav_icon' => $favIcon,
+                'tab_title' => $request->tab_title,
+                'company_name' => $request->company_name,
+                'short_description' => $request->short_description,
+                'contact' => $request->contact,
+                'email' => $request->email,
+                'address' => $request->address,
+                'google_map_link' => $request->google_map_link,
+                'play_store_link' => $request->play_store_link,
+                'app_store_link' => $request->app_store_link,
+                'footer_copyright_text' => $request->footer_copyright_text,
+                'payment_banner' => $paymentBanner,
+                'updated_at' => Carbon::now()
+            ]
+        );
 
         Toastr::success('General Info Updated', 'Success');
         return back();
@@ -189,7 +227,7 @@ class GeneralInfoController extends Controller
 
     public function websiteThemePage()
     {
-        $data = GeneralInfo::where('id', 1)->first() ?? new GeneralInfo();
+        $data = GeneralInfo::first() ?? new GeneralInfo();
         return view('website_theme', compact('data'));
     }
 
@@ -212,7 +250,7 @@ class GeneralInfoController extends Controller
 
     public function socialMediaPage()
     {
-        $data = GeneralInfo::where('id', 1)->first() ?? new GeneralInfo();
+        $data = GeneralInfo::first() ?? new GeneralInfo();
         return view('social_media', compact('data'));
     }
 
@@ -240,14 +278,14 @@ class GeneralInfoController extends Controller
 
     public function seoHomePage()
     {
-        $data = GeneralInfo::where('id', 1)->select('meta_title', 'meta_keywords', 'meta_description', 'meta_og_title', 'meta_og_description', 'meta_og_image')->first() ?? new GeneralInfo();
+        $data = GeneralInfo::select('meta_title', 'meta_keywords', 'meta_description', 'meta_og_title', 'meta_og_description', 'meta_og_image')->first() ?? new GeneralInfo();
         return view('seo_homepage', compact('data'));
     }
 
     public function updateSeoHomePage(Request $request)
     {
 
-        $data = GeneralInfo::where('id', 1)->first();
+        $data = GeneralInfo::first();
         $meta_og_image = $data->meta_og_image;
         if ($request->hasFile('meta_og_image')) {
 
@@ -257,9 +295,15 @@ class GeneralInfoController extends Controller
 
             $get_image = $request->file('meta_og_image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('company_logo/');
+            $relativeDir = 'uploads/company_logo/';
+            $location = public_path($relativeDir);
+
+            if (!\Illuminate\Support\Facades\File::exists($location)) {
+                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
+            }
+
             $get_image->move($location, $image_name);
-            $meta_og_image = "company_logo/" . $image_name;
+            $meta_og_image = $relativeDir . $image_name;
         }
 
         GeneralInfo::where('id', 1)->update([
@@ -278,7 +322,7 @@ class GeneralInfoController extends Controller
 
     public function customCssJs()
     {
-        $data = GeneralInfo::where('id', 1)->first() ?? new GeneralInfo();
+        $data = GeneralInfo::first() ?? new GeneralInfo();
         return view('custom_css_js', compact('data'));
     }
 
@@ -297,9 +341,9 @@ class GeneralInfoController extends Controller
 
     public function socialChatScriptPage()
     {
-        $googleRecaptcha = GoogleRecaptcha::where('id', 1)->first() ?? new GoogleRecaptcha();
-        $generalInfo = GeneralInfo::where('id', 1)->first() ?? new GeneralInfo();
-        $socialLoginInfo = SocialLogin::where('id', 1)->first() ?? new SocialLogin();
+        $googleRecaptcha = GoogleRecaptcha::first() ?? new GoogleRecaptcha();
+        $generalInfo = GeneralInfo::first() ?? new GeneralInfo();
+        $socialLoginInfo = SocialLogin::first() ?? new SocialLogin();
         return view('social_chat_script', compact('googleRecaptcha', 'generalInfo', 'socialLoginInfo'));
     }
 
@@ -342,17 +386,21 @@ class GeneralInfoController extends Controller
 
     public function updateSocialLogin(Request $request)
     {
-        SocialLogin::where('id', 1)->update([
-            'fb_login_status' => $request->fb_login_status,
-            'fb_app_id' => $request->fb_app_id,
-            'fb_app_secret' => $request->fb_app_secret,
-            'fb_redirect_url' => $request->fb_redirect_url,
-            'gmail_login_status' => $request->gmail_login_status,
-            'gmail_client_id' => $request->gmail_client_id,
-            'gmail_secret_id' => $request->gmail_secret_id,
-            'gmail_redirect_url' => $request->gmail_redirect_url,
-            'updated_at' => Carbon::now()
-        ]);
+
+        SocialLogin::updateOrCreate(
+            ['id' => 1],
+            [
+                'fb_login_status' => $request->fb_login_status,
+                'fb_app_id' => $request->fb_app_id,
+                'fb_app_secret' => $request->fb_app_secret,
+                'fb_redirect_url' => $request->fb_redirect_url,
+                'gmail_login_status' => $request->gmail_login_status,
+                'gmail_client_id' => $request->gmail_client_id,
+                'gmail_secret_id' => $request->gmail_secret_id,
+                'gmail_redirect_url' => $request->gmail_redirect_url,
+                'updated_at' => Carbon::now()
+            ]
+        );
 
         Toastr::success('Google Analytic Info Updated', 'Success');
         return back();
@@ -360,6 +408,7 @@ class GeneralInfoController extends Controller
 
     public function updateFacebookPixel(Request $request)
     {
+
         GeneralInfo::where('id', 1)->update([
             'fb_pixel_status' => $request->fb_pixel_status,
             'fb_pixel_app_id' => $request->fb_pixel_app_id,
@@ -408,13 +457,13 @@ class GeneralInfoController extends Controller
 
     public function changeGuestCheckoutStatus()
     {
-        $info = GeneralInfo::where('id', 1)->first() ?? new GeneralInfo();
+        $info = GeneralInfo::first() ?? new GeneralInfo();
         if ($info->guest_checkout == 1) {
-            GeneralInfo::where('id', 1)->update([
+            GeneralInfo::updateOrCreate(['id' => 1], [
                 'guest_checkout' => 0
             ]);
         } else {
-            GeneralInfo::where('id', 1)->update([
+            GeneralInfo::updateOrCreate(['id' => 1], [
                 'guest_checkout' => 1
             ]);
         }

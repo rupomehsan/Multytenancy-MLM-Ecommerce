@@ -62,10 +62,16 @@ class TestimonialController extends Controller
         if ($request->hasFile('image')) {
             $get_image = $request->file('image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('testimonial/');
+            $relativeDir = 'uploads/testimonial/';
+            $location = public_path($relativeDir);
+
+            if (!\Illuminate\Support\Facades\File::exists($location)) {
+                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
+            }
+
             // Image::make($get_image)->save($location . $image_name, 80);
             $get_image->move($location, $image_name);
-            $image = "testimonial/" . $image_name;
+            $image = $relativeDir . $image_name;
         }
 
         Testimonial::insert([
@@ -113,16 +119,22 @@ class TestimonialController extends Controller
         $image = $data->customer_image;
         if ($request->hasFile('image')) {
 
-            if ($data->image != '' && file_exists(public_path($data->image))) {
-                unlink(public_path($data->image));
+            if ($data->customer_image != '' && file_exists(public_path($data->customer_image))) {
+                unlink(public_path($data->customer_image));
             }
 
             $get_image = $request->file('image');
             $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('testimonial/');
+            $relativeDir = 'uploads/testimonial/';
+            $location = public_path($relativeDir);
+
+            if (!\Illuminate\Support\Facades\File::exists($location)) {
+                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
+            }
+
             // Image::make($get_image)->save($location . $image_name, 80);
             $get_image->move($location, $image_name);
-            $image = "testimonial/" . $image_name;
+            $image = $relativeDir . $image_name;
         }
 
         $data->customer_image = $image;

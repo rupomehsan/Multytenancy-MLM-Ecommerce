@@ -35,9 +35,15 @@ class SupportTicketController extends Controller
         if ($request->hasFile('image')) {
             $get_attachment = $request->file('image');
             $attachment_name = str::random(5) . time() . '.' . $get_attachment->getClientOriginalExtension();
-            $location = public_path('support_ticket_attachments/');
+            $relativeDir = 'uploads/support_ticket_attachments/';
+            $location = public_path($relativeDir);
+
+            if (!\Illuminate\Support\Facades\File::exists($location)) {
+                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
+            }
+
             $get_attachment->move($location, $attachment_name);
-            $attachment = "support_ticket_attachments/" . $attachment_name;
+            $attachment = $relativeDir . $attachment_name;
 
             $curl = curl_init();
             curl_setopt_array($curl, array(
@@ -97,9 +103,15 @@ class SupportTicketController extends Controller
         if ($request->hasFile('image')) {
             $get_attachment = $request->file('image');
             $attachment_name = str::random(5) . time() . '.' . $get_attachment->getClientOriginalExtension();
-            $location = public_path('support_ticket_attachments/');
+            $relativeDir = 'uploads/support_ticket_attachments/';
+            $location = public_path($relativeDir);
+
+            if (!\Illuminate\Support\Facades\File::exists($location)) {
+                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
+            }
+
             $get_attachment->move($location, $attachment_name);
-            $attachment = "support_ticket_attachments/" . $attachment_name;
+            $attachment = $relativeDir . $attachment_name;
 
             $curl = curl_init();
             curl_setopt_array($curl, array(
