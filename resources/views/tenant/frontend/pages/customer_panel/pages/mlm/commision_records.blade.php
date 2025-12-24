@@ -460,10 +460,10 @@
                 <i class="fi-rr-sack-dollar"></i>
                 Total Earned
             </div>
-            <div class="mlm-summary-value">৳124,850</div>
+            <div class="mlm-summary-value">৳{{ number_format($totalEarned ?? 0, 2) }}</div>
             <div class="mlm-summary-change positive">
-                <i class="fi-rr-arrow-trend-up"></i>
-                +18.5% from last month
+                <i class="fi-rr-check"></i>
+                Approved & Paid
             </div>
         </div>
 
@@ -472,9 +472,9 @@
                 <i class="fi-rr-clock"></i>
                 Pending Approval
             </div>
-            <div class="mlm-summary-value">৳8,420</div>
+            <div class="mlm-summary-value">৳{{ number_format($pending ?? 0, 2) }}</div>
             <div class="mlm-summary-change">
-                12 transactions pending
+                {{ $pendingCount ?? 0 }} transactions pending
             </div>
         </div>
 
@@ -483,7 +483,7 @@
                 <i class="fi-rr-wallet"></i>
                 Available Balance
             </div>
-            <div class="mlm-summary-value">৳15,680</div>
+            <div class="mlm-summary-value">৳{{ number_format($availableBalance ?? 0, 2) }}</div>
             <div class="mlm-summary-change positive">
                 <i class="fi-rr-check"></i>
                 Ready to withdraw
@@ -511,39 +511,49 @@
         </div>
 
         <!-- Filters -->
-        <div class="mlm-filters">
-            <div class="mlm-filter-group">
-                <label for="statusFilter">Status</label>
-                <select id="statusFilter">
-                    <option value="">All Status</option>
-                    <option value="approved">Approved</option>
-                    <option value="pending">Pending</option>
-                    <option value="rejected">Rejected</option>
-                </select>
+        <form method="GET" action="{{ route('customer.mlm.commission_history') }}">
+            <div class="mlm-filters">
+                <div class="mlm-filter-group">
+                    <label for="statusFilter">Status</label>
+                    <select id="statusFilter" name="status">
+                        <option value="">All Status</option>
+                        <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
+                        <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Paid</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                    </select>
+                </div>
+                <div class="mlm-filter-group">
+                    <label for="levelFilter">Commission Level</label>
+                    <select id="levelFilter" name="level">
+                        <option value="">All Levels</option>
+                        <option value="1" {{ request('level') == '1' ? 'selected' : '' }}>Level 1 (Referral)</option>
+                        <option value="2" {{ request('level') == '2' ? 'selected' : '' }}>Level 2</option>
+                        <option value="3" {{ request('level') == '3' ? 'selected' : '' }}>Level 3</option>
+                    </select>
+                </div>
+                <div class="mlm-filter-group">
+                    <label for="dateFrom">Date From</label>
+                    <input type="date" id="dateFrom" name="date_from" value="{{ request('date_from') }}">
+                </div>
+                <div class="mlm-filter-group">
+                    <label for="dateTo">Date To</label>
+                    <input type="date" id="dateTo" name="date_to" value="{{ request('date_to') }}">
+                </div>
+                <div class="mlm-filter-group" style="display: flex; align-items: flex-end; gap: 10px;">
+                    <button type="submit" class="mlm-btn mlm-btn-primary">
+                        <i class="fi-rr-filter"></i> Apply Filters
+                    </button>
+                    <a href="{{ route('customer.mlm.commission_history') }}" class="mlm-btn mlm-btn-outline">
+                        <i class="fi-rr-refresh"></i> Clear
+                    </a>
+                </div>
             </div>
-            <div class="mlm-filter-group">
-                <label for="typeFilter">Commission Type</label>
-                <select id="typeFilter">
-                    <option value="">All Types</option>
-                    <option value="referral">Referral</option>
-                    <option value="level">Level</option>
-                    <option value="team">Team Sales</option>
-                    <option value="bonus">Bonus</option>
-                </select>
-            </div>
-            <div class="mlm-filter-group">
-                <label for="dateFrom">Date From</label>
-                <input type="date" id="dateFrom">
-            </div>
-            <div class="mlm-filter-group">
-                <label for="dateTo">Date To</label>
-                <input type="date" id="dateTo">
-            </div>
-        </div>
+        </form>
 
         <!-- Table -->
         <div class="mlm-table-wrapper">
-            <table class="mlm-table">
+            <table id="commissionTable" class="mlm-table">
                 <thead>
                     <tr>
                         <th>Transaction ID</th>
@@ -556,167 +566,117 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Row 1 -->
-                    <tr>
-                        <td><strong>#COM-1249</strong></td>
-                        <td>Dec 6, 2024<br><small class="text-muted">02:45 PM</small></td>
-                        <td><span class="mlm-type-badge">Referral</span></td>
-                        <td>John Doe<br><small class="mlm-reference">john@example.com</small></td>
-                        <td><span class="mlm-amount positive">৳850.00</span></td>
-                        <td><span class="mlm-status-badge approved">Approved</span></td>
-                        <td><span class="mlm-reference">Order #5842</span></td>
-                    </tr>
-
-                    <!-- Row 2 -->
-                    <tr>
-                        <td><strong>#COM-1248</strong></td>
-                        <td>Dec 6, 2024<br><small class="text-muted">11:20 AM</small></td>
-                        <td><span class="mlm-type-badge">Level 2</span></td>
-                        <td>Sarah Wilson<br><small class="mlm-reference">sarah@example.com</small></td>
-                        <td><span class="mlm-amount positive">৳420.50</span></td>
-                        <td><span class="mlm-status-badge pending">Pending</span></td>
-                        <td><span class="mlm-reference">Order #5839</span></td>
-                    </tr>
-
-                    <!-- Row 3 -->
-                    <tr>
-                        <td><strong>#COM-1247</strong></td>
-                        <td>Dec 5, 2024<br><small class="text-muted">04:15 PM</small></td>
-                        <td><span class="mlm-type-badge">Team Sales</span></td>
-                        <td>Mike Johnson<br><small class="mlm-reference">mike@example.com</small></td>
-                        <td><span class="mlm-amount positive">৳1,240.00</span></td>
-                        <td><span class="mlm-status-badge approved">Approved</span></td>
-                        <td><span class="mlm-reference">Order #5821</span></td>
-                    </tr>
-
-                    <!-- Row 4 -->
-                    <tr>
-                        <td><strong>#COM-1246</strong></td>
-                        <td>Dec 5, 2024<br><small class="text-muted">10:30 AM</small></td>
-                        <td><span class="mlm-type-badge">Referral</span></td>
-                        <td>Jane Smith<br><small class="mlm-reference">jane@example.com</small></td>
-                        <td><span class="mlm-amount positive">৳680.00</span></td>
-                        <td><span class="mlm-status-badge approved">Approved</span></td>
-                        <td><span class="mlm-reference">Order #5818</span></td>
-                    </tr>
-
-                    <!-- Row 5 -->
-                    <tr>
-                        <td><strong>#COM-1245</strong></td>
-                        <td>Dec 4, 2024<br><small class="text-muted">03:45 PM</small></td>
-                        <td><span class="mlm-type-badge">Bonus</span></td>
-                        <td>Team Performance<br><small class="mlm-reference">Monthly Milestone</small></td>
-                        <td><span class="mlm-amount positive">৳5,000.00</span></td>
-                        <td><span class="mlm-status-badge approved">Approved</span></td>
-                        <td><span class="mlm-reference">Target Achievement</span></td>
-                    </tr>
-
-                    <!-- Row 6 -->
-                    <tr>
-                        <td><strong>#COM-1244</strong></td>
-                        <td>Dec 4, 2024<br><small class="text-muted">09:15 AM</small></td>
-                        <td><span class="mlm-type-badge">Level 3</span></td>
-                        <td>David Brown<br><small class="mlm-reference">david@example.com</small></td>
-                        <td><span class="mlm-amount positive">৳285.50</span></td>
-                        <td><span class="mlm-status-badge pending">Pending</span></td>
-                        <td><span class="mlm-reference">Order #5802</span></td>
-                    </tr>
-
-                    <!-- Row 7 -->
-                    <tr>
-                        <td><strong>#COM-1243</strong></td>
-                        <td>Dec 3, 2024<br><small class="text-muted">02:00 PM</small></td>
-                        <td><span class="mlm-type-badge">Referral</span></td>
-                        <td>Emily Davis<br><small class="mlm-reference">emily@example.com</small></td>
-                        <td><span class="mlm-amount positive">৳920.00</span></td>
-                        <td><span class="mlm-status-badge approved">Approved</span></td>
-                        <td><span class="mlm-reference">Order #5795</span></td>
-                    </tr>
-
-                    <!-- Row 8 -->
-                    <tr>
-                        <td><strong>#COM-1242</strong></td>
-                        <td>Dec 3, 2024<br><small class="text-muted">11:45 AM</small></td>
-                        <td><span class="mlm-type-badge">Team Sales</span></td>
-                        <td>Robert Lee<br><small class="mlm-reference">robert@example.com</small></td>
-                        <td><span class="mlm-amount positive">৳1,580.00</span></td>
-                        <td><span class="mlm-status-badge rejected">Rejected</span></td>
-                        <td><span class="mlm-reference">Invalid Order</span></td>
-                    </tr>
-
-                    <!-- Row 9 -->
-                    <tr>
-                        <td><strong>#COM-1241</strong></td>
-                        <td>Dec 2, 2024<br><small class="text-muted">04:30 PM</small></td>
-                        <td><span class="mlm-type-badge">Referral</span></td>
-                        <td>Lisa Wilson<br><small class="mlm-reference">lisa@example.com</small></td>
-                        <td><span class="mlm-amount positive">৳750.00</span></td>
-                        <td><span class="mlm-status-badge approved">Approved</span></td>
-                        <td><span class="mlm-reference">Order #5776</span></td>
-                    </tr>
-
-                    <!-- Row 10 -->
-                    <tr>
-                        <td><strong>#COM-1240</strong></td>
-                        <td>Dec 2, 2024<br><small class="text-muted">10:15 AM</small></td>
-                        <td><span class="mlm-type-badge">Level 2</span></td>
-                        <td>Alex Brown<br><small class="mlm-reference">alex@example.com</small></td>
-                        <td><span class="mlm-amount positive">৳365.00</span></td>
-                        <td><span class="mlm-status-badge approved">Approved</span></td>
-                        <td><span class="mlm-reference">Order #5770</span></td>
-                    </tr>
+                    @forelse($commissions as $commission)
+                        <tr>
+                            <td><strong>#COM-{{ str_pad($commission->id, 4, '0', STR_PAD_LEFT) }}</strong></td>
+                            <td>
+                                {{ \Carbon\Carbon::parse($commission->created_at)->format('M j, Y') }}<br>
+                                <small
+                                    class="text-muted">{{ \Carbon\Carbon::parse($commission->created_at)->format('h:i A') }}</small>
+                            </td>
+                            <td>
+                                <span class="mlm-type-badge">
+                                    {{ $commission->level == 1 ? 'Referral' : 'Level ' . $commission->level }}
+                                </span>
+                            </td>
+                            <td>
+                                {{ $commission->buyer_name }}<br>
+                                <small class="mlm-reference">{{ $commission->buyer_email }}</small>
+                            </td>
+                            <td>
+                                <span
+                                    class="mlm-amount positive">৳{{ number_format($commission->commission_amount, 2) }}</span>
+                            </td>
+                            <td>
+                                <span
+                                    class="mlm-status-badge {{ $commission->status == 'paid' || $commission->status == 'approved' ? 'approved' : ($commission->status == 'pending' ? 'pending' : 'rejected') }}">
+                                    {{ ucfirst($commission->status) }}
+                                </span>
+                            </td>
+                            <td>
+                                @if ($commission->order_no && $commission->order_slug)
+                                    <span class="mlm-reference">Order #{{ $commission->order_no }}</span>
+                                @else
+                                    <span class="mlm-reference">-</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-center" style="padding: 40px;">
+                                <i class="fi-rr-sack-dollar" style="font-size: 48px; color: var(--gray-300);"></i>
+                                <p style="margin-top: 16px; color: var(--gray-600);">No commission records found</p>
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
         <!-- Pagination -->
-        <div class="mlm-pagination">
-            <div class="mlm-pagination-info">
-                Showing 1 to 10 of 156 entries
+        @if ($commissions->total() > 0)
+            <div class="mlm-pagination">
+                <div class="mlm-pagination-info">
+                    Showing {{ $commissions->firstItem() ?? 0 }} to {{ $commissions->lastItem() ?? 0 }} of
+                    {{ $commissions->total() }} entries
+                </div>
+                @if ($commissions->hasPages())
+                    <div class="mlm-pagination-buttons">
+                        @if ($commissions->onFirstPage())
+                            <button class="mlm-pagination-btn" disabled>
+                                <i class="fi-rr-angle-left"></i>
+                            </button>
+                        @else
+                            <a href="{{ $commissions->appends(request()->query())->previousPageUrl() }}"
+                                class="mlm-pagination-btn">
+                                <i class="fi-rr-angle-left"></i>
+                            </a>
+                        @endif
+
+                        @foreach ($commissions->appends(request()->query())->getUrlRange(1, $commissions->lastPage()) as $page => $url)
+                            @if ($page == $commissions->currentPage())
+                                <button class="mlm-pagination-btn active">{{ $page }}</button>
+                            @else
+                                <a href="{{ $url }}" class="mlm-pagination-btn">{{ $page }}</a>
+                            @endif
+                        @endforeach
+
+                        @if ($commissions->hasMorePages())
+                            <a href="{{ $commissions->appends(request()->query())->nextPageUrl() }}"
+                                class="mlm-pagination-btn">
+                                <i class="fi-rr-angle-right"></i>
+                            </a>
+                        @else
+                            <button class="mlm-pagination-btn" disabled>
+                                <i class="fi-rr-angle-right"></i>
+                            </button>
+                        @endif
+                    </div>
+                @endif
             </div>
-            <div class="mlm-pagination-buttons">
-                <button class="mlm-pagination-btn" disabled>
-                    <i class="fi-rr-angle-left"></i>
-                </button>
-                <button class="mlm-pagination-btn active">1</button>
-                <button class="mlm-pagination-btn">2</button>
-                <button class="mlm-pagination-btn">3</button>
-                <button class="mlm-pagination-btn">4</button>
-                <button class="mlm-pagination-btn">5</button>
-                <button class="mlm-pagination-btn">
-                    <i class="fi-rr-angle-right"></i>
-                </button>
-            </div>
-        </div>
+        @endif
+
+        <!-- DataTables will handle pagination -->
     </div>
 
     <!-- Empty State (Show when no data) -->
     <!-- <div class="mlm-content-card">
-        <div class="mlm-empty-state">
-            <i class="fi-rr-sack-dollar"></i>
-            <h3>No Commission Records</h3>
-            <p>Your commission history will appear here once you start earning</p>
-            <button class="mlm-btn mlm-btn-primary" onclick="window.location.href='{{ url('/customer/mlm/referral-list') }}'">
-                <i class="fi-rr-users-alt"></i> View Your Network
-            </button>
-        </div>
-    </div> -->
+                                    <div class="mlm-empty-state">
+                                        <i class="fi-rr-sack-dollar"></i>
+                                        <h3>No Commission Records</h3>
+                                        <p>Your commission history will appear here once you start earning</p>
+                                        <button class="mlm-btn mlm-btn-primary" onclick="window.location.href='{{ url('/customer/mlm/referral-list') }}'">
+                                            <i class="fi-rr-users-alt"></i> View Your Network
+                                        </button>
+                                    </div>
+                                </div> -->
+@endsection
 
+@section('page_js')
     <script>
-        // Filter functionality
-        document.getElementById('statusFilter').addEventListener('change', filterTable);
-        document.getElementById('typeFilter').addEventListener('change', filterTable);
-        document.getElementById('dateFrom').addEventListener('change', filterTable);
-        document.getElementById('dateTo').addEventListener('change', filterTable);
-
-        function filterTable() {
-            // Implement filter logic here
-            console.log('Filtering commission records...');
-        }
-
         function exportCommissions() {
-            alert('Export commission history as CSV/Excel');
-            // Implement export logic here
+            alert('Export commission history as CSV/Excel - Feature coming soon!');
+            // TODO: Implement export logic
         }
     </script>
 @endsection

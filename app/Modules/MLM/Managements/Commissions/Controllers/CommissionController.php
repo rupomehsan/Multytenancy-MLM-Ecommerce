@@ -10,7 +10,9 @@ use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 
 
-
+use App\Modules\MLM\Managements\Commissions\Actions\Create;
+use App\Modules\MLM\Managements\Commissions\Actions\Update;
+use App\Modules\MLM\Managements\Commissions\Actions\ViewCommissionRecords;
 
 class CommissionController extends Controller
 {
@@ -20,10 +22,21 @@ class CommissionController extends Controller
     }
     public function settings()
     {
-        return view('settings');
+        $result = Create::execute();
+
+        return view('settings', compact('result'));
     }
-    public function record()
+    public function update(Request $request)
     {
+        $result = Update::execute($request);
+
+        return redirect()->back()->with('success', $result['message'] ?? 'Settings updated successfully.');
+    }
+    public function record(Request $request)
+    {
+        if ($request->ajax()) {
+            return ViewCommissionRecords::execute($request);
+        }
         return view('records');
     }
 }

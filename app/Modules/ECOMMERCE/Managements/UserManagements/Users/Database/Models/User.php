@@ -25,7 +25,10 @@ class User extends Authenticatable
         'phone',
         'address',
         'balance',
-        'verification_code'
+        'verification_code',
+        'referral_code',
+        'referred_by',
+        'wallet_balance'
     ];
 
     /**
@@ -46,4 +49,34 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get all customers referred by this user.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function referrals()
+    {
+        return $this->hasMany(User::class, 'referred_by', 'id');
+    }
+
+    /**
+     * Get the parent customer who referred this user.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function parent()
+    {
+        return $this->belongsTo(User::class, 'referred_by', 'id');
+    }
+
+    /**
+     * Get count of direct referrals.
+     * 
+     * @return int
+     */
+    public function getDirectReferralsCountAttribute()
+    {
+        return $this->referrals()->count();
+    }
 }

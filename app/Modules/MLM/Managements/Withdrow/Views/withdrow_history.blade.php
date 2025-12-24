@@ -1,6 +1,8 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
+    <link rel="stylesheet" href="{{ url('tenant/admin/dataTable/css/jquery.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ url('tenant/admin/dataTable/css/dataTables.bootstrap4.min.css') }}">
     <style>
         h4.card-title {
             background: linear-gradient(to right, #17263A, #2c3e50, #17263A);
@@ -9,54 +11,33 @@
             color: white;
         }
 
-        .graph_card {
-            position: relative
+        .user-info {
+            line-height: 1.4;
         }
 
-        .graph_card i {
-            position: absolute;
-            top: 18px;
-            right: 18px;
-            font-size: 18px;
-            height: 35px;
-            width: 35px;
-            line-height: 33px;
-            text-align: center;
-            border-radius: 50%;
-            font-weight: 300;
-
-            /* animation-name: rotate;
-                                                                    animation-duration: 5s;
-                                                                    animation-iteration-count: infinite;
-                                                                    animation-timing-function: linear;
-                                                                */
-
+        .user-info .text-muted {
+            font-size: 12px;
         }
-
-        /* @keyframes rotate{
-                                                                    from{ transform: rotate(-360deg); }
-                                                                    to{ transform: rotate(360deg); }
-                                                                } */
     </style>
 @endsection
 
 @section('page_title')
-    Dashboard
+    Withdrawal History
 @endsection
 
 @section('page_heading')
-    Overview
+    Withdrawal Management
 @endsection
+
 @section('content')
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Withdraw History</h4>
 
             <div class="table-responsive mt-3">
-                <table class="table table-bordered table-hover">
+                <table id="withdrawHistoryTable" class="table table-bordered table-hover">
                     <thead style="background:#17263A; color:white;">
                         <tr>
-                            <th>#</th>
                             <th>User Name</th>
                             <th>Amount</th>
                             <th>Method</th>
@@ -66,33 +47,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Rakib Hasan</td>
-                            <td>৳ 1500</td>
-                            <td>Bank Transfer</td>
-                            <td>DBBL — 122334455</td>
-                            <td><span class="badge bg-warning">Pending</span></td>
-                            <td>2025-12-01</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Shakil Ahmed</td>
-                            <td>৳ 1000</td>
-                            <td>bKash</td>
-                            <td>017XXXXXXXX</td>
-                            <td><span class="badge bg-success">Approved</span></td>
-                            <td>2025-12-02</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Tamim Khan</td>
-                            <td>৳ 800</td>
-                            <td>Nagad</td>
-                            <td>018XXXXXXXX</td>
-                            <td><span class="badge bg-danger">Rejected</span></td>
-                            <td>2025-12-03</td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -100,6 +54,72 @@
     </div>
 @endsection
 
-
 @section('footer_js')
-@endsection
+    <script src="{{ url('tenant/admin/dataTable/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url('tenant/admin/dataTable/js/dataTables.bootstrap4.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function() {
+            console.log('Initializing Withdrawal History DataTable...');
+
+            var table = $('#withdrawHistoryTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('mlm.withdraw.history') }}",
+                    type: 'GET',
+                    error: function(xhr, error, code) {
+                        console.error('DataTable AJAX Error:', error, code);
+                        console.error('Response:', xhr.responseText);
+                    }
+                },
+                columns: [{
+                        data: 'user',
+                        name: 'u.name',
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'amount_formatted',
+                        name: 'wr.amount',
+                        orderable: true,
+                        searchable: false
+                    },
+                    {
+                        data: 'payment_method_badge',
+                        name: 'wr.payment_method',
+                        orderable: true,
+                        searchable: false
+                    },
+                    {
+                        data: 'account_details',
+                        name: 'wr.payment_details',
+                        orderable: false,
+                        searchable: true
+                    },
+                    {
+                        data: 'status_badge',
+                        name: 'wr.status',
+                        orderable: true,
+                        searchable: false
+                    },
+                    {
+                        data: 'requested_at',
+                        name: 'wr.created_at',
+                        orderable: true,
+                        searchable: false
+                    }
+                ],
+                order: [
+                    [5, 'desc']
+                ], // Sort by requested date
+                pageLength: 25,
+                language: {
+                    emptyTable: "No withdrawal history found",
+                    zeroRecords: "No matching withdrawals found"
+                }
+            });
+
+            console.log('DataTable initialized:', table);
+        });
+    </script>

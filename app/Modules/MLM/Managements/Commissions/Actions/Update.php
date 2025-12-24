@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Modules\Managements\MLM\Settings\Actions;
+namespace App\Modules\MLM\Managements\Commissions\Actions;
 
-use App\Modules\Managements\MLM\Settings\Models\Model as MLMSettings;
+use App\Modules\MLM\Managements\Commissions\Database\Models\CommissionSettingsModel;
 
 class Update
 {
-    
+
 
 
     public static function execute($request)
     {
         try {
-            $data = MLMSettings::first();
+            $data = CommissionSettingsModel::first();
             if ($data) {
                 $data->update($request->all());
             } else {
-                $data = MLMSettings::create($request->all());
+                $data = CommissionSettingsModel::create($request->all());
             }
             return $data;
         } catch (\Exception $e) {

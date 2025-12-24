@@ -3,29 +3,31 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\EmailConfigure;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\SocialLoginResource;
-use App\Models\User;
-use App\Models\SmsGateway;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserVerificationEmail;
 use App\Mail\ForgetPasswordEmail;
-use App\Models\SocialLogin;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 use Laravel\Socialite\Facades\Socialite;
 
+use App\Models\SocialLogin;
+use App\Models\SmsGateway;
+use App\Models\User;
+use App\Models\EmailConfigure;
+
 class AuthenticationController extends Controller
 {
     const AUTHORIZATION_TOKEN = 'GenericCommerceV1-SBW7583837NUDD82';
 
-    public function userRegistration(Request $request){
+    public function userRegistration(Request $request)
+    {
         if ($request->header('Authorization') == AuthenticationController::AUTHORIZATION_TOKEN) {
 
-            if(!$request->name || !$request->username || !$request->password || !$request->address){
+            if (!$request->name || !$request->username || !$request->password || !$request->address) {
                 return response()->json([
                     'success' => false,
                     'message' => 'All the Fields are required'
@@ -43,10 +45,10 @@ class AuthenticationController extends Controller
 
                 User::where('email', $username)->where('email_verified_at', null)->delete();
                 $checkExistingEmail = User::where('email', $username)->where('email_verified_at', '!=', null)->first();
-                if($username != '' && $checkExistingEmail){
+                if ($username != '' && $checkExistingEmail) {
                     return response()->json([
-                        'success'=> false,
-                        'message'=> 'You are already registered! Try login',
+                        'success' => false,
+                        'message' => 'You are already registered! Try login',
                         'data' => $data
                     ]);
                 } else {
@@ -79,15 +81,15 @@ class AuthenticationController extends Controller
                     try {
 
                         $emailConfig = EmailConfigure::where('status', 1)->orderBy('id', 'desc')->first();
-                        if($emailConfig){
+                        if ($emailConfig) {
 
                             $decryption = "";
-                            if($emailConfig){
+                            if ($emailConfig) {
                                 $ciphering = "AES-128-CTR";
                                 $options = 0;
                                 $decryption_iv = '1234567891011121';
                                 $decryption_key = "GenericCommerceV1";
-                                $decryption = openssl_decrypt ($emailConfig->password, $ciphering, $decryption_key, $options, $decryption_iv);
+                                $decryption = openssl_decrypt($emailConfig->password, $ciphering, $decryption_key, $options, $decryption_iv);
                             }
 
                             config([
@@ -107,7 +109,6 @@ class AuthenticationController extends Controller
                                 'message' => "Verification Email Sent",
                                 'data' => $data
                             ], 200);
-
                         } else {
                             return response()->json([
                                 'success' => false,
@@ -115,8 +116,7 @@ class AuthenticationController extends Controller
                                 'data' => $data
                             ], 200);
                         }
-
-                    } catch(\Exception $e) {
+                    } catch (\Exception $e) {
                         return response()->json([
                             'success' => false,
                             'message' => "Something Went Wrong while Sending Email",
@@ -124,12 +124,11 @@ class AuthenticationController extends Controller
                         ], 200);
                     }
                 }
-
             } else { // phone
 
                 User::where('phone', $username)->where('email_verified_at', null)->delete();
                 $checkExistingPhone = User::where('phone', $username)->where('email_verified_at', '!=', null)->first();
-                if($username != '' && $checkExistingPhone){
+                if ($username != '' && $checkExistingPhone) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Phone already used ! Please use another Mobile No',
@@ -164,22 +163,21 @@ class AuthenticationController extends Controller
                     $data['balance'] = 0;
 
                     $smsGateway = SmsGateway::where('status', 1)->first();
-                    if($smsGateway && $smsGateway->provider_name == 'Reve'){
+                    if ($smsGateway && $smsGateway->provider_name == 'Reve') {
                         $response = Http::get($smsGateway->api_endpoint, [
                             'apikey' => $smsGateway->api_key,
                             'secretkey' => $smsGateway->secret_key,
                             "callerID" => $smsGateway->sender_id,
                             "toUser" => $username,
-                            "messageContent" => "Verification Code is : ". $randomCode
+                            "messageContent" => "Verification Code is : " . $randomCode
                         ]);
 
-                        if($response->status() == 200){
+                        if ($response->status() == 200) {
                             return response()->json([
                                 'success' => true,
                                 'message' => "Verification SMS Sent Successfully", //$response
                                 'data' => $data
                             ], 200);
-
                         } else {
                             return response()->json([
                                 'success' => false,
@@ -187,18 +185,17 @@ class AuthenticationController extends Controller
                                 'data' => $data
                             ], 200);
                         }
-
-                    } elseif($smsGateway && $smsGateway->provider_name == 'ElitBuzz'){
+                    } elseif ($smsGateway && $smsGateway->provider_name == 'ElitBuzz') {
 
                         $response = Http::get($smsGateway->api_endpoint, [
                             'api_key' => $smsGateway->api_key,
                             "type" => "text",
                             "contacts" => $username, //“88017xxxxxxxx,88018xxxxxxxx”
                             "senderid" => $smsGateway->sender_id,
-                            "msg" => "Verification Code is : ". $randomCode
+                            "msg" => "Verification Code is : " . $randomCode
                         ]);
 
-                        if($response->status() == 200){
+                        if ($response->status() == 200) {
                             return response()->json([
                                 'success' => true,
                                 'message' => "SMS Sent Successfully",
@@ -211,7 +208,6 @@ class AuthenticationController extends Controller
                                 'data' => $data
                             ], 200);
                         }
-
                     } else {
                         return response()->json([
                             'success' => false,
@@ -220,9 +216,7 @@ class AuthenticationController extends Controller
                         ], 200);
                     }
                 }
-
             }
-
         } else {
             return response()->json([
                 'success' => false,
@@ -231,17 +225,18 @@ class AuthenticationController extends Controller
         }
     }
 
-    public function userVerification(Request $request){
+    public function userVerification(Request $request)
+    {
         if ($request->header('Authorization') == AuthenticationController::AUTHORIZATION_TOKEN) {
 
-            if(!$request->code || !$request->username || !$request->password){
+            if (!$request->code || !$request->username || !$request->password) {
                 return response()->json([
                     'success' => false,
                     'message' => 'All the Fields are required'
                 ]);
             }
 
-            if(Auth::attempt(['email' => $request->username, 'password' => $request->password, 'verification_code' => $request->code]) || Auth::attempt(['phone' => $request->username, 'password' => $request->password, 'verification_code' => $request->code])){
+            if (Auth::attempt(['email' => $request->username, 'password' => $request->password, 'verification_code' => $request->code]) || Auth::attempt(['phone' => $request->username, 'password' => $request->password, 'verification_code' => $request->code])) {
 
                 $user = Auth::user();
 
@@ -263,21 +258,18 @@ class AuthenticationController extends Controller
                 $data['balance'] = $user->balance;
 
                 return response()->json([
-                    'success'=> true,
-                    'message'=> 'Successfully Verified And Logged In',
+                    'success' => true,
+                    'message' => 'Successfully Verified And Logged In',
                     'data' => $data
                 ]);
-
-            }
-            else{
+            } else {
                 $data = array();
                 return response()->json([
-                    'success'=> false,
-                    'message'=> 'Wrong Verification Code',
+                    'success' => false,
+                    'message' => 'Wrong Verification Code',
                     'data' => $data
                 ]);
             }
-
         } else {
             return response()->json([
                 'success' => false,
@@ -286,18 +278,19 @@ class AuthenticationController extends Controller
         }
     }
 
-    public function userLogin(Request $request){
+    public function userLogin(Request $request)
+    {
 
         if ($request->header('Authorization') == AuthenticationController::AUTHORIZATION_TOKEN) {
 
-            if(!$request->username || !$request->password){
+            if (!$request->username || !$request->password) {
                 return response()->json([
                     'success' => false,
                     'message' => 'All the Fields are required'
                 ]);
             }
 
-            if(Auth::attempt(['email' => $request->username, 'password' => $request->password]) || Auth::attempt(['phone' => $request->username, 'password' => $request->password])){
+            if (Auth::attempt(['email' => $request->username, 'password' => $request->password]) || Auth::attempt(['phone' => $request->username, 'password' => $request->password])) {
 
                 $user = Auth::user();
                 User::where('id', $user->id)->update([
@@ -317,20 +310,17 @@ class AuthenticationController extends Controller
                 $data['balance'] = $user->balance;
 
                 return response()->json([
-                    'success'=> true,
-                    'message'=> 'Successfully Logged In',
+                    'success' => true,
+                    'message' => 'Successfully Logged In',
                     'data' => $data
                 ]);
-
-            }
-            else{
+            } else {
                 return response()->json([
                     'success' => false,
                     'message' => 'Wrong Login Credentials',
                     'data' => array(),
                 ]);
             }
-
         } else {
             return response()->json([
                 'success' => false,
@@ -339,7 +329,8 @@ class AuthenticationController extends Controller
         }
     }
 
-    public function socialLoginCredentials(Request $request){
+    public function socialLoginCredentials(Request $request)
+    {
         if ($request->header('Authorization') == AuthenticationController::AUTHORIZATION_TOKEN) {
 
             $data = SocialLogin::where('id', 1)->first();
@@ -349,7 +340,6 @@ class AuthenticationController extends Controller
                 'message' => 'Wrong Login Credentials',
                 'data' => new SocialLoginResource($data),
             ]);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -358,7 +348,8 @@ class AuthenticationController extends Controller
         }
     }
 
-    public function socialLogin(Request $request){
+    public function socialLogin(Request $request)
+    {
         if ($request->header('Authorization') == AuthenticationController::AUTHORIZATION_TOKEN) {
 
             $provider = $request->provider_name;
@@ -384,7 +375,7 @@ class AuthenticationController extends Controller
 
 
             $user = User::where('provider_name', $provider)->where('provider_id', $providerUser->id)->first();
-            if($user == null){
+            if ($user == null) {
                 $user = User::create([
                     'provider_name' => $provider,
                     'provider_id' => $providerUser->id,
@@ -403,11 +394,10 @@ class AuthenticationController extends Controller
             $data['balance'] = $user->balance;
 
             return response()->json([
-                'success'=> true,
-                'message'=> 'Successfully Logged In',
+                'success' => true,
+                'message' => 'Successfully Logged In',
                 'data' => $data
             ]);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -416,10 +406,11 @@ class AuthenticationController extends Controller
         }
     }
 
-    public function forgetPassword(Request $request){
+    public function forgetPassword(Request $request)
+    {
         if ($request->header('Authorization') == AuthenticationController::AUTHORIZATION_TOKEN) {
 
-            if(!$request->username){
+            if (!$request->username) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Please Write Your Username'
@@ -432,7 +423,7 @@ class AuthenticationController extends Controller
             if (filter_var($username, FILTER_VALIDATE_EMAIL)) { // email
 
                 $userInfo = User::where('email', $username)->first();
-                if(!$userInfo){
+                if (!$userInfo) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Email does not Exist',
@@ -447,15 +438,15 @@ class AuthenticationController extends Controller
                     try {
 
                         $emailConfig = EmailConfigure::where('status', 1)->orderBy('id', 'desc')->first();
-                        if($emailConfig){
+                        if ($emailConfig) {
 
                             $decryption = "";
-                            if($emailConfig){
+                            if ($emailConfig) {
                                 $ciphering = "AES-128-CTR";
                                 $options = 0;
                                 $decryption_iv = '1234567891011121';
                                 $decryption_key = "GenericCommerceV1";
-                                $decryption = openssl_decrypt ($emailConfig->password, $ciphering, $decryption_key, $options, $decryption_iv);
+                                $decryption = openssl_decrypt($emailConfig->password, $ciphering, $decryption_key, $options, $decryption_iv);
                             }
 
                             config([
@@ -475,7 +466,6 @@ class AuthenticationController extends Controller
                                 'message' => "Password Reset Email Sent",
                                 'data' => null
                             ], 200);
-
                         } else {
                             return response()->json([
                                 'success' => false,
@@ -483,8 +473,7 @@ class AuthenticationController extends Controller
                                 'data' => null
                             ], 200);
                         }
-
-                    } catch(\Exception $e) {
+                    } catch (\Exception $e) {
                         return response()->json([
                             'success' => false,
                             'message' => "Something Went Wrong while Sending Email",
@@ -492,11 +481,10 @@ class AuthenticationController extends Controller
                         ], 200);
                     }
                 }
-
             } else {
 
                 $userInfo = User::where('phone', $username)->first();
-                if(!$userInfo){
+                if (!$userInfo) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Phone No. Not Found',
@@ -509,22 +497,21 @@ class AuthenticationController extends Controller
                     $userInfo->save();
 
                     $smsGateway = SmsGateway::where('status', 1)->first();
-                    if($smsGateway && $smsGateway->provider_name == 'Reve'){
+                    if ($smsGateway && $smsGateway->provider_name == 'Reve') {
                         $response = Http::get($smsGateway->api_endpoint, [
                             'apikey' => $smsGateway->api_key,
                             'secretkey' => $smsGateway->secret_key,
                             "callerID" => $smsGateway->sender_id,
                             "toUser" => $username,
-                            "messageContent" => "Verification Code is : ". $randomCode
+                            "messageContent" => "Verification Code is : " . $randomCode
                         ]);
 
-                        if($response->status() == 200){
+                        if ($response->status() == 200) {
                             return response()->json([
                                 'success' => true,
                                 'message' => "Password Reset SMS Sent Successfully",
                                 'data' => null
                             ], 200);
-
                         } else {
                             return response()->json([
                                 'success' => false,
@@ -532,18 +519,17 @@ class AuthenticationController extends Controller
                                 'data' => null
                             ], 200);
                         }
-
-                    } elseif($smsGateway && $smsGateway->provider_name == 'ElitBuzz'){
+                    } elseif ($smsGateway && $smsGateway->provider_name == 'ElitBuzz') {
 
                         $response = Http::get($smsGateway->api_endpoint, [
                             'api_key' => $smsGateway->api_key,
                             "type" => "text",
                             "contacts" => $username, //“88017xxxxxxxx,88018xxxxxxxx”
                             "senderid" => $smsGateway->sender_id,
-                            "msg" => "Verification Code is : ". $randomCode
+                            "msg" => "Verification Code is : " . $randomCode
                         ]);
 
-                        if($response->status() == 200){
+                        if ($response->status() == 200) {
                             return response()->json([
                                 'success' => true,
                                 'message' => "Password Reset SMS Sent Successfully",
@@ -556,7 +542,6 @@ class AuthenticationController extends Controller
                                 'data' => null
                             ], 200);
                         }
-
                     } else {
                         return response()->json([
                             'success' => false,
@@ -566,7 +551,6 @@ class AuthenticationController extends Controller
                     }
                 }
             }
-
         } else {
             return response()->json([
                 'success' => false,
@@ -575,10 +559,11 @@ class AuthenticationController extends Controller
         }
     }
 
-    public function verifyResetCode(Request $request){
+    public function verifyResetCode(Request $request)
+    {
         if ($request->header('Authorization') == AuthenticationController::AUTHORIZATION_TOKEN) {
 
-            if(!$request->username && !$request->code){
+            if (!$request->username && !$request->code) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Please Provide Username with Verification Code',
@@ -593,7 +578,7 @@ class AuthenticationController extends Controller
             if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
 
                 $userInfo = User::where('email', $username)->where('verification_code', $code)->first();
-                if(!$userInfo){
+                if (!$userInfo) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Wrong Password Reset Code',
@@ -615,13 +600,11 @@ class AuthenticationController extends Controller
                         'message' => "Code is Verified. Now Change Your Password",
                         'data' => $data
                     ], 200);
-
                 }
-
             } else {
 
                 $userInfo = User::where('phone', $username)->where('verification_code', $code)->first();
-                if(!$userInfo){
+                if (!$userInfo) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Wrong Password Reset Code',
@@ -643,10 +626,8 @@ class AuthenticationController extends Controller
                         'message' => "Code is Verified. Now Change Your Password",
                         'data' => $data
                     ], 200);
-
                 }
             }
-
         } else {
             return response()->json([
                 'success' => false,
@@ -655,10 +636,11 @@ class AuthenticationController extends Controller
         }
     }
 
-    public function changePassword(Request $request){
+    public function changePassword(Request $request)
+    {
         if ($request->header('Authorization') == AuthenticationController::AUTHORIZATION_TOKEN) {
 
-            if(!$request->username && !$request->code){
+            if (!$request->username && !$request->code) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Please Provide Username with Verification Code',
@@ -689,7 +671,6 @@ class AuthenticationController extends Controller
                     'message' => "Password Changed Successfully",
                     'data' => $data
                 ], 200);
-
             } else {
 
                 $userInfo = User::where('phone', $username)->first();
@@ -710,9 +691,7 @@ class AuthenticationController extends Controller
                     'message' => "Password Changed Successfully",
                     'data' => $data
                 ], 200);
-
             }
-
         } else {
             return response()->json([
                 'success' => false,
@@ -720,5 +699,4 @@ class AuthenticationController extends Controller
             ], 422);
         }
     }
-
 }

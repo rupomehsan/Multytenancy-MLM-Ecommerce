@@ -2,7 +2,6 @@
 
 // MLM Module Routes
 require __DIR__ . '/../Managements/Dashboard/Routes/Web.php';
-require __DIR__ . '/../Managements/Settings/Routes/Web.php';
 require __DIR__ . '/../Managements/Commissions/Routes/Web.php';
 require __DIR__ . '/../Managements/Wallet/Routes/Web.php';
 require __DIR__ . '/../Managements/Withdrow/Routes/Web.php';

@@ -47,7 +47,7 @@
                         </a>
                     </div>
 
-                    <form class="needs-validation" method="POST" action="{{ route('mlm.update') }}"
+                    <form class="needs-validation" method="POST" action="{{ route('mlm.commissions.update') }}"
                         enctype="multipart/form-data">
                         @csrf
 
@@ -64,7 +64,8 @@
                                             <label for="level_1_percentage">level 1 percentage <span
                                                     class="text-danger">*</span></label>
                                             <input type="number" id="level_1_percentage" name="level_1_percentage"
-                                                class="form-control" placeholder="Enter level 1 percentage Here">
+                                                class="form-control" placeholder="Enter level 1 percentage Here"
+                                                value="{{ $result->level_1_percentage ?? '' }}">
                                             <div class="invalid-feedback" style="display: block;">
                                                 @error('level_1_percentage')
                                                     <strong>{{ $message }}</strong>
@@ -77,7 +78,8 @@
                                                     class="text-danger">*</span></label>
                                             <input type="number" id="level_2_percentage" name="level_2_percentage"
                                                 maxlength="60" class="form-control"
-                                                placeholder="Enter level 2 percentage here">
+                                                placeholder="Enter level 2 percentage here"
+                                                value="{{ $result->level_2_percentage ?? '' }}">
                                             <div class="invalid-feedback" style="display: block;">
                                                 @error('level_2_percentage')
                                                     <strong>{{ $message }}</strong>
@@ -90,7 +92,8 @@
                                         <div class="form-group">
                                             <label for="level_3_percentage">level 3 percentage</label>
                                             <input type="number" id="level_3_percentage" name="level_3_percentage"
-                                                class="form-control" placeholder="Enter level 3 percentage Here">
+                                                class="form-control" placeholder="Enter level 3 percentage Here"
+                                                value="{{ $result->level_3_percentage ?? '' }}">
                                             <div class="invalid-feedback" style="display: block;">
                                                 @error('level_3_percentage')
                                                     {{ $message }}
@@ -100,7 +103,8 @@
                                         <div class="form-group">
                                             <label for="minimum_withdrawal">Minimum Withdrawal</label>
                                             <input type="number" id="minimum_withdrawal" name="minimum_withdrawal"
-                                                class="form-control" placeholder="Enter Minimum Withdrawal Here">
+                                                class="form-control" placeholder="Enter Minimum Withdrawal Here"
+                                                value="{{ $result->minimum_withdrawal ?? '' }}">
                                             <div class="invalid-feedback" style="display: block;">
                                                 @error('minimum_withdrawal')
                                                     {{ $message }}

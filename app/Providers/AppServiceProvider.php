@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 use App\Services\SeoService;
 use App\Http\View\Composers\SeoComposer;
+use App\Modules\ECOMMERCE\Managements\Orders\Database\Models\Order;
+use App\Modules\ECOMMERCE\Managements\Orders\Observers\OrderObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,6 +39,9 @@ class AppServiceProvider extends ServiceProvider
         // }
 
         Paginator::useBootstrap();
+
+        // Register Order Observer for MLM Commission Distribution
+        Order::observe(OrderObserver::class);
 
         // Share general site settings to all views with safe defaults to avoid
         // "property on null" errors in Blade templates.

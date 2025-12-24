@@ -5,14 +5,13 @@ namespace App\Http\Controllers\Tenant\Frontend;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
+
 use Brian2694\Toastr\Facades\Toastr;
-use Illuminate\Support\Facades\Http;
-use App\Mail\UserVerificationMail;
+
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 
-use App\Modules\ECOMMERCE\Managements\UserManagements\Users\Database\Models\User;
+
 
 use App\Http\Controllers\Controller;
 
@@ -36,8 +35,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $user = Auth::user()->user_type;
-        $userId = Auth::user()->id;
+        $user = Auth::guard('customer')->user()->user_type;
+        $userId = Auth::guard('customer')->user()->id;
 
         $totalOrderPlaced = DB::table('orders')->where('user_id', $userId)->count();
         $totalRunningOrder = DB::table('orders')->where('user_id', $userId)->where('order_status', '<', 3)->count();
@@ -97,213 +96,6 @@ class HomeController extends Controller
     }
 
 
-    public function userVerification()
-    {
-        $randomCode = rand(100000, 999999);
-        $userInfo = Auth::user();
-
-        if (!$userInfo->email_verified_at && !$userInfo->verification_code) {
-
-            User::where('id', $userInfo->id)->update([
-                'verification_code' => $randomCode
-            ]);
-
-            if ($userInfo->email) {
-
-                $mailData = array();
-                $mailData['code'] = $randomCode;
-
-                $emailConfig = DB::table('email_configures')->where('status', 1)->orderBy('id', 'desc')->first();
-                $decryption = "";
-
-                if ($emailConfig) {
-                    $ciphering = "AES-128-CTR";
-                    $options = 0;
-                    $decryption_iv = '1234567891011121';
-                    $decryption_key = "GenericCommerceV1";
-                    $decryption = openssl_decrypt($emailConfig->password, $ciphering, $decryption_key, $options, $decryption_iv);
-
-                    config([
-                        'mail.mailers.smtp.host' => $emailConfig->host,
-                        'mail.mailers.smtp.port' => $emailConfig->port,
-                        'mail.mailers.smtp.username' => $emailConfig->email,
-                        'mail.mailers.smtp.password' => $decryption != "" ? $decryption : '',
-                        'mail.mailers.smtp.encryption' => $emailConfig ? ($emailConfig->encryption == 1 ? 'tls' : ($emailConfig->encryption == 2 ? 'ssl' : '')) : '',
-
-                        'mail.mailers.from' => $emailConfig->email,
-                        'mail.mailers.name' => env("APP_NAME"),
-                    ]);
-
-                    try {
-                        Mail::to(trim($userInfo->email))->send(new UserVerificationMail($mailData));
-                    } catch (\Exception $e) {
-                        // write code for handling error from here
-                    }
-                }
-            } else {
-
-                $smsGateway = DB::table('sms_gateways')->where('status', 1)->first();
-                if ($smsGateway && $smsGateway->provider_name == 'Reve') {
-
-                    $response = Http::get($smsGateway->api_endpoint, [
-                        'apikey' => $smsGateway->api_key,
-                        'secretkey' => $smsGateway->secret_key,
-                        "callerID" => $smsGateway->sender_id,
-                        "toUser" => $userInfo->phone,
-                        "messageContent" => "Verification Code is : " . $randomCode
-                    ]);
-
-                    if ($response->status() != 200) {
-                        Toastr::error('Something Went Wrong', 'Failed to send SMS');
-                        return back();
-                    }
-                } elseif ($smsGateway && $smsGateway->provider_name == 'ElitBuzz') {
-
-                    $response = Http::get($smsGateway->api_endpoint, [
-                        'api_key' => $smsGateway->api_key,
-                        "type" => "text",
-                        "contacts" => $userInfo->phone, //“88017xxxxxxxx,88018xxxxxxxx”
-                        "senderid" => $smsGateway->sender_id,
-                        "msg" => $randomCode . " is your OTP verification code for shadikorun.com"
-                    ]);
-
-                    if ($response->status() != 200) {
-                        Toastr::error('Something Went Wrong', 'Failed to send SMS');
-                        return back();
-                    }
-                } else {
-                    Toastr::error('No SMS Gateway is Active Now', 'Failed to send SMS');
-                    return back();
-                }
-            }
-
-            return view('customer_panel.pages.verification');
-        } elseif (!$userInfo->email_verified_at && $userInfo->verification_code) {
-            return view('customer_panel.pages.verification');
-        } else {
-            return redirect('/cutomer/home');
-        }
-    }
-
-    public function userVerificationResend()
-    {
-        $randomCode = rand(100000, 999999);
-        $userInfo = Auth::user();
-
-        if (!$userInfo->email_verified_at) {
-
-            User::where('id', $userInfo->id)->update([
-                'verification_code' => $randomCode
-            ]);
-
-            if ($userInfo->email) {
-
-                $mailData = array();
-                $mailData['code'] = $randomCode;
-
-                $emailConfig = DB::table('email_configures')->where('status', 1)->orderBy('id', 'desc')->first();
-                $decryption = "";
-
-                if ($emailConfig) {
-                    $ciphering = "AES-128-CTR";
-                    $options = 0;
-                    $decryption_iv = '1234567891011121';
-                    $decryption_key = "GenericCommerceV1";
-                    $decryption = openssl_decrypt($emailConfig->password, $ciphering, $decryption_key, $options, $decryption_iv);
-
-                    config([
-                        'mail.mailers.smtp.host' => $emailConfig->host,
-                        'mail.mailers.smtp.port' => $emailConfig->port,
-                        'mail.mailers.smtp.username' => $emailConfig->email,
-                        'mail.mailers.smtp.password' => $decryption != "" ? $decryption : '',
-                        'mail.mailers.smtp.encryption' => $emailConfig ? ($emailConfig->encryption == 1 ? 'tls' : ($emailConfig->encryption == 2 ? 'ssl' : '')) : '',
-
-                        'mail.mailers.from' => $emailConfig->email,
-                        'mail.mailers.name' => env("APP_NAME"),
-                    ]);
-
-
-                    // try {
-                    Mail::to(trim($userInfo->email))->send(new UserVerificationMail($mailData));
-                    // } catch(\Exception $e) {
-                    //     // write code for handling error from here
-                    // }
-                }
-            } else {
-
-                $smsGateway = DB::table('sms_gateways')->where('status', 1)->first();
-                if ($smsGateway && $smsGateway->provider_name == 'Reve') {
-                    $response = Http::get($smsGateway->api_endpoint, [
-                        'apikey' => $smsGateway->api_key,
-                        'secretkey' => $smsGateway->secret_key,
-                        "callerID" => $smsGateway->sender_id,
-                        "toUser" => $userInfo->phone,
-                        "messageContent" => "Verification Code is : " . $randomCode
-                    ]);
-
-                    if ($response->status() != 200) {
-                        Toastr::error('Something Went Wrong', 'Failed to send SMS');
-                        return back();
-                    }
-                } elseif ($smsGateway && $smsGateway->provider_name == 'ElitBuzz') {
-
-                    $response = Http::get($smsGateway->api_endpoint, [
-                        'api_key' => $smsGateway->api_key,
-                        "type" => "text",
-                        "contacts" => $userInfo->phone, //“88017xxxxxxxx,88018xxxxxxxx”
-                        "senderid" => $smsGateway->sender_id,
-                        "msg" => $randomCode . " is your OTP verification code for shadikorun.com"
-                    ]);
-
-                    if ($response->status() != 200) {
-                        Toastr::error('Something Went Wrong', 'Failed to send SMS');
-                        return back();
-                    }
-                } else {
-                    Toastr::error('No SMS Gateway is Active Now', 'Failed to send SMS');
-                    return back();
-                }
-            }
-
-            Toastr::success('Verification Code Sent', 'Resend Verification Code');
-            return back();
-        } else {
-            return redirect('/home');
-        }
-    }
-
-    public function userVerifyCheck(Request $request)
-    {
-
-        $verificationCode = '';
-        foreach ($request->code as $code) {
-            $verificationCode .= $code;
-        }
-
-        $userInfo = Auth::user();
-        if ($userInfo->verification_code == $verificationCode) {
-            if ($userInfo->email_verified_at) {
-                Toastr::info('User already verified', 'Already Verified');
-                return redirect('/home');
-            }
-
-            User::where('id', $userInfo->id)->update([
-                'email_verified_at' => Carbon::now()
-            ]);
-
-            Toastr::success('User Verification Complete', 'Successfully Verified');
-
-            if (session('cart') && count(session('cart')) > 0) {
-                return redirect('/checkout');
-            } else {
-                return redirect('/home');
-            }
-        } else {
-            Toastr::error('Wrong Verification Code', 'Failed');
-            return back();
-        }
-    }
-
 
     public function submitProductReview(Request $request)
     {
@@ -311,7 +103,7 @@ class HomeController extends Controller
         $purchaseStatus = DB::table('order_details')
             ->join('orders', 'order_details.order_id', 'orders.id')
             ->where('orders.order_status', 5)
-            ->where('orders.user_id', Auth::user()->id)
+            ->where('orders.user_id', Auth::guard('customer')->user()->id)
             ->where('product_id', $request->review_product_id)
             ->first();
 
@@ -322,7 +114,7 @@ class HomeController extends Controller
         }
 
         $alreadyReviewSubmitted = DB::table('product_reviews')
-            ->where('user_id', Auth::user()->id)
+            ->where('user_id', Auth::guard('customer')->user()->id)
             ->where('product_id', $request->review_product_id)
             ->count();
 
@@ -333,7 +125,7 @@ class HomeController extends Controller
 
         DB::table('product_reviews')->insert([
             'product_id' => $request->review_product_id,
-            'user_id' => Auth::user()->id,
+            'user_id' => Auth::guard('customer')->user()->id,
             'rating' => $request->rarting,
             'review' => $request->review,
             'slug' => str::random(5) . time(),
@@ -350,7 +142,7 @@ class HomeController extends Controller
         // $purchaseStatus = DB::table('order_details')
         //                     ->join('orders', 'order_details.order_id', 'orders.id')
         //                     ->where('orders.order_status', 5)
-        //                     ->where('orders.user_id', Auth::user()->id)
+        //                     ->where('orders.user_id', Auth::guard('customer')->user()->id)
         //                     ->where('product_id', $request->question_product_id)
         //                     ->first();
 
@@ -359,7 +151,7 @@ class HomeController extends Controller
         //     return back();
         // }
 
-        $authenticatedUser = Auth::user();
+        $authenticatedUser = Auth::guard('customer')->user();
         if ($authenticatedUser->user_type !== 3) {
             Toastr::error('You are not allowed to ask a question');
             return back();
@@ -390,7 +182,7 @@ class HomeController extends Controller
 
         if (!$productInfo) {
             if (request()->ajax()) {
-                $wishlistCount = DB::table('wish_lists')->where('user_id', Auth::user()->id)->count();
+                $wishlistCount = DB::table('wish_lists')->where('user_id', Auth::guard('customer')->user()->id)->count();
                 return response()->json([
                     'success' => false,
                     'message' => 'Product not found',
@@ -401,9 +193,9 @@ class HomeController extends Controller
             return back();
         }
 
-        if (DB::table('wish_lists')->where('product_id', $productInfo->id)->where('user_id', Auth::user()->id)->exists()) {
+        if (DB::table('wish_lists')->where('product_id', $productInfo->id)->where('user_id', Auth::guard('customer')->user()->id)->exists()) {
             if (request()->ajax()) {
-                $wishlistCount = DB::table('wish_lists')->where('user_id', Auth::user()->id)->count();
+                $wishlistCount = DB::table('wish_lists')->where('user_id', Auth::guard('customer')->user()->id)->count();
                 return response()->json([
                     'success' => false,
                     'message' => 'Already in Wishlist',
@@ -415,13 +207,13 @@ class HomeController extends Controller
         } else {
             DB::table('wish_lists')->insert([
                 'product_id' => $productInfo->id,
-                'user_id' => Auth::user()->id,
+                'user_id' => Auth::guard('customer')->user()->id,
                 'slug' => str::random(5) . time(),
                 'created_at' => Carbon::now()
             ]);
 
             if (request()->ajax()) {
-                $wishlistCount = DB::table('wish_lists')->where('user_id', Auth::user()->id)->count();
+                $wishlistCount = DB::table('wish_lists')->where('user_id', Auth::guard('customer')->user()->id)->count();
                 return response()->json([
                     'success' => true,
                     'message' => 'Added to Wishlist',
@@ -439,7 +231,7 @@ class HomeController extends Controller
 
         if (!$productInfo) {
             if (request()->ajax()) {
-                $wishlistCount = DB::table('wish_lists')->where('user_id', Auth::user()->id)->count();
+                $wishlistCount = DB::table('wish_lists')->where('user_id', Auth::guard('customer')->user()->id)->count();
                 return response()->json([
                     'success' => false,
                     'message' => 'Product not found',
@@ -451,10 +243,10 @@ class HomeController extends Controller
         }
 
         $deleted = DB::table('wish_lists')->where('product_id', $productInfo->id)
-            ->where('user_id', Auth::user()->id)->delete();
+            ->where('user_id', Auth::guard('customer')->user()->id)->delete();
 
         if (request()->ajax()) {
-            $wishlistCount = DB::table('wish_lists')->where('user_id', Auth::user()->id)->count();
+            $wishlistCount = DB::table('wish_lists')->where('user_id', Auth::guard('customer')->user()->id)->count();
             return response()->json([
                 'success' => true,
                 'message' => 'Removed from Wishlist',

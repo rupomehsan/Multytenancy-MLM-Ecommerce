@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
-
+use App\Modules\MLM\Managements\TopEarners\Actions\ViewTopEarners;
 
 
 class TopEarnerController extends Controller
@@ -17,8 +17,12 @@ class TopEarnerController extends Controller
     {
         $this->loadModuleViewPath('MLM/Managements/TopEarners');
     }
-    public function index()
+
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            return ViewTopEarners::execute($request);
+        }
         return view('index');
     }
 }

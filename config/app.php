@@ -181,6 +181,12 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        /*
+         * MLM Service Providers...
+         */
+        App\Modules\MLM\Providers\MLMServiceProvider::class,
+        App\Modules\MLM\Managements\Withdrow\Providers\WithdrawalServiceProvider::class,
+
     ],
 
     /*

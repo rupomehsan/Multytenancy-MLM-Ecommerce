@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Modules\Managements\MLM\Settings\Actions;
+namespace App\Modules\MLM\Managements\Commissions\Actions;
 
-use App\Modules\Managements\MLM\Settings\Models\Model as MLMSettings;
+use App\Modules\MLM\Managements\Commissions\Database\Models\CommissionSettingsModel;
 
 class Create
 {
@@ -12,7 +12,8 @@ class Create
     {
         try {
             // Simple string data
-            $data =  MLMSettings::first();
+            $data =  CommissionSettingsModel::first();
+
             return $data;
         } catch (\Exception $e) {
             return ['error' => $e->getMessage()];

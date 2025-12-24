@@ -372,10 +372,10 @@
                 </div>
                 <div class="mlm-stat-label">This Month</div>
             </div>
-            <div class="mlm-stat-value">৳28,450</div>
-            <div class="mlm-stat-change positive">
-                <i class="fi-rr-arrow-trend-up"></i>
-                +24.5% from last month
+            <div class="mlm-stat-value">৳{{ number_format($thisMonthEarnings, 2) }}</div>
+            <div class="mlm-stat-change {{ $monthOverMonth >= 0 ? 'positive' : 'negative' }}">
+                <i class="fi-rr-arrow-trend-{{ $monthOverMonth >= 0 ? 'up' : 'down' }}"></i>
+                {{ $monthOverMonth >= 0 ? '+' : '' }}{{ number_format($monthOverMonth, 1) }}% from last month
             </div>
         </div>
 
@@ -386,10 +386,11 @@
                 </div>
                 <div class="mlm-stat-label">Last Month</div>
             </div>
-            <div class="mlm-stat-value">৳22,860</div>
+            <div class="mlm-stat-value">
+                ৳{{ number_format($thisMonthEarnings - ($thisMonthEarnings * $monthOverMonth) / 100, 2) }}</div>
             <div class="mlm-stat-change positive">
-                <i class="fi-rr-arrow-trend-up"></i>
-                +12.3% from previous
+                <i class="fi-rr-check-circle"></i>
+                Previous period
             </div>
         </div>
 
@@ -400,7 +401,7 @@
                 </div>
                 <div class="mlm-stat-label">Average Monthly</div>
             </div>
-            <div class="mlm-stat-value">৳24,680</div>
+            <div class="mlm-stat-value">৳{{ number_format($lastSixMonthsAvg, 2) }}</div>
             <div class="mlm-stat-change">
                 Last 6 months
             </div>
@@ -413,10 +414,10 @@
                 </div>
                 <div class="mlm-stat-label">Total Lifetime</div>
             </div>
-            <div class="mlm-stat-value">৳124,850</div>
+            <div class="mlm-stat-value">৳{{ number_format($lifetimeEarnings, 2) }}</div>
             <div class="mlm-stat-change positive">
                 <i class="fi-rr-check-circle"></i>
-                Since Jan 2024
+                All time earnings
             </div>
         </div>
     </div>
@@ -466,46 +467,34 @@
                     <i class="fi-rr-chart-pie"></i>
                 </div>
             </div>
-            <div class="mlm-breakdown-item">
-                <div class="mlm-breakdown-label">
-                    <span class="mlm-color-dot" style="background: #667eea;"></span>
-                    Direct Referral
+            @php
+                $colors = ['#667eea', '#10b981', '#f59e0b', '#3b82f6', '#ec4899', '#8b5cf6'];
+                $levelNames = [
+                    1 => 'Direct Referral (Level 1)',
+                    2 => 'Level 2 Commission',
+                    3 => 'Level 3 Commission',
+                    4 => 'Level 4 Commission',
+                    5 => 'Level 5 Commission',
+                    6 => 'Level 6 Commission',
+                ];
+            @endphp
+            @forelse($earningsBreakdown as $index => $breakdown)
+                <div class="mlm-breakdown-item">
+                    <div class="mlm-breakdown-label">
+                        <span class="mlm-color-dot" style="background: {{ $colors[$index % count($colors)] }};"></span>
+                        {{ $levelNames[$breakdown['level']] ?? 'Level ' . $breakdown['level'] }}
+                    </div>
+                    <div>
+                        <span class="mlm-breakdown-value">৳{{ number_format($breakdown['amount'], 2) }}</span>
+                        <span class="mlm-breakdown-percentage">({{ $breakdown['percentage'] }}%)</span>
+                    </div>
                 </div>
-                <div>
-                    <span class="mlm-breakdown-value">৳12,450</span>
-                    <span class="mlm-breakdown-percentage">(44%)</span>
+            @empty
+                <div class="mlm-breakdown-item">
+                    <div class="mlm-breakdown-label">No earnings data yet</div>
+                    <div><span class="mlm-breakdown-value">৳0.00</span></div>
                 </div>
-            </div>
-            <div class="mlm-breakdown-item">
-                <div class="mlm-breakdown-label">
-                    <span class="mlm-color-dot" style="background: #10b981;"></span>
-                    Level Commission
-                </div>
-                <div>
-                    <span class="mlm-breakdown-value">৳8,680</span>
-                    <span class="mlm-breakdown-percentage">(30%)</span>
-                </div>
-            </div>
-            <div class="mlm-breakdown-item">
-                <div class="mlm-breakdown-label">
-                    <span class="mlm-color-dot" style="background: #f59e0b;"></span>
-                    Team Sales
-                </div>
-                <div>
-                    <span class="mlm-breakdown-value">৳5,320</span>
-                    <span class="mlm-breakdown-percentage">(19%)</span>
-                </div>
-            </div>
-            <div class="mlm-breakdown-item">
-                <div class="mlm-breakdown-label">
-                    <span class="mlm-color-dot" style="background: #3b82f6;"></span>
-                    Bonuses
-                </div>
-                <div>
-                    <span class="mlm-breakdown-value">৳2,000</span>
-                    <span class="mlm-breakdown-percentage">(7%)</span>
-                </div>
-            </div>
+            @endforelse
         </div>
 
         <!-- Top Performers -->
@@ -516,42 +505,25 @@
                     <i class="fi-rr-trophy"></i>
                 </div>
             </div>
-            <div class="mlm-breakdown-item">
-                <div class="mlm-breakdown-label">
-                    <span style="font-weight: 600;">🥇</span>
-                    John Doe
+            @php
+                $medals = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
+            @endphp
+            @forelse($topContributors as $index => $contributor)
+                <div class="mlm-breakdown-item">
+                    <div class="mlm-breakdown-label">
+                        <span style="font-weight: 600;">{{ $medals[$index] ?? $index + 1 . '️⃣' }}</span>
+                        {{ $contributor->name }}
+                    </div>
+                    <div>
+                        <span class="mlm-breakdown-value">৳{{ number_format($contributor->total, 2) }}</span>
+                    </div>
                 </div>
-                <div>
-                    <span class="mlm-breakdown-value">৳4,850</span>
+            @empty
+                <div class="mlm-breakdown-item">
+                    <div class="mlm-breakdown-label">No contributors yet</div>
+                    <div><span class="mlm-breakdown-value">৳0.00</span></div>
                 </div>
-            </div>
-            <div class="mlm-breakdown-item">
-                <div class="mlm-breakdown-label">
-                    <span style="font-weight: 600;">🥈</span>
-                    Sarah Wilson
-                </div>
-                <div>
-                    <span class="mlm-breakdown-value">৳3,420</span>
-                </div>
-            </div>
-            <div class="mlm-breakdown-item">
-                <div class="mlm-breakdown-label">
-                    <span style="font-weight: 600;">🥉</span>
-                    David Brown
-                </div>
-                <div>
-                    <span class="mlm-breakdown-value">৳2,960</span>
-                </div>
-            </div>
-            <div class="mlm-breakdown-item">
-                <div class="mlm-breakdown-label">
-                    <span style="font-weight: 600;">4️⃣</span>
-                    Emily Davis
-                </div>
-                <div>
-                    <span class="mlm-breakdown-value">৳2,180</span>
-                </div>
-            </div>
+            @endforelse
         </div>
 
         <!-- Growth Metrics -->
@@ -567,7 +539,10 @@
                     Month-over-Month
                 </div>
                 <div>
-                    <span class="mlm-breakdown-value" style="color: var(--success-color);">+24.5%</span>
+                    <span class="mlm-breakdown-value"
+                        style="color: {{ $monthOverMonth >= 0 ? 'var(--success-color)' : 'var(--danger-color)' }};">
+                        {{ $monthOverMonth >= 0 ? '+' : '' }}{{ number_format($monthOverMonth, 1) }}%
+                    </span>
                 </div>
             </div>
             <div class="mlm-breakdown-item">
@@ -575,7 +550,10 @@
                     Quarter Growth
                 </div>
                 <div>
-                    <span class="mlm-breakdown-value" style="color: var(--success-color);">+68.2%</span>
+                    <span class="mlm-breakdown-value"
+                        style="color: {{ $quarterGrowth >= 0 ? 'var(--success-color)' : 'var(--danger-color)' }};">
+                        {{ $quarterGrowth >= 0 ? '+' : '' }}{{ number_format($quarterGrowth, 1) }}%
+                    </span>
                 </div>
             </div>
             <div class="mlm-breakdown-item">
@@ -583,7 +561,10 @@
                     Yearly Growth
                 </div>
                 <div>
-                    <span class="mlm-breakdown-value" style="color: var(--success-color);">+142.8%</span>
+                    <span class="mlm-breakdown-value"
+                        style="color: {{ $yearlyGrowth >= 0 ? 'var(--success-color)' : 'var(--danger-color)' }};">
+                        {{ $yearlyGrowth >= 0 ? '+' : '' }}{{ number_format($yearlyGrowth, 1) }}%
+                    </span>
                 </div>
             </div>
             <div class="mlm-breakdown-item">
@@ -591,7 +572,7 @@
                     Avg. Daily Earnings
                 </div>
                 <div>
-                    <span class="mlm-breakdown-value">৳948</span>
+                    <span class="mlm-breakdown-value">৳{{ number_format($avgDaily, 2) }}</span>
                 </div>
             </div>
         </div>
@@ -614,10 +595,10 @@
         const monthlyEarningsChart = new Chart(monthlyCtx, {
             type: 'bar',
             data: {
-                labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                labels: {!! json_encode($monthLabels) !!},
                 datasets: [{
                     label: 'Monthly Earnings',
-                    data: [18500, 19200, 21800, 20500, 22860, 28450],
+                    data: {!! json_encode($monthlyEarnings) !!},
                     backgroundColor: createGradient(monthlyCtx),
                     borderColor: chartColors.primary,
                     borderWidth: 2,
@@ -672,12 +653,10 @@
         const dailyEarningsChart = new Chart(dailyCtx, {
             type: 'line',
             data: {
-                labels: ['1', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23', '25', '27', '29', '31'],
+                labels: {!! json_encode($dailyLabels) !!},
                 datasets: [{
                     label: 'Daily Earnings',
-                    data: [850, 920, 780, 1050, 980, 1120, 890, 1240, 1080, 950, 1180, 1020, 860, 1350,
-                        1150, 980
-                    ],
+                    data: {!! json_encode($dailyEarnings) !!},
                     backgroundColor: createGradient(dailyCtx, 0.2),
                     borderColor: chartColors.success,
                     borderWidth: 3,

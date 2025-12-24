@@ -26,7 +26,7 @@ class CreateOrdersTable extends Migration
             $table->tinyInteger('payment_status')->nullable()->comment('0=>Unpaid; 1=>Payment Success; 2=>Payment Failed');
             $table->string('trx_id')->nullable()->comment("Created By GenericCommerceV1");
             $table->string('bank_tran_id')->nullable()->comment("KEEP THIS bank_tran_id FOR REFUNDING ISSUE");
-            $table->tinyInteger('order_status')->default(0)->comment('0=>pending/processing; 1=>confirmed; 2=>intransit; 3=>delivered; 4=>cancel');
+            $table->tinyInteger('order_status')->default(0)->comment('0=>pending/processing; 1=>approved; 2=>dispatch; 3=>intransit; 4=>delivered; 5=>cancelled; 6=>returned');
             $table->double('sub_total')->default(0);
             $table->string('coupon_code')->nullable();
             $table->string('reference_code')->nullable();

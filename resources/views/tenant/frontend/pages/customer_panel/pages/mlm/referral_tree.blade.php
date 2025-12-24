@@ -447,236 +447,27 @@
             <div class="mlm-skeleton mlm-skeleton-node"></div>
         </div>
 
-        <!-- MLM Tree -->
+        <!-- MLM Tree - Dynamic Data -->
         <div id="mlmTreeView" class="mlm-tree">
-            <!-- Root Node (You) -->
-            <div class="mlm-tree-node">
-                <div class="mlm-tree-node-content root">
-                    <div class="mlm-node-avatar">
-                        <img src="https://ui-avatars.com/api/?name=You&background=667eea&color=fff" alt="You">
-                    </div>
-                    <div class="mlm-node-level">You (Root)</div>
-                    <div class="mlm-node-name">{{ auth('customer')->user()->name ?? 'Your Name' }}</div>
-                    <div class="mlm-node-email">{{ auth('customer')->user()->email ?? 'your@email.com' }}</div>
-                    <div class="mlm-node-stats">
-                        <div class="mlm-node-stat">
-                            <div class="mlm-node-stat-value">24</div>
-                            <div class="mlm-node-stat-label">Direct</div>
-                        </div>
-                        <div class="mlm-node-stat">
-                            <div class="mlm-node-stat-value">156</div>
-                            <div class="mlm-node-stat-label">Total</div>
-                        </div>
-                    </div>
-                    <div class="mlm-node-date">
-                        <i class="fi-rr-calendar"></i> Joined: Jan 15, 2024
-                    </div>
-                    <div class="mlm-expand-btn expanded" data-node="root"></div>
+            @if (isset($tree) && !empty($tree))
+                {{-- Render the tree using recursive partial --}}
+                @include('tenant.frontend.pages.customer_panel.pages.mlm.partials._tree_node', [
+                    'node' => $tree,
+                    'depth' => 0,
+                ])
+            @else
+                {{-- Empty State - Show when no referrals --}}
+                <div class="mlm-empty-state">
+                    <i class="fi-rr-sitemap"></i>
+                    <h3>No Referrals Yet</h3>
+                    <p>Start building your network by sharing your referral link</p>
+                    <button class="mlm-btn mlm-btn-primary"
+                        onclick="window.location.href='{{ url('/customer/dashboard') }}'">
+                        <i class="fi-rr-share"></i> Get Referral Link
+                    </button>
                 </div>
-
-                <!-- Level 1 Children -->
-                <div class="mlm-tree-children" id="children-root">
-                    <!-- Child 1 -->
-                    <div class="mlm-tree-node">
-                        <div class="mlm-tree-node-content">
-                            <div class="mlm-node-avatar">
-                                <img src="https://ui-avatars.com/api/?name=John+Doe&background=10b981&color=fff"
-                                    alt="John">
-                            </div>
-                            <div class="mlm-node-level">Level 1</div>
-                            <div class="mlm-node-name">John Doe</div>
-                            <div class="mlm-node-email">john@example.com</div>
-                            <div class="mlm-node-stats">
-                                <div class="mlm-node-stat">
-                                    <div class="mlm-node-stat-value">8</div>
-                                    <div class="mlm-node-stat-label">Direct</div>
-                                </div>
-                                <div class="mlm-node-stat">
-                                    <div class="mlm-node-stat-value">42</div>
-                                    <div class="mlm-node-stat-label">Total</div>
-                                </div>
-                            </div>
-                            <div class="mlm-node-date">
-                                <i class="fi-rr-calendar"></i> Joined: Feb 20, 2024
-                            </div>
-                            <div class="mlm-expand-btn collapsed" data-node="node1"></div>
-                        </div>
-
-                        <!-- Level 2 Children (Hidden by default) -->
-                        <div class="mlm-tree-children" id="children-node1" style="display: none;">
-                            <div class="mlm-tree-node">
-                                <div class="mlm-tree-node-content">
-                                    <div class="mlm-node-avatar">
-                                        <img src="https://ui-avatars.com/api/?name=Sarah+Wilson&background=f59e0b&color=fff"
-                                            alt="Sarah">
-                                    </div>
-                                    <div class="mlm-node-level">Level 2</div>
-                                    <div class="mlm-node-name">Sarah Wilson</div>
-                                    <div class="mlm-node-email">sarah@example.com</div>
-                                    <div class="mlm-node-stats">
-                                        <div class="mlm-node-stat">
-                                            <div class="mlm-node-stat-value">3</div>
-                                            <div class="mlm-node-stat-label">Direct</div>
-                                        </div>
-                                        <div class="mlm-node-stat">
-                                            <div class="mlm-node-stat-value">12</div>
-                                            <div class="mlm-node-stat-label">Total</div>
-                                        </div>
-                                    </div>
-                                    <div class="mlm-node-date">
-                                        <i class="fi-rr-calendar"></i> Joined: Mar 10, 2024
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mlm-tree-node">
-                                <div class="mlm-tree-node-content">
-                                    <div class="mlm-node-avatar">
-                                        <img src="https://ui-avatars.com/api/?name=Mike+Chen&background=3b82f6&color=fff"
-                                            alt="Mike">
-                                    </div>
-                                    <div class="mlm-node-level">Level 2</div>
-                                    <div class="mlm-node-name">Mike Chen</div>
-                                    <div class="mlm-node-email">mike@example.com</div>
-                                    <div class="mlm-node-stats">
-                                        <div class="mlm-node-stat">
-                                            <div class="mlm-node-stat-value">5</div>
-                                            <div class="mlm-node-stat-label">Direct</div>
-                                        </div>
-                                        <div class="mlm-node-stat">
-                                            <div class="mlm-node-stat-value">18</div>
-                                            <div class="mlm-node-stat-label">Total</div>
-                                        </div>
-                                    </div>
-                                    <div class="mlm-node-date">
-                                        <i class="fi-rr-calendar"></i> Joined: Mar 15, 2024
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Child 2 -->
-                    <div class="mlm-tree-node">
-                        <div class="mlm-tree-node-content">
-                            <div class="mlm-node-avatar">
-                                <img src="https://ui-avatars.com/api/?name=Jane+Smith&background=ef4444&color=fff"
-                                    alt="Jane">
-                            </div>
-                            <div class="mlm-node-level">Level 1</div>
-                            <div class="mlm-node-name">Jane Smith</div>
-                            <div class="mlm-node-email">jane@example.com</div>
-                            <div class="mlm-node-stats">
-                                <div class="mlm-node-stat">
-                                    <div class="mlm-node-stat-value">6</div>
-                                    <div class="mlm-node-stat-label">Direct</div>
-                                </div>
-                                <div class="mlm-node-stat">
-                                    <div class="mlm-node-stat-value">38</div>
-                                    <div class="mlm-node-stat-label">Total</div>
-                                </div>
-                            </div>
-                            <div class="mlm-node-date">
-                                <i class="fi-rr-calendar"></i> Joined: Feb 25, 2024
-                            </div>
-                            <div class="mlm-expand-btn collapsed" data-node="node2"></div>
-                        </div>
-
-                        <!-- Level 2 Children (Hidden) -->
-                        <div class="mlm-tree-children" id="children-node2" style="display: none;">
-                            <div class="mlm-tree-node">
-                                <div class="mlm-tree-node-content">
-                                    <div class="mlm-node-avatar">
-                                        <img src="https://ui-avatars.com/api/?name=Alex+Brown&background=8b5cf6&color=fff"
-                                            alt="Alex">
-                                    </div>
-                                    <div class="mlm-node-level">Level 2</div>
-                                    <div class="mlm-node-name">Alex Brown</div>
-                                    <div class="mlm-node-email">alex@example.com</div>
-                                    <div class="mlm-node-stats">
-                                        <div class="mlm-node-stat">
-                                            <div class="mlm-node-stat-value">4</div>
-                                            <div class="mlm-node-stat-label">Direct</div>
-                                        </div>
-                                        <div class="mlm-node-stat">
-                                            <div class="mlm-node-stat-value">15</div>
-                                            <div class="mlm-node-stat-label">Total</div>
-                                        </div>
-                                    </div>
-                                    <div class="mlm-node-date">
-                                        <i class="fi-rr-calendar"></i> Joined: Apr 5, 2024
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Child 3 -->
-                    <div class="mlm-tree-node">
-                        <div class="mlm-tree-node-content">
-                            <div class="mlm-node-avatar">
-                                <img src="https://ui-avatars.com/api/?name=Robert+Lee&background=06b6d4&color=fff"
-                                    alt="Robert">
-                            </div>
-                            <div class="mlm-node-level">Level 1</div>
-                            <div class="mlm-node-name">Robert Lee</div>
-                            <div class="mlm-node-email">robert@example.com</div>
-                            <div class="mlm-node-stats">
-                                <div class="mlm-node-stat">
-                                    <div class="mlm-node-stat-value">10</div>
-                                    <div class="mlm-node-stat-label">Direct</div>
-                                </div>
-                                <div class="mlm-node-stat">
-                                    <div class="mlm-node-stat-value">52</div>
-                                    <div class="mlm-node-stat-label">Total</div>
-                                </div>
-                            </div>
-                            <div class="mlm-node-date">
-                                <i class="fi-rr-calendar"></i> Joined: Mar 1, 2024
-                            </div>
-                            <div class="mlm-expand-btn collapsed" data-node="node3"></div>
-                        </div>
-
-                        <!-- Level 2 Children (Hidden) -->
-                        <div class="mlm-tree-children" id="children-node3" style="display: none;">
-                            <div class="mlm-tree-node">
-                                <div class="mlm-tree-node-content">
-                                    <div class="mlm-node-avatar">
-                                        <img src="https://ui-avatars.com/api/?name=Emily+Davis&background=ec4899&color=fff"
-                                            alt="Emily">
-                                    </div>
-                                    <div class="mlm-node-level">Level 2</div>
-                                    <div class="mlm-node-name">Emily Davis</div>
-                                    <div class="mlm-node-email">emily@example.com</div>
-                                    <div class="mlm-node-stats">
-                                        <div class="mlm-node-stat">
-                                            <div class="mlm-node-stat-value">7</div>
-                                            <div class="mlm-node-stat-label">Direct</div>
-                                        </div>
-                                        <div class="mlm-node-stat">
-                                            <div class="mlm-node-stat-value">28</div>
-                                            <div class="mlm-node-stat-label">Total</div>
-                                        </div>
-                                    </div>
-                                    <div class="mlm-node-date">
-                                        <i class="fi-rr-calendar"></i> Joined: Apr 12, 2024
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @endif
         </div>
-
-        <!-- Empty State (Show when no referrals) -->
-        <!-- <div class="mlm-empty-state" style="display: none;">
-            <i class="fi-rr-sitemap"></i>
-            <h3>No Referrals Yet</h3>
-            <p>Start building your network by sharing your referral link</p>
-            <button class="mlm-btn mlm-btn-primary">
-                <i class="fi-rr-share"></i> Get Referral Link
-            </button>
-        </div> -->
     </div>
 
     <script>
@@ -710,7 +501,7 @@
                     const name = node.querySelector('.mlm-node-name')?.textContent.toLowerCase() ||
                         '';
                     const email = node.querySelector('.mlm-node-email')?.textContent
-                    .toLowerCase() || '';
+                        .toLowerCase() || '';
 
                     if (name.includes(searchTerm) || email.includes(searchTerm)) {
                         node.parentElement.style.display = 'block';

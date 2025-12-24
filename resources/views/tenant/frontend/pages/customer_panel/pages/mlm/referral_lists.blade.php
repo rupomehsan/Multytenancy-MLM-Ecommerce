@@ -481,7 +481,7 @@
                 <i class="fi-rr-users-alt"></i>
             </div>
             <div class="mlm-stat-content">
-                <h3>248</h3>
+                <h3>{{ $totalReferrals ?? 0 }}</h3>
                 <p>Total Referrals</p>
             </div>
         </div>
@@ -490,8 +490,8 @@
                 <i class="fi-rr-check-circle"></i>
             </div>
             <div class="mlm-stat-content">
-                <h3>186</h3>
-                <p>Active Members</p>
+                <h3>{{ $stats['total_network'] ?? 0 }}</h3>
+                <p>Total Network</p>
             </div>
         </div>
         <div class="mlm-stat-card warning">
@@ -499,7 +499,7 @@
                 <i class="fi-rr-user-add"></i>
             </div>
             <div class="mlm-stat-content">
-                <h3>24</h3>
+                <h3>{{ $stats['direct_referrals'] ?? 0 }}</h3>
                 <p>Direct Referrals</p>
             </div>
         </div>
@@ -508,7 +508,7 @@
                 <i class="fi-rr-chart-network"></i>
             </div>
             <div class="mlm-stat-content">
-                <h3>224</h3>
+                <h3>{{ ($stats['level_2_count'] ?? 0) + ($stats['level_3_count'] ?? 0) }}</h3>
                 <p>Indirect Referrals</p>
             </div>
         </div>
@@ -541,21 +541,7 @@
                     <option value="1">Level 1</option>
                     <option value="2">Level 2</option>
                     <option value="3">Level 3</option>
-                    <option value="4">Level 4</option>
-                    <option value="5">Level 5+</option>
                 </select>
-            </div>
-            <div class="mlm-filter-group">
-                <label for="statusFilter">Status</label>
-                <select id="statusFilter">
-                    <option value="">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                </select>
-            </div>
-            <div class="mlm-filter-group">
-                <label for="dateFilter">Join Date</label>
-                <input type="date" id="dateFilter">
             </div>
             <div class="mlm-search-box">
                 <label for="searchBox">Search</label>
@@ -571,230 +557,51 @@
                     <tr>
                         <th>Member</th>
                         <th>Level</th>
-                        <th>Status</th>
                         <th>Direct Referrals</th>
                         <th>Total Network</th>
                         <th>Join Date</th>
-                        <th>Total Sales</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Row 1 -->
-                    <tr>
-                        <td>
-                            <div class="mlm-user-cell">
-                                <div class="mlm-user-avatar">
-                                    <img src="https://ui-avatars.com/api/?name=John+Doe&background=667eea&color=fff"
-                                        alt="John">
+                    @forelse($referrals as $referral)
+                        <tr>
+                            <td>
+                                <div class="mlm-user-cell">
+                                    <div class="mlm-user-avatar">
+                                        @if (isset($referral['image']) && $referral['image'])
+                                            <img src="{{ asset($referral['image']) }}" alt="{{ $referral['name'] }}">
+                                        @else
+                                            <img src="https://ui-avatars.com/api/?name={{ urlencode($referral['name']) }}&background=667eea&color=fff"
+                                                alt="{{ $referral['name'] }}">
+                                        @endif
+                                    </div>
+                                    <div class="mlm-user-info">
+                                        <h4>{{ $referral['name'] }}</h4>
+                                        <p>{{ $referral['email'] }}</p>
+                                    </div>
                                 </div>
-                                <div class="mlm-user-info">
-                                    <h4>John Doe</h4>
-                                    <p>john.doe@example.com</p>
+                            </td>
+                            <td><span class="mlm-badge level">Level {{ $referral['level'] }}</span></td>
+                            <td><strong>{{ $referral['direct_count'] }}</strong></td>
+                            <td><strong>{{ $referral['total_team_count'] }}</strong></td>
+                            <td>{{ $referral['joined_at'] }}</td>
+                            <td>
+                                <button class="mlm-action-btn" onclick="viewDetails({{ $referral['id'] }})">
+                                    <i class="fi-rr-eye"></i> View
+                                </button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px;">
+                                <div style="color: var(--gray-600);">
+                                    <i class="fi-rr-users-alt" style="font-size: 48px; opacity: 0.3;"></i>
+                                    <p style="margin-top: 16px;">No referrals found</p>
                                 </div>
-                            </div>
-                        </td>
-                        <td><span class="mlm-badge level">Level 1</span></td>
-                        <td><span class="mlm-badge active">Active</span></td>
-                        <td><strong>12</strong></td>
-                        <td><strong>48</strong></td>
-                        <td>Feb 15, 2024</td>
-                        <td><strong>৳25,400</strong></td>
-                        <td>
-                            <button class="mlm-action-btn" onclick="viewDetails(1)">
-                                <i class="fi-rr-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
-
-                    <!-- Row 2 -->
-                    <tr>
-                        <td>
-                            <div class="mlm-user-cell">
-                                <div class="mlm-user-avatar">
-                                    <img src="https://ui-avatars.com/api/?name=Jane+Smith&background=10b981&color=fff"
-                                        alt="Jane">
-                                </div>
-                                <div class="mlm-user-info">
-                                    <h4>Jane Smith</h4>
-                                    <p>jane.smith@example.com</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="mlm-badge level">Level 1</span></td>
-                        <td><span class="mlm-badge active">Active</span></td>
-                        <td><strong>8</strong></td>
-                        <td><strong>32</strong></td>
-                        <td>Feb 20, 2024</td>
-                        <td><strong>৳18,900</strong></td>
-                        <td>
-                            <button class="mlm-action-btn" onclick="viewDetails(2)">
-                                <i class="fi-rr-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
-
-                    <!-- Row 3 -->
-                    <tr>
-                        <td>
-                            <div class="mlm-user-cell">
-                                <div class="mlm-user-avatar">
-                                    <img src="https://ui-avatars.com/api/?name=Mike+Johnson&background=f59e0b&color=fff"
-                                        alt="Mike">
-                                </div>
-                                <div class="mlm-user-info">
-                                    <h4>Mike Johnson</h4>
-                                    <p>mike.johnson@example.com</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="mlm-badge level">Level 2</span></td>
-                        <td><span class="mlm-badge inactive">Inactive</span></td>
-                        <td><strong>5</strong></td>
-                        <td><strong>15</strong></td>
-                        <td>Mar 5, 2024</td>
-                        <td><strong>৳9,200</strong></td>
-                        <td>
-                            <button class="mlm-action-btn" onclick="viewDetails(3)">
-                                <i class="fi-rr-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
-
-                    <!-- Row 4 -->
-                    <tr>
-                        <td>
-                            <div class="mlm-user-cell">
-                                <div class="mlm-user-avatar">
-                                    <img src="https://ui-avatars.com/api/?name=Sarah+Williams&background=ef4444&color=fff"
-                                        alt="Sarah">
-                                </div>
-                                <div class="mlm-user-info">
-                                    <h4>Sarah Williams</h4>
-                                    <p>sarah.w@example.com</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="mlm-badge level">Level 2</span></td>
-                        <td><span class="mlm-badge active">Active</span></td>
-                        <td><strong>10</strong></td>
-                        <td><strong>42</strong></td>
-                        <td>Mar 10, 2024</td>
-                        <td><strong>৳32,100</strong></td>
-                        <td>
-                            <button class="mlm-action-btn" onclick="viewDetails(4)">
-                                <i class="fi-rr-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
-
-                    <!-- Row 5 -->
-                    <tr>
-                        <td>
-                            <div class="mlm-user-cell">
-                                <div class="mlm-user-avatar">
-                                    <img src="https://ui-avatars.com/api/?name=David+Brown&background=3b82f6&color=fff"
-                                        alt="David">
-                                </div>
-                                <div class="mlm-user-info">
-                                    <h4>David Brown</h4>
-                                    <p>david.brown@example.com</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="mlm-badge level">Level 1</span></td>
-                        <td><span class="mlm-badge active">Active</span></td>
-                        <td><strong>15</strong></td>
-                        <td><strong>68</strong></td>
-                        <td>Feb 28, 2024</td>
-                        <td><strong>৳45,800</strong></td>
-                        <td>
-                            <button class="mlm-action-btn" onclick="viewDetails(5)">
-                                <i class="fi-rr-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
-
-                    <!-- Row 6 -->
-                    <tr>
-                        <td>
-                            <div class="mlm-user-cell">
-                                <div class="mlm-user-avatar">
-                                    <img src="https://ui-avatars.com/api/?name=Emily+Davis&background=8b5cf6&color=fff"
-                                        alt="Emily">
-                                </div>
-                                <div class="mlm-user-info">
-                                    <h4>Emily Davis</h4>
-                                    <p>emily.davis@example.com</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="mlm-badge level">Level 3</span></td>
-                        <td><span class="mlm-badge active">Active</span></td>
-                        <td><strong>6</strong></td>
-                        <td><strong>18</strong></td>
-                        <td>Mar 18, 2024</td>
-                        <td><strong>৳12,500</strong></td>
-                        <td>
-                            <button class="mlm-action-btn" onclick="viewDetails(6)">
-                                <i class="fi-rr-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
-
-                    <!-- Row 7 -->
-                    <tr>
-                        <td>
-                            <div class="mlm-user-cell">
-                                <div class="mlm-user-avatar">
-                                    <img src="https://ui-avatars.com/api/?name=Robert+Lee&background=ec4899&color=fff"
-                                        alt="Robert">
-                                </div>
-                                <div class="mlm-user-info">
-                                    <h4>Robert Lee</h4>
-                                    <p>robert.lee@example.com</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="mlm-badge level">Level 1</span></td>
-                        <td><span class="mlm-badge active">Active</span></td>
-                        <td><strong>9</strong></td>
-                        <td><strong>38</strong></td>
-                        <td>Mar 1, 2024</td>
-                        <td><strong>৳28,700</strong></td>
-                        <td>
-                            <button class="mlm-action-btn" onclick="viewDetails(7)">
-                                <i class="fi-rr-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
-
-                    <!-- Row 8 -->
-                    <tr>
-                        <td>
-                            <div class="mlm-user-cell">
-                                <div class="mlm-user-avatar">
-                                    <img src="https://ui-avatars.com/api/?name=Lisa+Wilson&background=06b6d4&color=fff"
-                                        alt="Lisa">
-                                </div>
-                                <div class="mlm-user-info">
-                                    <h4>Lisa Wilson</h4>
-                                    <p>lisa.wilson@example.com</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="mlm-badge level">Level 2</span></td>
-                        <td><span class="mlm-badge inactive">Inactive</span></td>
-                        <td><strong>3</strong></td>
-                        <td><strong>8</strong></td>
-                        <td>Mar 25, 2024</td>
-                        <td><strong>৳5,400</strong></td>
-                        <td>
-                            <button class="mlm-action-btn" onclick="viewDetails(8)">
-                                <i class="fi-rr-eye"></i> View
-                            </button>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -802,68 +609,118 @@
         <!-- Pagination -->
         <div class="mlm-pagination">
             <div class="mlm-pagination-info">
-                Showing 1 to 8 of 248 entries
-            </div>
-            <div class="mlm-pagination-buttons">
-                <button class="mlm-pagination-btn" disabled>
-                    <i class="fi-rr-angle-left"></i>
-                </button>
-                <button class="mlm-pagination-btn active">1</button>
-                <button class="mlm-pagination-btn">2</button>
-                <button class="mlm-pagination-btn">3</button>
-                <button class="mlm-pagination-btn">4</button>
-                <button class="mlm-pagination-btn">5</button>
-                <button class="mlm-pagination-btn">
-                    <i class="fi-rr-angle-right"></i>
-                </button>
+                Showing {{ count($referrals) }} of {{ $totalReferrals }} entries
             </div>
         </div>
     </div>
 
     <!-- Empty State (Show when no data) -->
     <!-- <div class="mlm-content-card">
-        <div class="mlm-empty-state">
-            <i class="fi-rr-users-alt"></i>
-            <h3>No Referrals Yet</h3>
-            <p>Start building your network by sharing your referral link</p>
-            <button class="mlm-btn mlm-btn-primary">
-                <i class="fi-rr-share"></i> Get Referral Link
-            </button>
-        </div>
-    </div> -->
+            <div class="mlm-empty-state">
+                <i class="fi-rr-users-alt"></i>
+                <h3>No Referrals Yet</h3>
+                <p>Start building your network by sharing your referral link</p>
+                <button class="mlm-btn mlm-btn-primary">
+                    <i class="fi-rr-share"></i> Get Referral Link
+                </button>
+            </div>
+        </div> -->
 
     <script>
         // Filter functionality
         document.getElementById('levelFilter').addEventListener('change', filterTable);
-        document.getElementById('statusFilter').addEventListener('change', filterTable);
-        document.getElementById('dateFilter').addEventListener('change', filterTable);
         document.getElementById('searchBox').addEventListener('input', filterTable);
 
         function filterTable() {
-            // Implement filter logic here
-            console.log('Filtering table...');
+            const levelFilter = document.getElementById('levelFilter').value;
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const rows = document.querySelectorAll('.mlm-table tbody tr');
+
+            rows.forEach(row => {
+                // Skip empty state row
+                if (row.querySelector('td[colspan]')) return;
+
+                const levelBadge = row.querySelector('.mlm-badge.level');
+                const userName = row.querySelector('.mlm-user-info h4')?.textContent.toLowerCase() || '';
+                const userEmail = row.querySelector('.mlm-user-info p')?.textContent.toLowerCase() || '';
+
+                const level = levelBadge ? levelBadge.textContent.replace('Level ', '') : '';
+
+                // Check level filter
+                const levelMatch = !levelFilter || level === levelFilter;
+
+                // Check search filter
+                const searchMatch = !searchTerm || userName.includes(searchTerm) || userEmail.includes(searchTerm);
+
+                // Show/hide row
+                if (levelMatch && searchMatch) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Update showing count
+            updateShowingCount();
+        }
+
+        function updateShowingCount() {
+            const visibleRows = document.querySelectorAll('.mlm-table tbody tr:not([style*="display: none"])').length;
+            const totalRows = {{ $totalReferrals ?? 0 }};
+            document.querySelector('.mlm-pagination-info').textContent =
+                `Showing ${visibleRows} of ${totalRows} entries`;
         }
 
         function viewDetails(id) {
-            alert('View details for member ID: ' + id);
-            // Implement view details logic
+            // Redirect to user details or open modal
+            window.location.href = `/customer/mlm/referral/details/${id}`;
         }
 
         function exportData() {
-            alert('Export data as CSV/Excel');
-            // Implement export logic
+            // Export visible rows to CSV
+            const rows = document.querySelectorAll('.mlm-table tbody tr:not([style*="display: none"])');
+            let csvContent = "Member,Email,Level,Direct Referrals,Total Network,Join Date\n";
+
+            rows.forEach(row => {
+                if (row.querySelector('td[colspan]')) return; // Skip empty state
+
+                const cells = row.querySelectorAll('td');
+                const name = row.querySelector('.mlm-user-info h4')?.textContent || '';
+                const email = row.querySelector('.mlm-user-info p')?.textContent || '';
+                const level = row.querySelector('.mlm-badge.level')?.textContent || '';
+                const direct = cells[2]?.textContent.trim() || '0';
+                const total = cells[3]?.textContent.trim() || '0';
+                const joinDate = cells[4]?.textContent.trim() || '';
+
+                csvContent += `"${name}","${email}","${level}","${direct}","${total}","${joinDate}"\n`;
+            });
+
+            // Create download
+            const blob = new Blob([csvContent], {
+                type: 'text/csv'
+            });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'referrals_' + new Date().toISOString().split('T')[0] + '.csv';
+            a.click();
         }
 
         function shareReferralLink() {
-            const referralLink = window.location.origin + '/register?ref=' +
-                '{{ auth('customer')->user()->id ?? 'USER_ID' }}';
+            @if (auth('customer')->check() && auth('customer')->user()->referral_code)
+                const referralLink = '{{ url('/register?ref=' . auth('customer')->user()->referral_code) }}';
+            @else
+                const referralLink = '{{ url('/register') }}';
+            @endif
 
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(referralLink).then(() => {
                     alert('Referral link copied to clipboard!\n\n' + referralLink);
+                }).catch(() => {
+                    prompt('Copy this referral link:', referralLink);
                 });
             } else {
-                alert('Your Referral Link:\n\n' + referralLink);
+                prompt('Copy this referral link:', referralLink);
             }
         }
     </script>

@@ -1,6 +1,8 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
+    <link rel="stylesheet" href="{{ url('tenant/admin/dataTable/css/jquery.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ url('tenant/admin/dataTable/css/dataTables.bootstrap4.min.css') }}">
     <style>
         h4.card-title {
             background: linear-gradient(to right, #17263A, #2c3e50, #17263A);
@@ -9,59 +11,35 @@
             color: white;
         }
 
-        .graph_card {
-            position: relative
+        .user-info {
+            line-height: 1.4;
         }
 
-        .graph_card i {
-            position: absolute;
-            top: 18px;
-            right: 18px;
-            font-size: 18px;
-            height: 35px;
-            width: 35px;
-            line-height: 33px;
-            text-align: center;
-            border-radius: 50%;
-            font-weight: 300;
-
-            /* animation-name: rotate;
-                                                                animation-duration: 5s;
-                                                                animation-iteration-count: infinite;
-                                                                animation-timing-function: linear;
-                                                            */
-
+        .user-info .text-muted {
+            font-size: 12px;
         }
-
-        /* @keyframes rotate{
-                                                                from{ transform: rotate(-360deg); }
-                                                                to{ transform: rotate(360deg); }
-                                                            } */
     </style>
 @endsection
 
 @section('page_title')
-    Dashboard
+    Withdrawal Requests
 @endsection
 
 @section('page_heading')
-    Overview
+    Withdrawal Management
 @endsection
+
 @section('content')
     <div class="row">
         <div class="col-12">
-
             <div class="card">
                 <div class="card-body">
-
                     <h4 class="card-title">Withdrawal Requests</h4>
 
                     <div class="table-responsive mt-3">
-                        <table class="table table-bordered table-striped">
-
+                        <table id="withdrawRequestTable" class="table table-bordered table-striped">
                             <thead class="thead-dark">
                                 <tr>
-                                    <th>#</th>
                                     <th>User</th>
                                     <th>User ID</th>
                                     <th>Amount</th>
@@ -72,98 +50,115 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-
                             <tbody>
-
-                                {{-- Row 1 --}}
-                                <tr>
-                                    <td>1</td>
-                                    <td><strong>Rupom Ehsan</strong></td>
-                                    <td>101</td>
-                                    <td>৳ 500</td>
-                                    <td>bKash</td>
-                                    <td>01745-000111</td>
-                                    <td><span class="badge bg-warning">Pending</span></td>
-                                    <td>12 Jan, 2025</td>
-                                    <td>
-                                        <button class="btn btn-success btn-sm">Approve</button>
-                                        <button class="btn btn-danger btn-sm">Reject</button>
-                                    </td>
-                                </tr>
-
-                                {{-- Row 2 --}}
-                                <tr>
-                                    <td>2</td>
-                                    <td><strong>Shakib Hasan</strong></td>
-                                    <td>102</td>
-                                    <td>৳ 300</td>
-                                    <td>Nagad</td>
-                                    <td>01844-558877</td>
-                                    <td><span class="badge bg-success">Approved</span></td>
-                                    <td>10 Jan, 2025</td>
-                                    <td>
-                                        <button class="btn btn-secondary btn-sm" disabled>Processed</button>
-                                    </td>
-                                </tr>
-
-                                {{-- Row 3 --}}
-                                <tr>
-                                    <td>3</td>
-                                    <td><strong>Mahin Ahmed</strong></td>
-                                    <td>120</td>
-                                    <td>৳ 450</td>
-                                    <td>Bank</td>
-                                    <td>Brac Bank • A/C: 556677</td>
-                                    <td><span class="badge bg-danger">Rejected</span></td>
-                                    <td>09 Jan, 2025</td>
-                                    <td>
-                                        <button class="btn btn-secondary btn-sm" disabled>No Action</button>
-                                    </td>
-                                </tr>
-
-                                {{-- Row 4 --}}
-                                <tr>
-                                    <td>4</td>
-                                    <td><strong>Sumaiya Rahman</strong></td>
-                                    <td>125</td>
-                                    <td>৳ 700</td>
-                                    <td>bKash</td>
-                                    <td>01788-334466</td>
-                                    <td><span class="badge bg-warning">Pending</span></td>
-                                    <td>08 Jan, 2025</td>
-                                    <td>
-                                        <button class="btn btn-success btn-sm">Approve</button>
-                                        <button class="btn btn-danger btn-sm">Reject</button>
-                                    </td>
-                                </tr>
-
-                                {{-- Row 5 --}}
-                                <tr>
-                                    <td>5</td>
-                                    <td><strong>Rubina Akter</strong></td>
-                                    <td>142</td>
-                                    <td>৳ 200</td>
-                                    <td>Nagad</td>
-                                    <td>01912-556677</td>
-                                    <td><span class="badge bg-success">Approved</span></td>
-                                    <td>06 Jan, 2025</td>
-                                    <td>
-                                        <button class="btn btn-secondary btn-sm" disabled>Processed</button>
-                                    </td>
-                                </tr>
-
                             </tbody>
-
                         </table>
                     </div>
-
                 </div>
             </div>
-
         </div>
     </div>
 @endsection
 
-
 @section('footer_js')
+    <script src="{{ url('tenant/admin/dataTable/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url('tenant/admin/dataTable/js/dataTables.bootstrap4.min.js') }}"></script>
+
+    <script>
+        $(document).ready(function() {
+            console.log('Initializing Withdrawal Request DataTable...');
+
+            var table = $('#withdrawRequestTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('mlm.user.withdraw.request') }}",
+                    type: 'GET',
+                    error: function(xhr, error, code) {
+                        console.error('DataTable AJAX Error:', error, code);
+                        console.error('Response:', xhr.responseText);
+                    }
+                },
+                columns: [{
+                        data: 'user',
+                        name: 'u.name',
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: 'user_id_badge',
+                        name: 'wr.user_id',
+                        orderable: true,
+                        searchable: false
+                    },
+                    {
+                        data: 'amount_formatted',
+                        name: 'wr.amount',
+                        orderable: true,
+                        searchable: false
+                    },
+                    {
+                        data: 'payment_method_badge',
+                        name: 'wr.payment_method',
+                        orderable: true,
+                        searchable: false
+                    },
+                    {
+                        data: 'payment_info',
+                        name: 'wr.payment_details',
+                        orderable: false,
+                        searchable: true
+                    },
+                    {
+                        data: 'status_badge',
+                        name: 'wr.status',
+                        orderable: true,
+                        searchable: false
+                    },
+                    {
+                        data: 'request_date',
+                        name: 'wr.created_at',
+                        orderable: true,
+                        searchable: false
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    }
+                ],
+                order: [
+                    [6, 'desc']
+                ], // Sort by request date
+                pageLength: 25,
+                language: {
+                    emptyTable: "No withdrawal requests found",
+                    zeroRecords: "No matching requests found"
+                }
+            });
+
+            // Approve button handler
+            $(document).on('click', '.approve-btn', function() {
+                var requestId = $(this).data('id');
+                if (confirm('Are you sure you want to approve this withdrawal request?')) {
+                    // TODO: Implement approve AJAX call
+                    console.log('Approve request:', requestId);
+                    alert('Approve functionality to be implemented');
+                }
+            });
+
+            // Reject button handler
+            $(document).on('click', '.reject-btn', function() {
+                var requestId = $(this).data('id');
+                if (confirm('Are you sure you want to reject this withdrawal request?')) {
+                    // TODO: Implement reject AJAX call
+                    console.log('Reject request:', requestId);
+                    alert('Reject functionality to be implemented');
+                }
+            });
+
+            console.log('DataTable initialized:', table);
+        });
+    </script>
 @endsection

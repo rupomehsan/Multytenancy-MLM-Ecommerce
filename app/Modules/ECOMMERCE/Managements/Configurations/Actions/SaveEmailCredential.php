@@ -47,13 +47,13 @@ class SaveEmailCredential
                 ]);
             }
 
-            $encryptedPassword = Crypt::encryptString($request->password);
+
 
             $data = [
                 'host' => $request->host,
                 'port' => $request->port,
                 'email' => $request->email,
-                'password' => $encryptedPassword,
+                'password' => $request->password,
                 'mail_from_name' => $request->mail_from_name,
                 'mail_from_email' => $request->mail_from_email,
                 'encryption' => $request->encryption ?? 0,

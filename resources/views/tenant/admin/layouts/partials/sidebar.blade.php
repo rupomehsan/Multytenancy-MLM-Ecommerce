@@ -1,3 +1,6 @@
+@php
+    use App\Modules\ECOMMERCE\Managements\Orders\Database\Models\Order;
+@endphp
 <!-- Left Menu Start -->
 <div style="padding: 10px;">
     <input type="text" id="menuSearch" placeholder="Search menu..."
@@ -74,11 +77,11 @@
                     Referral Lists
                 </a>
             </li>
-            <li>
+            {{-- <li>
                 <a href="{{ route('mlm.referral.tree') }}" data-active-paths="{{ route('mlm.referral.tree') }}">
                     Referral Tree
                 </a>
-            </li>
+            </li> --}}
             <li>
                 <a href="{{ route('mlm.referral.activity.log') }}"
                     data-active-paths="{{ route('mlm.referral.activity.log') }}">
@@ -125,7 +128,7 @@
             <i class="feather-star"></i> <span>Top Earners</span></a>
     </li>
 
-    <li>
+    {{-- <li>
         <a href="javascript: void(0);" class="has-arrow">
             <i class="feather-bar-chart-2"></i> <span>MLM Reports</span>
         </a>
@@ -160,7 +163,7 @@
                     data-active-paths="{{ route('mlm.reports.wallet_summary') }}">Wallet Summary</a>
             </li>
         </ul>
-    </li>
+    </li> --}}
     <li>
         <a href="{{ route('mlm.passive.income') }}" data-active-paths="{{ route('mlm.passive.income') }}">
             <i class="feather-dollar-sign"></i> <span>Passive Income</span>
@@ -205,8 +208,7 @@
             </li> --}}
 
             <li>
-                <a href="{{ url('/view/email/credential') }}"
-                    data-active-paths="{{ url('/view/email/credential') }}">
+                <a href="{{ url('/view/email/credential') }}" data-active-paths="{{ url('/view/email/credential') }}">
                     Email Configure (SMTP)
                 </a>
             </li>
@@ -366,20 +368,20 @@
                 </a>
             </li>
             <li>
-                <a style="color: wheat !important;" href="{{ url('/view/pending/orders') }}"
+                <a style="color: rgb(126, 125, 125) !important;" href="{{ url('/view/pending/orders') }}"
                     data-active-paths="{{ url('/view/pending/orders') }}, {{ url('order/edit/*') }}">
                     Pending Orders
                     (@php
-                        echo DB::table('orders')->where('order_status', 0)->count();
+                        echo DB::table('orders')->where('order_status', Order::STATUS_PENDING)->count();
                     @endphp)
                 </a>
             </li>
             <li>
-                <a style="color: skyblue !important;" href="{{ url('/view/approved/orders') }}"
+                <a class="text-primary" href="{{ url('/view/approved/orders') }}"
                     data-active-paths="{{ url('/view/approved/orders') }}">
                     Approved Orders
                     (@php
-                        echo DB::table('orders')->where('order_status', 1)->count();
+                        echo DB::table('orders')->where('order_status', Order::STATUS_APPROVED)->count();
                     @endphp)
                 </a>
             </li>
@@ -388,7 +390,7 @@
                     data-active-paths="{{ url('/view/dispatch/orders') }}">
                     Dispatch Orders
                     (@php
-                        echo DB::table('orders')->where('order_status', 2)->count();
+                        echo DB::table('orders')->where('order_status', Order::STATUS_DISPATCH)->count();
                     @endphp)
                 </a>
             </li>
@@ -397,7 +399,16 @@
                     data-active-paths="{{ url('/view/intransit/orders') }}">
                     Intransit Orders
                     (@php
-                        echo DB::table('orders')->where('order_status', 3)->count();
+                        echo DB::table('orders')->where('order_status', Order::STATUS_INTRANSIT)->count();
+                    @endphp)
+                </a>
+            </li>
+            <li>
+                <a class="text-warning" href="{{ url('/view/cancelled/orders') }}"
+                    data-active-paths="{{ url('/view/cancelled/orders') }}">
+                    Cancelled Orders
+                    (@php
+                        echo DB::table('orders')->where('order_status', Order::STATUS_CANCELLED)->count();
                     @endphp)
                 </a>
             </li>
@@ -406,28 +417,20 @@
                     data-active-paths="{{ url('/view/delivered/orders') }}">
                     Delivered Orders
                     (@php
-                        echo DB::table('orders')->where('order_status', 4)->count();
+                        echo DB::table('orders')->where('order_status', Order::STATUS_DELIVERED)->count();
                     @endphp)
                 </a>
             </li>
             <li>
-                <a style="color: tomato !important;" href="{{ url('/view/picked/orders') }}"
-                    data-active-paths="{{ url('/view/picked/orders') }}">
+                <a style="color: tomato !important;" href="{{ url('/view/return/orders') }}"
+                    data-active-paths="{{ url('/view/return/orders') }}">
                     Return Orders
                     (@php
-                        echo DB::table('orders')->where('order_status', 5)->count();
+                        echo DB::table('orders')->where('order_status', Order::STATUS_RETURN)->count();
                     @endphp)
                 </a>
             </li>
-            <li>
-                <a style="color: red !important;" href="{{ url('/view/cancelled/orders') }}"
-                    data-active-paths="{{ url('/view/cancelled/orders') }}">
-                    Cancelled Orders
-                    (@php
-                        echo DB::table('orders')->where('order_status', 6)->count();
-                    @endphp)
-                </a>
-            </li>
+
             <li>
                 <a style="color: red !important;" href="{{ url('view/trash/orders') }}"
                     data-active-paths="{{ url('view/trash/orders') }}">
@@ -435,6 +438,13 @@
                     (@php
                         echo DB::table('orders')->where('deleted_at', '!=', null)->count();
                     @endphp)
+                </a>
+            </li>
+            <li>
+                <a class="text-info" href="{{ url('view/orders/log') }}"
+                    data-active-paths="{{ url('view/orders/log') }}">
+                    Order Logs
+
                 </a>
             </li>
         </ul>

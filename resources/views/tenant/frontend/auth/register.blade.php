@@ -2,6 +2,82 @@
 
 @section('header_css')
     <style>
+        /* Referral Info Badge */
+        .referral-info-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .referral-info-badge i {
+            font-size: 20px;
+        }
+
+        .referral-info-badge .text {
+            flex: 1;
+        }
+
+        .referral-info-badge .text strong {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 2px;
+            opacity: 0.9;
+        }
+
+        .referral-info-badge .text span {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .form-group.referral-field {
+            position: relative;
+        }
+
+        .form-group.referral-field input:disabled {
+            background-color: #f3f4f6;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .referral-verified-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #10b981;
+            font-size: 20px;
+        }
+
+        /* Form Labels */
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-label span {
+            color: #dc3545;
+        }
+
+        /* Input Wrapper */
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
         /* Confirmation Email Modal  */
         #backdrop {
             display: none;
@@ -189,6 +265,64 @@
             display: none !important;
         }
 
+        /* Inline Validation Styles */
+        .form-control.is-valid {
+            border-color: #10b981 !important;
+            padding-right: 45px !important;
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545 !important;
+            padding-right: 45px !important;
+        }
+
+        . {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            display: none;
+        }
+
+        ..success {
+            color: #10b981;
+            display: block;
+        }
+
+        ..error {
+            color: #dc3545;
+            display: block;
+        }
+
+        .password-field-wrapper . {
+            right: 45px !important;
+        }
+
+        .valid-feedback {
+            display: none;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 16px;
+            color: #10b981;
+        }
+
+        .valid-feedback.d-block {
+            display: block !important;
+        }
+
+        .invalid-feedback {
+            display: none;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 16px;
+            color: #dc3545;
+        }
+
+        .invalid-feedback.d-block {
+            display: block !important;
+        }
+
         /* Responsive CSS */
         @media only screen and (min-width: 992px) and (max-width: 1240px) {
             .c-email-modal-icon img {
@@ -291,64 +425,135 @@
                             <h4 class="auth-card-title">Register Account</h4>
                         </div>
                         <div class="auth-card-form-body">
-                            <form class="auth-card-form" action="{{ url('register') }}" method="post">
+                            <form class="auth-card-form" action="{{ url('register') }}" method="post"
+                                id="registrationForm">
                                 @csrf
 
-                                <div class="form-group">
-                                    <div class="form-group-icon">
-                                        <i class="fi fi-ss-user"></i>
+                                <!-- Referral Info Badge (shown when ref parameter exists) -->
+                                <div id="referralInfoBadge" class="referral-info-badge" style="display: none;">
+                                    <i class="fi fi-ss-user-add"></i>
+                                    <div class="text">
+                                        <strong>Referred by</strong>
+                                        <span id="referralCodeDisplay"></span>
                                     </div>
-                                    <input type="text" id="name" name="name"
-                                        class="form-control @error('name') is-invalid @enderror"
-                                        value="{{ old('name') }}" placeholder="Full Name" required="" />
+                                    <i class="" style="color: #fff; font-size: 24px;"></i>
+                                </div>
+
+                                <!-- Hidden input for referral code -->
+                                <input type="hidden" name="referral_code" id="referralCodeInput" value="">
+
+                                <div class="form-group">
+                                    <label for="name" class="form-label">Full Name <span
+                                            style="color: #dc3545;">*</span></label>
+                                    <div class="input-wrapper">
+                                        <div class="form-group-icon">
+                                            <i class="fi fi-ss-user"></i>
+                                        </div>
+                                        <input type="text" id="name" name="name"
+                                            class="form-control @error('name') is-invalid @enderror"
+                                            value="{{ old('name') }}" placeholder="Enter your full name"
+                                            required="" />
+                                        <i class=" " id="nameValidIcon"></i>
+                                    </div>
                                     @error('name')
-                                        <span class="invalid-feedback" role="alert">
+                                        <span class="invalid-feedback d-block" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
+                                    @else
+                                        <span class="invalid-feedback" id="nameError" role="alert"></span>
+                                        <span class="valid-feedback" id="nameSuccess" role="alert">Name looks good!</span>
                                     @enderror
                                 </div>
 
                                 <div class="form-group">
-                                    <div class="form-group-icon">
-                                        <i class="fi fi-ss-envelope"></i>
+                                    <label for="email" class="form-label">Email <span
+                                            style="color: #dc3545;">*</span></label>
+                                    <div class="input-wrapper">
+                                        <div class="form-group-icon">
+                                            <i class="fi fi-ss-envelope"></i>
+                                        </div>
+                                        <input type="text" id="email" name="email"
+                                            class="form-control 
+                                        @error('email') is-invalid @enderror"
+                                            value="{{ old('email') }}" placeholder="Enter your email " required="" />
+                                        <i class=" " id="emailValidIcon"></i>
                                     </div>
-                                    <input type="text" id="email" name="email"
-                                        class="form-control 
-                                    @error('email') is-invalid @enderror"
-                                        value="{{ old('email') }}" placeholder="Email" required="" />
                                     @error('email')
-                                        <span class="invalid-feedback" role="alert">
+                                        <span class="invalid-feedback d-block" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
+                                    @else
+                                        <span class="invalid-feedback" id="emailError" role="alert"></span>
+                                        <span class="valid-feedback" id="emailSuccess" role="alert">Email/Phone looks
+                                            good!</span>
                                     @enderror
                                 </div>
 
-                                <div class="form-group">
-                                    <div class="form-group-icon">
-                                        <i class="fi-ss-home-location-alt"></i>
+                                {{-- <div class="form-group">
+                                    <label for="address" class="form-label">Address <span
+                                            style="color: #dc3545;">*</span></label>
+                                    <div class="input-wrapper">
+                                        <div class="form-group-icon">
+                                            <i class="fi-ss-home-location-alt"></i>
+                                        </div>
+                                        <input type="text" id="address" name="address"
+                                            class="form-control @error('address') is-invalid @enderror"
+                                            value="{{ old('address') }}" placeholder="Enter your address" required="" />
                                     </div>
-                                    <input type="text" id="address" name="address"
-                                        class="form-control @error('address') is-invalid @enderror"
-                                        value="{{ old('address') }}" placeholder="Address" />
                                     @error('address')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
+                                </div> --}}
+
+                                <div class="form-group password-field-wrapper">
+                                    <label for="password" class="form-label">Password <span
+                                            style="color: #dc3545;">*</span></label>
+                                    <div class="input-wrapper">
+                                        <div class="form-group-icon">
+                                            <i class="fi fi-ss-lock"></i>
+                                        </div>
+                                        <input type="password" id="password" name="password"
+                                            class="form-control @error('password') is-invalid  @enderror" value=""
+                                            placeholder="Enter your password" required="" />
+                                        <i class=" " id="passwordValidIcon"></i>
+                                        <i class="fi-rs-eye-crossed password-toggle-icon" id="togglePassword"></i>
+                                    </div>
+                                    @error('password')
+                                        <span class="invalid-feedback d-block" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @else
+                                        <span class="invalid-feedback" id="passwordError" role="alert"></span>
+                                        <span class="valid-feedback" id="passwordSuccess" role="alert">Password is
+                                            strong!</span>
+                                    @enderror
                                 </div>
 
                                 <div class="form-group password-field-wrapper">
-                                    <div class="form-group-icon">
-                                        <i class="fi fi-ss-lock"></i>
+                                    <label for="password_confirmation" class="form-label">Confirm Password <span
+                                            style="color: #dc3545;">*</span></label>
+                                    <div class="input-wrapper">
+                                        <div class="form-group-icon">
+                                            <i class="fi fi-ss-lock"></i>
+                                        </div>
+                                        <input type="password" id="password_confirmation" name="password_confirmation"
+                                            class="form-control @error('password_confirmation') is-invalid  @enderror"
+                                            value="" placeholder="Re-enter your password" required="" />
+                                        <i class="fi fi-ss-check-circle validation-icon"
+                                            id="passwordConfirmValidIcon"></i>
+                                        <i class="fi-rs-eye-crossed password-toggle-icon"
+                                            id="togglePasswordConfirmation"></i>
                                     </div>
-                                    <input type="password" id="password" name="password"
-                                        class="form-control @error('password') is-invalid  @enderror" value=""
-                                        placeholder="Set Password" required="" />
-                                    <i class="fi-rs-eye-crossed password-toggle-icon" id="togglePassword"></i>
-                                    @error('password')
-                                        <span class="invalid-feedback" role="alert">
+                                    @error('password_confirmation')
+                                        <span class="invalid-feedback d-block" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
+                                    @else
+                                        <span class="invalid-feedback" id="passwordConfirmError" role="alert"></span>
+                                        <span class="valid-feedback" id="passwordConfirmSuccess" role="alert">Passwords
+                                            match!</span>
                                     @enderror
                                 </div>
 
@@ -414,6 +619,42 @@
 
 @section('footer_js')
     <script>
+        // Referral System: Extract and validate referral code from URL
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const referralCode = urlParams.get('ref');
+
+            if (referralCode) {
+                // Validate referral code via AJAX
+                validateReferralCode(referralCode);
+            }
+        });
+
+        function validateReferralCode(code) {
+            fetch(`{{ url('/api/validate-referral') }}?code=${code}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.valid) {
+                        // Show referral info badge
+                        document.getElementById('referralInfoBadge').style.display = 'flex';
+                        document.getElementById('referralCodeDisplay').textContent = code;
+                        document.getElementById('referralCodeInput').value = code;
+                    } else {
+                        console.warn('Invalid referral code:', code);
+                        // Optionally show a warning to the user
+                    }
+                })
+                .catch(error => {
+                    console.error('Error validating referral code:', error);
+                });
+        }
+
         const togglePassword = document.querySelector("#togglePassword");
         const password = document.querySelector("#password");
 
@@ -422,6 +663,26 @@
                 // toggle the type attribute
                 const type = password.getAttribute("type") === "password" ? "text" : "password";
                 password.setAttribute("type", type);
+
+                // toggle the icon using classList
+                if (this.classList.contains("fi-rs-eye-crossed")) {
+                    this.classList.remove("fi-rs-eye-crossed");
+                    this.classList.add("fi-rs-eye");
+                } else {
+                    this.classList.remove("fi-rs-eye");
+                    this.classList.add("fi-rs-eye-crossed");
+                }
+            });
+        }
+
+        const togglePasswordConfirmation = document.querySelector("#togglePasswordConfirmation");
+        const passwordConfirmation = document.querySelector("#password_confirmation");
+
+        if (togglePasswordConfirmation && passwordConfirmation) {
+            togglePasswordConfirmation.addEventListener("click", function() {
+                // toggle the type attribute
+                const type = passwordConfirmation.getAttribute("type") === "password" ? "text" : "password";
+                passwordConfirmation.setAttribute("type", type);
 
                 // toggle the icon using classList
                 if (this.classList.contains("fi-rs-eye-crossed")) {
@@ -463,33 +724,15 @@
         // JavaScript to handle button click and show/hide the modal
         document.getElementById("show-confirmation-email-modal").addEventListener("click", function() {
 
-            var name = $("#name").val();
-            var username = $("#email").val();
-            var password = $("#password").val();
-            var address = $("#address").val();
-
-            if (name == '' || username == '' || password == '' || address == '') {
+            // Run complete validation
+            if (!validateAllFields()) {
                 toastr.options.positionClass = 'toast-top-right';
                 toastr.options.timeOut = 2000;
-                toastr.error("Please fill up all the input fields");
+                toastr.error("Please fix all validation errors before continuing");
                 return false;
             }
 
-            if (containsAtSymbol(username)) {
-                if (!isValidEmail(username)) {
-                    toastr.options.positionClass = 'toast-top-right';
-                    toastr.options.timeOut = 2000;
-                    toastr.error("Email is not in a valid format");
-                    return false;
-                }
-            } else {
-                if (!isValidBangladeshiMobileNumber(username)) {
-                    toastr.options.positionClass = 'toast-top-right';
-                    toastr.options.timeOut = 2000;
-                    toastr.error("Mobile number is not in a valid Bangladeshi format");
-                    return false;
-                }
-            }
+            var username = $("#email").val();
 
             $("#confirmationEmailOrPhone").html(username);
 
@@ -520,6 +763,295 @@
             // Hide the backdrop and modal
             backdrop.style.display = "none";
             widget.style.display = "none";
+        }
+
+        // Extract and handle referral code from URL
+        function handleReferralCode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const referralCode = urlParams.get('ref');
+
+            if (referralCode) {
+                // Set the referral code in hidden input
+                document.getElementById('referralCodeInput').value = referralCode;
+
+                // Display the referral info badge
+                document.getElementById('referralInfoBadge').style.display = 'flex';
+                document.getElementById('referralCodeDisplay').textContent = referralCode;
+
+                // Validate referral code exists (optional AJAX call)
+                validateReferralCode(referralCode);
+            }
+        }
+
+        // Optional: Validate referral code via AJAX
+        function validateReferralCode(code) {
+            fetch(`/api/validate-referral?code=${code}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.valid) {
+                        // Show warning if code is invalid
+                        toastr.options.positionClass = 'toast-top-right';
+                        toastr.options.timeOut = 4000;
+                        toastr.warning("The referral code may be invalid or expired");
+
+                        // Hide the referral badge if invalid
+                        document.getElementById('referralInfoBadge').style.display = 'none';
+                        document.getElementById('referralCodeInput').value = '';
+                    }
+                })
+                .catch(error => {
+                    console.log('Referral validation skipped');
+                });
+        }
+
+        // Call on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            handleReferralCode();
+            initializeInlineValidation();
+        });
+
+        // ========================================
+        // INLINE VALIDATION IMPLEMENTATION
+        // ========================================
+        function initializeInlineValidation() {
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const passwordConfirmInput = document.getElementById('password_confirmation');
+
+            // Name validation
+            if (nameInput) {
+                nameInput.addEventListener('input', debounce(function() {
+                    validateName();
+                }, 300));
+                nameInput.addEventListener('blur', function() {
+                    validateName();
+                });
+            }
+
+            // Email validation
+            if (emailInput) {
+                emailInput.addEventListener('input', debounce(function() {
+                    validateEmail();
+                }, 300));
+                emailInput.addEventListener('blur', function() {
+                    validateEmail();
+                });
+            }
+
+            // Password validation
+            if (passwordInput) {
+                passwordInput.addEventListener('input', debounce(function() {
+                    validatePassword();
+                    if (passwordConfirmInput.value) {
+                        validatePasswordConfirmation();
+                    }
+                }, 300));
+                passwordInput.addEventListener('blur', function() {
+                    validatePassword();
+                });
+            }
+
+            // Password confirmation validation
+            if (passwordConfirmInput) {
+                passwordConfirmInput.addEventListener('input', debounce(function() {
+                    validatePasswordConfirmation();
+                }, 300));
+                passwordConfirmInput.addEventListener('blur', function() {
+                    validatePasswordConfirmation();
+                });
+            }
+        }
+
+        // Debounce function to limit validation calls
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Name validation
+        function validateName() {
+            const nameInput = document.getElementById('name');
+            const nameError = document.getElementById('nameError');
+            const nameSuccess = document.getElementById('nameSuccess');
+            const nameValidIcon = document.getElementById('nameValidIcon');
+            const name = nameInput.value.trim();
+
+            // Clear previous states
+            nameInput.classList.remove('is-valid', 'is-invalid');
+            nameValidIcon.classList.remove('success', 'error');
+            nameError.classList.remove('d-block');
+            nameSuccess.classList.remove('d-block');
+
+            if (name === '') {
+                setFieldInvalid(nameInput, nameError, nameValidIcon, 'Name is required');
+                return false;
+            }
+
+            if (name.length < 2) {
+                setFieldInvalid(nameInput, nameError, nameValidIcon, 'Name must be at least 2 characters');
+                return false;
+            }
+
+            if (name.length > 255) {
+                setFieldInvalid(nameInput, nameError, nameValidIcon, 'Name must not exceed 255 characters');
+                return false;
+            }
+
+            setFieldValid(nameInput, nameSuccess, nameValidIcon);
+            return true;
+        }
+
+        // Email/Phone validation
+        function validateEmail() {
+            const emailInput = document.getElementById('email');
+            const emailError = document.getElementById('emailError');
+            const emailSuccess = document.getElementById('emailSuccess');
+            const emailValidIcon = document.getElementById('emailValidIcon');
+            const value = emailInput.value.trim();
+
+            // Clear previous states
+            emailInput.classList.remove('is-valid', 'is-invalid');
+            emailValidIcon.classList.remove('success', 'error');
+            emailError.classList.remove('d-block');
+            emailSuccess.classList.remove('d-block');
+
+            if (value === '') {
+                setFieldInvalid(emailInput, emailError, emailValidIcon, 'Email or phone is required');
+                return false;
+            }
+
+            // Check if it contains @, then validate as email
+            if (containsAtSymbol(value)) {
+                if (!isValidEmail(value)) {
+                    setFieldInvalid(emailInput, emailError, emailValidIcon, 'Please enter a valid email address');
+                    return false;
+                }
+            } else {
+                // Validate as phone number
+                if (!isValidBangladeshiMobileNumber(value)) {
+                    setFieldInvalid(emailInput, emailError, emailValidIcon,
+                        'Please enter a valid Bangladeshi mobile number (01XXXXXXXXX)');
+                    return false;
+                }
+            }
+
+            setFieldValid(emailInput, emailSuccess, emailValidIcon);
+            return true;
+        }
+
+        // Password validation
+        function validatePassword() {
+            const passwordInput = document.getElementById('password');
+            const passwordError = document.getElementById('passwordError');
+            const passwordSuccess = document.getElementById('passwordSuccess');
+            const passwordValidIcon = document.getElementById('passwordValidIcon');
+            const password = passwordInput.value;
+
+            // Clear previous states
+            passwordInput.classList.remove('is-valid', 'is-invalid');
+            passwordValidIcon.classList.remove('success', 'error');
+            passwordError.classList.remove('d-block');
+            passwordSuccess.classList.remove('d-block');
+
+            if (password === '') {
+                setFieldInvalid(passwordInput, passwordError, passwordValidIcon, 'Password is required');
+                return false;
+            }
+
+            if (password.length < 8) {
+                setFieldInvalid(passwordInput, passwordError, passwordValidIcon, 'Password must be at least 8 characters');
+                return false;
+            }
+
+            setFieldValid(passwordInput, passwordSuccess, passwordValidIcon);
+            return true;
+        }
+
+        // Password confirmation validation
+        function validatePasswordConfirmation() {
+            const passwordInput = document.getElementById('password');
+            const passwordConfirmInput = document.getElementById('password_confirmation');
+            const passwordConfirmError = document.getElementById('passwordConfirmError');
+            const passwordConfirmSuccess = document.getElementById('passwordConfirmSuccess');
+            const passwordConfirmValidIcon = document.getElementById('passwordConfirmValidIcon');
+            const password = passwordInput.value;
+            const passwordConfirm = passwordConfirmInput.value;
+
+            // Clear previous states completely
+            passwordConfirmInput.classList.remove('is-valid', 'is-invalid');
+            passwordConfirmValidIcon.classList.remove('success', 'error');
+            passwordConfirmError.classList.remove('d-block');
+            passwordConfirmSuccess.classList.remove('d-block');
+            passwordConfirmError.textContent = ''; // Clear error text
+            passwordConfirmSuccess.textContent = ''; // Clear success text
+
+            if (passwordConfirm === '') {
+                setFieldInvalid(passwordConfirmInput, passwordConfirmError, passwordConfirmValidIcon,
+                    'Please confirm your password');
+                return false;
+            }
+
+            if (password !== passwordConfirm) {
+                setFieldInvalid(passwordConfirmInput, passwordConfirmError, passwordConfirmValidIcon,
+                    'Passwords do not match');
+                return false;
+            }
+
+            // Set success message
+            passwordConfirmSuccess.textContent = 'Passwords match!';
+            setFieldValid(passwordConfirmInput, passwordConfirmSuccess, passwordConfirmValidIcon);
+            return true;
+        }
+
+        // Helper function to set field as invalid
+        function setFieldInvalid(input, errorElement, iconElement, message) {
+            // Remove valid state
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+
+            // Show error message
+            errorElement.textContent = message;
+            errorElement.classList.add('d-block');
+
+            // Update icon
+            iconElement.classList.remove('success');
+            iconElement.classList.add('error');
+            iconElement.classList.remove('fi-ss-check-circle');
+            iconElement.classList.add('fi-ss-cross-circle');
+        }
+
+        // Helper function to set field as valid
+        function setFieldValid(input, successElement, iconElement) {
+            // Remove invalid state
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+
+            // Show success message
+            successElement.classList.add('d-block');
+
+            // Update icon
+            iconElement.classList.remove('error');
+            iconElement.classList.add('success');
+            iconElement.classList.remove('fi-ss-cross-circle');
+            iconElement.classList.add('fi-ss-check-circle');
+        }
+
+        // Validate all fields before showing confirmation modal
+        function validateAllFields() {
+            const nameValid = validateName();
+            const emailValid = validateEmail();
+            const passwordValid = validatePassword();
+            const passwordConfirmValid = validatePasswordConfirmation();
+
+            return nameValid && emailValid && passwordValid && passwordConfirmValid;
         }
     </script>
 @endsection

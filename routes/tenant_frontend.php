@@ -20,6 +20,7 @@ use App\Http\Controllers\Tenant\Frontend\UserDashboardController;
 use App\Http\Controllers\Tenant\Frontend\SupportTicketController;
 use App\Http\Controllers\Tenant\Frontend\PaymentController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Tenant\Frontend\Auth\VerificationController;
 
 use App\Http\Controllers\Tenant\Frontend\MlmController;
 
@@ -44,19 +45,19 @@ Route::get('register', [\App\Http\Controllers\Tenant\Frontend\Auth\RegisterContr
 Route::post('register', [\App\Http\Controllers\Tenant\Frontend\Auth\RegisterController::class, 'register']);
 
 // Password Reset
-Route::get('password/reset', [\App\Http\Controllers\Tenant\Frontend\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
-Route::post('password/email', [\App\Http\Controllers\Tenant\Frontend\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
-Route::get('password/reset/{token}', [\App\Http\Controllers\Tenant\Frontend\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
-Route::post('password/reset', [\App\Http\Controllers\Tenant\Frontend\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
+// Route::get('password/reset', [\App\Http\Controllers\Tenant\Frontend\Auth\ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+// Route::post('password/email', [\App\Http\Controllers\Tenant\Frontend\Auth\ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+// Route::get('password/reset/{token}', [\App\Http\Controllers\Tenant\Frontend\Auth\ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+// Route::post('password/reset', [\App\Http\Controllers\Tenant\Frontend\Auth\ResetPasswordController::class, 'reset'])->name('password.update');
 
 // Password Confirmation
-Route::get('password/confirm', [\App\Http\Controllers\Tenant\Frontend\Auth\ConfirmPasswordController::class, 'showConfirmForm'])->name('password.confirm');
-Route::post('password/confirm', [\App\Http\Controllers\Tenant\Frontend\Auth\ConfirmPasswordController::class, 'confirm']);
+// Route::get('password/confirm', [\App\Http\Controllers\Tenant\Frontend\Auth\ConfirmPasswordController::class, 'showConfirmForm'])->name('password.confirm');
+// Route::post('password/confirm', [\App\Http\Controllers\Tenant\Frontend\Auth\ConfirmPasswordController::class, 'confirm']);
 
 // Email Verification
-Route::get('email/verify', [\App\Http\Controllers\Tenant\Frontend\Auth\VerificationController::class, 'show'])->name('verification.notice');
-Route::get('email/verify/{id}/{hash}', [\App\Http\Controllers\Tenant\Frontend\Auth\VerificationController::class, 'verify'])->name('verification.verify');
-Route::post('email/resend', [\App\Http\Controllers\Tenant\Frontend\Auth\VerificationController::class, 'resend'])->name('verification.resend');
+// Route::get('email/verify', [\App\Http\Controllers\Tenant\Frontend\Auth\VerificationController::class, 'show'])->name('verification.notice');
+// Route::get('email/verify/{id}/{hash}', [\App\Http\Controllers\Tenant\Frontend\Auth\VerificationController::class, 'verify'])->name('verification.verify');
+// Route::post('email/resend', [\App\Http\Controllers\Tenant\Frontend\Auth\VerificationController::class, 'resend'])->name('verification.resend');
 
 Route::get('/forget/password', [ForgotPasswordController::class, 'userForgetPassword'])->name('UserForgetPassword');
 
@@ -177,9 +178,9 @@ if (Schema::hasTable('general_infos')) {
 
 Route::middleware(['auth:customer'])->group(function () {
 
-    Route::get('/user/verification', [HomeController::class, 'userVerification'])->name('UserVerification');
-    Route::post('/user/verify/check', [HomeController::class, 'userVerifyCheck'])->name('UserVerifyCheck');
-    Route::get('/user/verification/resend', [HomeController::class, 'userVerificationResend'])->name('UserVerificationResend');
+    Route::get('/user/verification', [VerificationController::class, 'userVerification'])->name('UserVerification');
+    Route::post('/user/verify/check', [VerificationController::class, 'userVerifyCheck'])->name('UserVerifyCheck');
+    Route::get('/user/verification/resend', [VerificationController::class, 'userVerificationResend'])->name('UserVerificationResend');
 
 
     Route::group(['middleware' => ['CheckUserVerification']], function () {
@@ -201,6 +202,7 @@ Route::middleware(['auth:customer'])->group(function () {
         //mlm routes 
         Route::get('/customer/mlm/referral-tree', [MlmController::class, 'referral_tree'])->name('customer.mlm.referral_tree');
         Route::get('/customer/mlm/referral-lists', [MlmController::class, 'referral_list'])->name('customer.mlm.referral_list');
+        Route::get('/customer/mlm/referral/details/{id}', [MlmController::class, 'referral_details'])->name('customer.mlm.referral_details');
         Route::get('/customer/mlm/commission-history', [MlmController::class, 'commission_history'])->name('customer.mlm.commission_history');
         Route::get('/customer/mlm/earning-reports', [MlmController::class, 'earning_reports'])->name('customer.mlm.earning_reports');
         Route::get('/customer/mlm/withdrawal-requests', [MlmController::class, 'withdrawal_requests'])->name('customer.mlm.withdrawal_requests');

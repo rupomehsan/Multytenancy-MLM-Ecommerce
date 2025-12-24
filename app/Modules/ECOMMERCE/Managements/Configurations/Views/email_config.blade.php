@@ -113,8 +113,8 @@
 
                             <div class="form-group">
                                 <label>Password<span class="text-danger">*</span></label>
-                                <input type="password" class="form-control" name="password" id="password"
-                                    value="{{ old('password', optional($data)->getDecryptedPassword()) }}"
+                                <input type="text" class="form-control" name="password" id="password"
+                                    value="{{ old('password', $data->password ?? '') }}"
                                     {{ empty($data) ? 'required' : '' }}>
                             </div>
 

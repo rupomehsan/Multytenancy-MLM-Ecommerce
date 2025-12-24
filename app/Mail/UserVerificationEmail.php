@@ -11,6 +11,7 @@ class UserVerificationEmail extends Mailable
 {
     use Queueable, SerializesModels;
     public $sendLinkInfo;
+    public $mailData;
 
     /**
      * Create a new message instance.
@@ -20,7 +21,7 @@ class UserVerificationEmail extends Mailable
     public function __construct($data)
     {
         $this->sendLinkInfo = $data;
-        Log::info(  config('mail.mailers.smtp'));
+        $this->mailData = $data;
     }
 
     /**
@@ -30,10 +31,11 @@ class UserVerificationEmail extends Mailable
      */
     public function build()
     {
-
-        return $this->subject('User Verification Email')
-            ->view('backend.mail.userVerificationEmail')->with([
-                'name' => 'User',
+        return $this->subject('Email Verification Code - ' . config('app.name'))
+            ->view('backend.mail.userVerificationEmail')
+            ->with([
+                'sendLinkInfo' => $this->sendLinkInfo,
+                'mailData' => $this->mailData,
             ]);
     }
 }

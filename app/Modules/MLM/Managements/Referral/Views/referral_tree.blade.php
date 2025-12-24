@@ -9,46 +9,6 @@
             color: white;
         }
 
-        .graph_card {
-            position: relative
-        }
-
-        .graph_card i {
-            position: absolute;
-            top: 18px;
-            right: 18px;
-            font-size: 18px;
-            height: 35px;
-            width: 35px;
-            line-height: 33px;
-            text-align: center;
-            border-radius: 50%;
-            font-weight: 300;
-
-            /* animation-name: rotate;
-                                                                        animation-duration: 5s;
-                                                                        animation-iteration-count: infinite;
-                                                                        animation-timing-function: linear;
-                                                                    */
-
-        }
-
-        /* @keyframes rotate{
-                                                                        from{ transform: rotate(-360deg); }
-                                                                        to{ transform: rotate(360deg); }
-                                                                    } */
-    </style>
-@endsection
-
-@section('page_title')
-    Dashboard
-@endsection
-
-@section('page_heading')
-    Overview
-@endsection
-@section('content')
-    <style>
         .tree-container {
             padding: 25px;
         }
@@ -126,112 +86,144 @@
             font-size: 12px;
             opacity: 0.75;
         }
-    </style>
 
+        .stats-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .stats-card .stat-item {
+            display: inline-block;
+            margin-right: 20px;
+        }
+
+        .stats-card .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #17263A;
+        }
+
+        .stats-card .stat-label {
+            font-size: 13px;
+            color: #6c757d;
+        }
+    </style>
+@endsection
+
+@section('page_title')
+    Referral Tree
+@endsection
+
+@section('page_heading')
+    Referral Management
+@endsection
+
+@section('content')
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Referral Tree (3 Level Structure)</h4>
 
-            <div class="tree-container">
+            @if (isset($stats))
+                <div class="stats-card">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ $stats['total_referrals'] ?? 0 }}</div>
+                        <div class="stat-label">Total Referrals</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ $stats['level1_count'] ?? 0 }}</div>
+                        <div class="stat-label">Level 1</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ $stats['level2_count'] ?? 0 }}</div>
+                        <div class="stat-label">Level 2</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ $stats['level3_count'] ?? 0 }}</div>
+                        <div class="stat-label">Level 3</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ number_format($stats['total_commission'] ?? 0, 2) }} BDT</div>
+                        <div class="stat-label">Total Commission</div>
+                    </div>
+                </div>
+            @endif
 
+            <div class="tree-container">
                 <div class="tree">
                     <ul>
                         <li>
                             <div>
-                                <strong>Main User</strong>
-                                <span class="level-tag">Root</span>
+                                <strong>{{ $rootCustomer->name ?? 'Root User' }}</strong>
+                                <span class="level-tag">Root (#{{ $rootCustomer->id ?? '' }})</span>
                             </div>
 
-                            <ul>
-
-                                {{-- LEVEL 1 USERS --}}
-                                <li>
-                                    <div>
-                                        <strong>Shakib Hasan</strong>
-                                        <span class="level-tag">Level 1</span>
-                                    </div>
-
-                                    <ul>
-
-                                        {{-- LEVEL 2 under Shakib --}}
+                            @if (isset($tree['children']) && count($tree['children']) > 0)
+                                <ul>
+                                    @foreach ($tree['children'] as $level1)
                                         <li>
                                             <div>
-                                                <strong>Mahin Ahmed</strong>
-                                                <span class="level-tag">Level 2</span>
+                                                <strong>{{ $level1['name'] }}</strong>
+                                                <span class="level-tag">Level 1 (#{{ $level1['id'] }})</span>
+                                                @if (isset($level1['direct_count']))
+                                                    <span class="level-tag">Direct: {{ $level1['direct_count'] }}</span>
+                                                @endif
                                             </div>
 
-                                            <ul>
+                                            @if (isset($level1['children']) && count($level1['children']) > 0)
+                                                <ul>
+                                                    @foreach ($level1['children'] as $level2)
+                                                        <li>
+                                                            <div>
+                                                                <strong>{{ $level2['name'] }}</strong>
+                                                                <span class="level-tag">Level 2
+                                                                    (#{{ $level2['id'] }})
+                                                                </span>
+                                                                @if (isset($level2['direct_count']))
+                                                                    <span class="level-tag">Direct:
+                                                                        {{ $level2['direct_count'] }}</span>
+                                                                @endif
+                                                            </div>
 
-                                                {{-- LEVEL 3 under Mahin --}}
-                                                <li>
-                                                    <div>
-                                                        <strong>Riyad Khan</strong>
-                                                        <span class="level-tag">Level 3</span>
-                                                    </div>
-                                                </li>
-
-                                                <li>
-                                                    <div>
-                                                        <strong>Rubina Akter</strong>
-                                                        <span class="level-tag">Level 3</span>
-                                                    </div>
-                                                </li>
-
-                                            </ul>
+                                                            @if (isset($level2['children']) && count($level2['children']) > 0)
+                                                                <ul>
+                                                                    @foreach ($level2['children'] as $level3)
+                                                                        <li>
+                                                                            <div>
+                                                                                <strong>{{ $level3['name'] }}</strong>
+                                                                                <span class="level-tag">Level 3
+                                                                                    (#{{ $level3['id'] }})
+                                                                                </span>
+                                                                                @if (isset($level3['direct_count']))
+                                                                                    <span class="level-tag">Direct:
+                                                                                        {{ $level3['direct_count'] }}</span>
+                                                                                @endif
+                                                                            </div>
+                                                                        </li>
+                                                                    @endforeach
+                                                                </ul>
+                                                            @endif
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            @endif
                                         </li>
-
-                                        {{-- Second Level 2 --}}
-                                        <li>
-                                            <div>
-                                                <strong>Sumaiya Rahman</strong>
-                                                <span class="level-tag">Level 2</span>
-                                            </div>
-                                        </li>
-
-                                    </ul>
-                                </li>
-
-                                {{-- Second Level 1 --}}
-                                <li>
-                                    <div>
-                                        <strong>Mithila Rahman</strong>
-                                        <span class="level-tag">Level 1</span>
-                                    </div>
-
-                                    <ul>
-
-                                        <li>
-                                            <div>
-                                                <strong>Arif Mahmud</strong>
-                                                <span class="level-tag">Level 2</span>
-                                            </div>
-
-                                            <ul>
-
-                                                <li>
-                                                    <div>
-                                                        <strong>Jannat Toma</strong>
-                                                        <span class="level-tag">Level 3</span>
-                                                    </div>
-                                                </li>
-
-                                            </ul>
-                                        </li>
-
-                                    </ul>
-                                </li>
-
-                            </ul>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <div class="text-center mt-3 text-muted">
+                                    <p>No referrals yet</p>
+                                </div>
+                            @endif
                         </li>
                     </ul>
                 </div>
-
             </div>
 
         </div>
     </div>
 @endsection
-
 
 @section('footer_js')
 @endsection

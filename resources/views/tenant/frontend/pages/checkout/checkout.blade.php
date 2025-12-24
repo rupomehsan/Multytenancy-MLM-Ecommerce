@@ -31,7 +31,7 @@
 @endpush
 
 @section('header_css')
-    <link href="{{ url('frontend_assets') }}/css/plugins/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ url('tenant/frontend') }}/css/plugins/select2.min.css" rel="stylesheet" type="text/css" />
     <style>
         .select2-selection {
             height: 34px !important;
@@ -119,7 +119,7 @@
     <section class="checkout-area">
         <div class="container-fluid">
 
-            @guest
+            @guest('customer')
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="guest_order_alert">
@@ -205,46 +205,46 @@
         function removeCartItems(id) {
             $.get("{{ url('remove/cart/item') }}" + '/' + id, function(data) {
 
-                    toastr.options.positionClass = 'toast-top-right';
-                    toastr.options.timeOut = 1000;
-                    toastr.error("Item is Removed");
-                    $(".offCanvas__minicart").html(data.rendered_cart);
-                    $("a.minicart__open--btn span.items__count").html(data.cartTotalQty);
+                toastr.options.positionClass = 'toast-top-right';
+                toastr.options.timeOut = 1000;
+                toastr.error("Item is Removed");
+                $(".offCanvas__minicart").html(data.rendered_cart);
+                $("a.minicart__open--btn span.items__count").html(data.cartTotalQty);
 
-                    $("table.cart-single-product-table tbody").html(data.checkoutCartItems);
-                    $(".order-review-summary").html(data.checkoutTotalAmount);
+                $("table.cart-single-product-table tbody").html(data.checkoutCartItems);
+                $(".order-review-summary").html(data.checkoutTotalAmount);
 
-                    // Update coupon section if coupon data is available
-                    if (data.checkoutCoupon) {
-                        $(".checkout-order-review-coupon-box").html(data.checkoutCoupon);
-                    }
+                // Update coupon section if coupon data is available
+                if (data.checkoutCoupon) {
+                    $(".checkout-order-review-coupon-box").html(data.checkoutCoupon);
+                }
 
-                    // Check if cart is now empty and remove coupon if applied
-                    if (data.cartTotalQty <= 0) {
-                        // Auto-remove coupon if cart is empty
-                        if (sessionStorage.getItem('coupon_applied') === 'true') {
-                            console.log('🛒 Cart is empty - removing coupon automatically');
+                // Check if cart is now empty and remove coupon if applied
+                if (data.cartTotalQty <= 0) {
+                    // Auto-remove coupon if cart is empty
+                    if (sessionStorage.getItem('coupon_applied') === 'true') {
+                        console.log('🛒 Cart is empty - removing coupon automatically');
 
-                            $.ajax({
-                                    url: "{{ url('remove/coupon') }}",
-                                    type: "POST",
-                                    data: {
-                                        _token: '{{ csrf_token() }}',
-                                        auto_remove_reason: 'cart_empty',
-                                        @guest
-                                        guest_checkout: 1
-                                    @endguest
-                                },
-                                success: function() {
-                                    sessionStorage.removeItem('coupon_applied');
-                                    $("#coupon_code").val('');
-                                    toastr.info('Coupon removed - cart is empty', 'Coupon Removed');
-                                },
-                                error: function() {
-                                    sessionStorage.removeItem('coupon_applied');
-                                    $("#coupon_code").val('');
-                                }
-                            });
+                        $.ajax({
+                            url: "{{ url('remove/coupon') }}",
+                            type: "POST",
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                auto_remove_reason: 'cart_empty',
+                                @guest('customer')
+                                    guest_checkout: 1
+                                @endguest
+                            },
+                            success: function() {
+                                sessionStorage.removeItem('coupon_applied');
+                                $("#coupon_code").val('');
+                                toastr.info('Coupon removed - cart is empty', 'Coupon Removed');
+                            },
+                            error: function() {
+                                sessionStorage.removeItem('coupon_applied');
+                                $("#coupon_code").val('');
+                            }
+                        });
                     }
 
                     setTimeout(function() {
@@ -277,12 +277,12 @@
                 console.log('🗑️ Auto-removing coupon due to:', reason);
 
                 $.ajax({
-                        url: "{{ url('remove/coupon') }}",
-                        type: "POST",
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            auto_remove_reason: reason,
-                            @guest
+                    url: "{{ url('remove/coupon') }}",
+                    type: "POST",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        auto_remove_reason: reason,
+                        @guest('customer')
                             guest_checkout: 1
                         @endguest
                     },
@@ -308,7 +308,8 @@
                         toastr.options.timeOut = 3000;
 
                         if (reason === 'time_expired') {
-                            toastr.warning('Coupon expired after 60 minutes of inactivity', 'Coupon Removed');
+                            toastr.warning('Coupon expired after 60 minutes of inactivity',
+                                'Coupon Removed');
                         } else if (reason === 'cart_empty') {
                             toastr.info('Coupon removed - cart is empty', 'Coupon Removed');
                         } else {
@@ -323,13 +324,13 @@
                         $("#coupon_code").val('');
                     }
                 });
-        }
+            }
 
-        // Clear the timer
-        if (globalCouponTimer) {
-            clearTimeout(globalCouponTimer);
-            globalCouponTimer = null;
-        }
+            // Clear the timer
+            if (globalCouponTimer) {
+                clearTimeout(globalCouponTimer);
+                globalCouponTimer = null;
+            }
         };
 
         function applyCoupon() {
@@ -387,76 +388,76 @@
         }
 
         $(document).ready(function() {
-                // Auto-remove coupon after 60 minutes (3600 seconds)
-                let couponTimer = null;
+            // Auto-remove coupon after 60 minutes (3600 seconds)
+            let couponTimer = null;
 
-                function startCouponTimer() {
-                    // Clear any existing timer
-                    if (couponTimer) {
-                        clearTimeout(couponTimer);
-                    }
-
-                    // Start 60-minute timer
-                    couponTimer = setTimeout(function() {
-                        console.log('⏰ 60 minutes elapsed - removing coupon automatically');
-                        removeCouponAutomatically('time_expired');
-                    }, 60 * 60 * 1000); // 60 minutes in milliseconds
-
-                    console.log('⏱️ Started 60-minute coupon timer');
+            function startCouponTimer() {
+                // Clear any existing timer
+                if (couponTimer) {
+                    clearTimeout(couponTimer);
                 }
 
-                function removeCouponAutomatically(reason = 'auto_remove') {
-                    if (sessionStorage.getItem('coupon_applied') === 'true') {
-                        console.log('🗑️ Auto-removing coupon due to:', reason);
+                // Start 60-minute timer
+                couponTimer = setTimeout(function() {
+                    console.log('⏰ 60 minutes elapsed - removing coupon automatically');
+                    removeCouponAutomatically('time_expired');
+                }, 60 * 60 * 1000); // 60 minutes in milliseconds
 
-                        $.ajax({
-                                url: "{{ url('remove/coupon') }}",
-                                type: "POST",
-                                data: {
-                                    _token: '{{ csrf_token() }}',
-                                    auto_remove_reason: reason,
-                                    @guest
-                                    guest_checkout: 1
-                                @endguest
-                            },
-                            success: function(data) {
-                                // Update order total
-                                if (data.checkoutTotalAmount) {
-                                    $(".order-review-summary").html(data.checkoutTotalAmount);
-                                }
+                console.log('⏱️ Started 60-minute coupon timer');
+            }
 
-                                // Update coupon section to remove warning message
-                                if (data.checkoutCoupon) {
-                                    $(".checkout-order-review-coupon-box").html(data.checkoutCoupon);
-                                }
+            function removeCouponAutomatically(reason = 'auto_remove') {
+                if (sessionStorage.getItem('coupon_applied') === 'true') {
+                    console.log('🗑️ Auto-removing coupon due to:', reason);
 
-                                // Clear session storage
-                                sessionStorage.removeItem('coupon_applied');
-
-                                // Clear coupon input
-                                $("#coupon_code").val('');
-
-                                // Show notification based on reason
-                                toastr.options.positionClass = 'toast-top-right';
-                                toastr.options.timeOut = 3000;
-
-                                if (reason === 'time_expired') {
-                                    toastr.warning('Coupon expired after 60 minutes of inactivity',
-                                        'Coupon Removed');
-                                } else if (reason === 'cart_empty') {
-                                    toastr.info('Coupon removed - cart is empty', 'Coupon Removed');
-                                } else {
-                                    toastr.info('Coupon removed automatically', 'Coupon Removed');
-                                }
-
-                                console.log('✅ Coupon removed successfully');
-                            },
-                            error: function() {
-                                console.log('⚠️ Error removing coupon, clearing local storage anyway');
-                                sessionStorage.removeItem('coupon_applied');
-                                $("#coupon_code").val('');
+                    $.ajax({
+                        url: "{{ url('remove/coupon') }}",
+                        type: "POST",
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            auto_remove_reason: reason,
+                            @guest('customer')
+                                guest_checkout: 1
+                            @endguest
+                        },
+                        success: function(data) {
+                            // Update order total
+                            if (data.checkoutTotalAmount) {
+                                $(".order-review-summary").html(data.checkoutTotalAmount);
                             }
-                        });
+
+                            // Update coupon section to remove warning message
+                            if (data.checkoutCoupon) {
+                                $(".checkout-order-review-coupon-box").html(data.checkoutCoupon);
+                            }
+
+                            // Clear session storage
+                            sessionStorage.removeItem('coupon_applied');
+
+                            // Clear coupon input
+                            $("#coupon_code").val('');
+
+                            // Show notification based on reason
+                            toastr.options.positionClass = 'toast-top-right';
+                            toastr.options.timeOut = 3000;
+
+                            if (reason === 'time_expired') {
+                                toastr.warning('Coupon expired after 60 minutes of inactivity',
+                                    'Coupon Removed');
+                            } else if (reason === 'cart_empty') {
+                                toastr.info('Coupon removed - cart is empty', 'Coupon Removed');
+                            } else {
+                                toastr.info('Coupon removed automatically', 'Coupon Removed');
+                            }
+
+                            console.log('✅ Coupon removed successfully');
+                        },
+                        error: function() {
+                            console.log('⚠️ Error removing coupon, clearing local storage anyway');
+                            sessionStorage.removeItem('coupon_applied');
+                            $("#coupon_code").val('');
+                        }
+                    });
                 }
 
                 // Clear the timer
@@ -473,292 +474,298 @@
 
             // Auto-remove coupon when input field is cleared
             $('#coupon_code').on('input', function() {
-                    const couponCode = $(this).val().trim();
+                const couponCode = $(this).val().trim();
 
-                    // If input is cleared and coupon was applied, remove it
-                    if (couponCode === '' && sessionStorage.getItem('coupon_applied') === 'true') {
-                        console.log('🗑️ Coupon input cleared - removing coupon automatically');
+                // If input is cleared and coupon was applied, remove it
+                if (couponCode === '' && sessionStorage.getItem('coupon_applied') === 'true') {
+                    console.log('🗑️ Coupon input cleared - removing coupon automatically');
 
-                        $.ajax({
-                                url: "{{ url('remove/coupon') }}",
-                                type: "POST",
-                                data: {
-                                    _token: '{{ csrf_token() }}',
-                                    auto_remove_reason: 'input_cleared',
-                                    @guest
-                                    guest_checkout: 1
-                                @endguest
-                            },
-                            success: function(data) {
-                                // Update order total
-                                if (data.checkoutTotalAmount) {
-                                    $(".order-review-summary").html(data.checkoutTotalAmount);
-                                }
-
-                                // Update coupon section if available
-                                if (data.checkoutCoupon) {
-                                    $(".checkout-order-review-coupon-box").html(data.checkoutCoupon);
-                                }
-
-                                // Clear session storage
-                                sessionStorage.removeItem('coupon_applied');
-
-                                // Show notification
-                                toastr.options.positionClass = 'toast-top-right';
-                                toastr.options.timeOut = 2000;
-                                toastr.info('Coupon removed', 'Coupon Cleared');
-
-                                // Clear the timer
-                                if (couponTimer) {
-                                    clearTimeout(couponTimer);
-                                    couponTimer = null;
-                                }
-
-                                console.log('✅ Coupon removed due to input being cleared');
-                            },
-                            error: function() {
-                                console.log('⚠️ Error removing coupon, clearing local storage anyway');
-                                sessionStorage.removeItem('coupon_applied');
-
-                                // Clear the timer
-                                if (couponTimer) {
-                                    clearTimeout(couponTimer);
-                                    couponTimer = null;
-                                }
+                    $.ajax({
+                        url: "{{ url('remove/coupon') }}",
+                        type: "POST",
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            auto_remove_reason: 'input_cleared',
+                            @guest('customer')
+                                guest_checkout: 1
+                            @endguest
+                        },
+                        success: function(data) {
+                            // Update order total
+                            if (data.checkoutTotalAmount) {
+                                $(".order-review-summary").html(data.checkoutTotalAmount);
                             }
-                        });
+
+                            // Update coupon section if available
+                            if (data.checkoutCoupon) {
+                                $(".checkout-order-review-coupon-box").html(data
+                                .checkoutCoupon);
+                            }
+
+                            // Clear session storage
+                            sessionStorage.removeItem('coupon_applied');
+
+                            // Show notification
+                            toastr.options.positionClass = 'toast-top-right';
+                            toastr.options.timeOut = 2000;
+                            toastr.info('Coupon removed', 'Coupon Cleared');
+
+                            // Clear the timer
+                            if (couponTimer) {
+                                clearTimeout(couponTimer);
+                                couponTimer = null;
+                            }
+
+                            console.log('✅ Coupon removed due to input being cleared');
+                        },
+                        error: function() {
+                            console.log(
+                                '⚠️ Error removing coupon, clearing local storage anyway');
+                            sessionStorage.removeItem('coupon_applied');
+
+                            // Clear the timer
+                            if (couponTimer) {
+                                clearTimeout(couponTimer);
+                                couponTimer = null;
+                            }
+                        }
+                    });
                 }
             });
 
-        // Override the applyCoupon function to start timer when coupon is applied
-        window.originalApplyCoupon = window.applyCoupon;
-        window.applyCoupon = function() {
-            var couponCode = $("#coupon_code").val();
-            toastr.options.positionClass = 'toast-top-right';
-            toastr.options.timeOut = 1000;
-
-            if (couponCode == '') {
-                toastr.error("Please Enter a Coupon Code");
-                return false;
-            }
-
-            var formData = new FormData();
-            formData.append("coupon_code", couponCode);
-            $.ajax({
-                data: formData,
-                url: "{{ url('apply/coupon') }}",
-                type: "POST",
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: function(data) {
-                    if (data.status == 0) {
-                        toastr.error(data.message);
-                        $(".order-review-summary").html(data.checkoutTotalAmount);
-
-                        // Update coupon section to remove any previous warning messages
-                        if (data.checkoutCoupon) {
-                            $(".checkout-order-review-coupon-box").html(data.checkoutCoupon);
-                        }
-
-                        sessionStorage.removeItem('coupon_applied');
-                    } else {
-                        toastr.success(data.message);
-                        $(".order-review-summary").html(data.checkoutTotalAmount);
-
-                        // Update coupon section to show any new warning messages
-                        if (data.checkoutCoupon) {
-                            $(".checkout-order-review-coupon-box").html(data.checkoutCoupon);
-                        }
-
-                        // Track that coupon is applied
-                        sessionStorage.setItem('coupon_applied', 'true');
-                        // Start the 60-minute timer
-                        startCouponTimer();
-                    }
-                },
-                error: function(data) {
-                    console.log('Error:', data);
-                }
-            });
-        };
-
-        // Override removeCartItems function to check if cart becomes empty
-        window.originalRemoveCartItems = window.removeCartItems;
-        window.removeCartItems = function(id) {
-            $.get("{{ url('remove/cart/item') }}" + '/' + id, function(data) {
+            // Override the applyCoupon function to start timer when coupon is applied
+            window.originalApplyCoupon = window.applyCoupon;
+            window.applyCoupon = function() {
+                var couponCode = $("#coupon_code").val();
                 toastr.options.positionClass = 'toast-top-right';
                 toastr.options.timeOut = 1000;
-                toastr.error("Item is Removed");
-                $(".offCanvas__minicart").html(data.rendered_cart);
-                $("a.minicart__open--btn span.items__count").html(data.cartTotalQty);
 
-                $("table.cart-single-product-table tbody").html(data.checkoutCartItems);
-                $(".order-review-summary").html(data.checkoutTotalAmount);
-
-                // Check if cart is now empty and remove coupon if applied
-                if (data.cartTotalQty <= 0) {
-                    // Auto-remove coupon if cart is empty
-                    removeCouponAutomatically('cart_empty');
-
-                    setTimeout(function() {
-                        window.location.href = '{{ url('/') }}';
-                    }, 1000);
+                if (couponCode == '') {
+                    toastr.error("Please Enter a Coupon Code");
+                    return false;
                 }
-            });
-        };
 
-        // Reset timer on any activity (optional - keeps coupon active if user is active)
-        let activityEvents = ['click', 'keypress', 'scroll', 'mousemove'];
-        let lastActivity = Date.now();
+                var formData = new FormData();
+                formData.append("coupon_code", couponCode);
+                $.ajax({
+                    data: formData,
+                    url: "{{ url('apply/coupon') }}",
+                    type: "POST",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        if (data.status == 0) {
+                            toastr.error(data.message);
+                            $(".order-review-summary").html(data.checkoutTotalAmount);
 
-        activityEvents.forEach(event => {
-            document.addEventListener(event, function() {
-                lastActivity = Date.now();
-            }, true);
-        });
+                            // Update coupon section to remove any previous warning messages
+                            if (data.checkoutCoupon) {
+                                $(".checkout-order-review-coupon-box").html(data.checkoutCoupon);
+                            }
 
-        // Check for inactivity every 5 minutes and restart timer if user was active
-        setInterval(function() {
-            if (sessionStorage.getItem('coupon_applied') === 'true') {
-                let inactiveTime = Date.now() - lastActivity;
-                // If user was active in last 5 minutes, restart the timer
-                if (inactiveTime < 5 * 60 * 1000) { // 5 minutes
-                    console.log('🔄 User activity detected, restarting coupon timer');
-                    startCouponTimer();
-                }
-            }
-        }, 5 * 60 * 1000); // Check every 5 minutes
+                            sessionStorage.removeItem('coupon_applied');
+                        } else {
+                            toastr.success(data.message);
+                            $(".order-review-summary").html(data.checkoutTotalAmount);
 
-        // Clear any existing coupon when entering checkout page (fresh start)
-        // This ensures coupons don't persist from previous sessions
-        // $.ajax({
-        //     url: "{{ url('remove/coupon') }}",
-        //     type: "POST",
-        //     data: {
-        //         _token: '{{ csrf_token() }}',
-        //         @guest
-        //         guest_checkout: 1
-        //         @endguest
-        //     },
-        //     success: function () {
-        //         // Clear the tracking as well
-        //         sessionStorage.removeItem('coupon_applied');
-        //         // Clear the coupon input field
-        //         $("#coupon_code").val('');
-        //     },
-        //     error: function() {
-        //         // Silent fail - coupon might not exist
-        //         sessionStorage.removeItem('coupon_applied');
-        //     }
-        // });
+                            // Update coupon section to show any new warning messages
+                            if (data.checkoutCoupon) {
+                                $(".checkout-order-review-coupon-box").html(data.checkoutCoupon);
+                            }
 
-        // Remove coupon from session when leaving checkout page
-        // window.addEventListener('beforeunload', function(e) {
-        //     // Only remove coupon if there's one applied
-        //     if (sessionStorage.getItem('coupon_applied') === 'true') {
-        //         navigator.sendBeacon("{{ url('remove/coupon') }}", 
-        //             new URLSearchParams({
-        //                 _token: '{{ csrf_token() }}',
-        //                 @guest
-        //                 guest_checkout: 1
-        //                 @endguest
-        //             })
-        //         );
-        //     }
-        // });
-
-        // window.addEventListener('pagehide', function(e) {
-        //     // Only remove coupon if there's one applied
-        //     if (sessionStorage.getItem('coupon_applied') === 'true') {
-        //         fetch("{{ url('remove/coupon') }}", {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/x-www-form-urlencoded',
-        //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //             },
-        //             body: new URLSearchParams({
-        //                 @guest
-        //                 guest_checkout: 1
-        //                 @endguest
-        //             }),
-        //             keepalive: true
-        //         });
-        //     }
-        // });
-
-        // Also handle visibility change for mobile browsers
-        // document.addEventListener('visibilitychange', function() {
-        //     if (document.hidden && sessionStorage.getItem('coupon_applied') === 'true') {
-        //         window.couponTimer = setTimeout(function() {
-        //             fetch("{{ url('remove/coupon') }}", {
-        //                 method: 'POST',
-        //                 headers: {
-        //                     'Content-Type': 'application/x-www-form-urlencoded',
-        //                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        //                 },
-        //                 body: new URLSearchParams({
-        //                     @guest
-        //                     guest_checkout: 1
-        //                     @endguest
-        //                 }),
-        //                 keepalive: true
-        //             }).then(() => {
-        //                 sessionStorage.removeItem('coupon_applied');
-        //             });
-        //         }, 3000); // 3 second delay
-        //     } else {
-        //         // Clear timer when page becomes visible again
-        //         if (window.couponTimer) {
-        //             clearTimeout(window.couponTimer);
-        //         }
-        //     }
-        // });
-
-        $('#shipping_district_id').on('change', function() {
-            var district_id = this.value;
-            $("#shipping_thana_id").html('');
-            $.ajax({
-                url: "{{ url('/district/wise/thana') }}",
-                type: "POST",
-                data: {
-                    district_id: district_id,
-                    _token: '{{ csrf_token() }}'
-                },
-                dataType: 'json',
-                success: function(result) {
-                    $('#shipping_thana_id').html(
-                        '<option data-display="Select One" value="">Select Thana</option>');
-                    $.each(result.data, function(key, value) {
-                        $("#shipping_thana_id").append('<option value="' + value.id + '">' +
-                            value.name + '</option>');
-                    });
-                    $(".order-review-summary").html(result.checkoutTotalAmount);
-                }
-            });
-        });
-
-        $('#billing_district_id').on('change', function() {
-        var district_id = this.value;
-        $("#billing_thana_id").html('');
-        $.ajax({
-            url: "{{ url('/district/wise/thana') }}",
-            type: "POST",
-            data: {
-                district_id: district_id,
-                _token: '{{ csrf_token() }}'
-            },
-            dataType: 'json',
-            success: function(result) {
-                $('#billing_thana_id').html(
-                    '<option data-display="Select One" value="">Select Thana</option>');
-                $.each(result.data, function(key, value) {
-                    $("#billing_thana_id").append('<option value="' + value.id + '">' +
-                        value.name + '</option>');
+                            // Track that coupon is applied
+                            sessionStorage.setItem('coupon_applied', 'true');
+                            // Start the 60-minute timer
+                            startCouponTimer();
+                        }
+                    },
+                    error: function(data) {
+                        console.log('Error:', data);
+                    }
                 });
-            }
-        });
-        });
+            };
+
+            // Override removeCartItems function to check if cart becomes empty
+            window.originalRemoveCartItems = window.removeCartItems;
+            window.removeCartItems = function(id) {
+                $.get("{{ url('remove/cart/item') }}" + '/' + id, function(data) {
+                    toastr.options.positionClass = 'toast-top-right';
+                    toastr.options.timeOut = 1000;
+                    toastr.error("Item is Removed");
+                    $(".offCanvas__minicart").html(data.rendered_cart);
+                    $("a.minicart__open--btn span.items__count").html(data.cartTotalQty);
+
+                    $("table.cart-single-product-table tbody").html(data.checkoutCartItems);
+                    $(".order-review-summary").html(data.checkoutTotalAmount);
+
+                    // Check if cart is now empty and remove coupon if applied
+                    if (data.cartTotalQty <= 0) {
+                        // Auto-remove coupon if cart is empty
+                        removeCouponAutomatically('cart_empty');
+
+                        setTimeout(function() {
+                            window.location.href = '{{ url('/') }}';
+                        }, 1000);
+                    }
+                });
+            };
+
+            // Reset timer on any activity (optional - keeps coupon active if user is active)
+            let activityEvents = ['click', 'keypress', 'scroll', 'mousemove'];
+            let lastActivity = Date.now();
+
+            activityEvents.forEach(event => {
+                document.addEventListener(event, function() {
+                    lastActivity = Date.now();
+                }, true);
+            });
+
+            // Check for inactivity every 5 minutes and restart timer if user was active
+            setInterval(function() {
+                if (sessionStorage.getItem('coupon_applied') === 'true') {
+                    let inactiveTime = Date.now() - lastActivity;
+                    // If user was active in last 5 minutes, restart the timer
+                    if (inactiveTime < 5 * 60 * 1000) { // 5 minutes
+                        console.log('🔄 User activity detected, restarting coupon timer');
+                        startCouponTimer();
+                    }
+                }
+            }, 5 * 60 * 1000); // Check every 5 minutes
+
+            // Clear any existing coupon when entering checkout page (fresh start)
+            // This ensures coupons don't persist from previous sessions
+            // $.ajax({
+            //     url: "{{ url('remove/coupon') }}",
+            //     type: "POST",
+            //     data: {
+            //         _token: '{{ csrf_token() }}',
+            //         @guest
+            //         guest_checkout: 1
+            //         @endguest
+            //     },
+            //     success: function () {
+            //         // Clear the tracking as well
+            //         sessionStorage.removeItem('coupon_applied');
+            //         // Clear the coupon input field
+            //         $("#coupon_code").val('');
+            //     },
+            //     error: function() {
+            //         // Silent fail - coupon might not exist
+            //         sessionStorage.removeItem('coupon_applied');
+            //     }
+            // });
+
+            // Remove coupon from session when leaving checkout page
+            // window.addEventListener('beforeunload', function(e) {
+            //     // Only remove coupon if there's one applied
+            //     if (sessionStorage.getItem('coupon_applied') === 'true') {
+            //         navigator.sendBeacon("{{ url('remove/coupon') }}", 
+            //             new URLSearchParams({
+            //                 _token: '{{ csrf_token() }}',
+            //                 @guest
+            //                 guest_checkout: 1
+            //                 @endguest
+            //             })
+            //         );
+            //     }
+            // });
+
+            // window.addEventListener('pagehide', function(e) {
+            //     // Only remove coupon if there's one applied
+            //     if (sessionStorage.getItem('coupon_applied') === 'true') {
+            //         fetch("{{ url('remove/coupon') }}", {
+            //             method: 'POST',
+            //             headers: {
+            //                 'Content-Type': 'application/x-www-form-urlencoded',
+            //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            //             },
+            //             body: new URLSearchParams({
+            //                 @guest
+            //                 guest_checkout: 1
+            //                 @endguest
+            //             }),
+            //             keepalive: true
+            //         });
+            //     }
+            // });
+
+            // Also handle visibility change for mobile browsers
+            // document.addEventListener('visibilitychange', function() {
+            //     if (document.hidden && sessionStorage.getItem('coupon_applied') === 'true') {
+            //         window.couponTimer = setTimeout(function() {
+            //             fetch("{{ url('remove/coupon') }}", {
+            //                 method: 'POST',
+            //                 headers: {
+            //                     'Content-Type': 'application/x-www-form-urlencoded',
+            //                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            //                 },
+            //                 body: new URLSearchParams({
+            //                     @guest
+            //                     guest_checkout: 1
+            //                     @endguest
+            //                 }),
+            //                 keepalive: true
+            //             }).then(() => {
+            //                 sessionStorage.removeItem('coupon_applied');
+            //             });
+            //         }, 3000); // 3 second delay
+            //     } else {
+            //         // Clear timer when page becomes visible again
+            //         if (window.couponTimer) {
+            //             clearTimeout(window.couponTimer);
+            //         }
+            //     }
+            // });
+
+            $('#shipping_district_id').on('change', function() {
+                var district_id = this.value;
+                $("#shipping_thana_id").html('');
+                $.ajax({
+                    url: "{{ url('/district/wise/thana') }}",
+                    type: "POST",
+                    data: {
+                        district_id: district_id,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    dataType: 'json',
+                    success: function(result) {
+                        $('#shipping_thana_id').html(
+                            '<option data-display="Select One" value="">Select Thana</option>'
+                            );
+                        $.each(result.data, function(key, value) {
+                            $("#shipping_thana_id").append('<option value="' + value
+                                .id + '">' +
+                                value.name + '</option>');
+                        });
+                        $(".order-review-summary").html(result.checkoutTotalAmount);
+                    }
+                });
+            });
+
+            $('#billing_district_id').on('change', function() {
+                var district_id = this.value;
+                $("#billing_thana_id").html('');
+                $.ajax({
+                    url: "{{ url('/district/wise/thana') }}",
+                    type: "POST",
+                    data: {
+                        district_id: district_id,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    dataType: 'json',
+                    success: function(result) {
+                        $('#billing_thana_id').html(
+                            '<option data-display="Select One" value="">Select Thana</option>'
+                            );
+                        $.each(result.data, function(key, value) {
+                            $("#billing_thana_id").append('<option value="' + value.id +
+                                '">' +
+                                value.name + '</option>');
+                        });
+                    }
+                });
+            });
         });
 
         function applySavedAddress(slug) {

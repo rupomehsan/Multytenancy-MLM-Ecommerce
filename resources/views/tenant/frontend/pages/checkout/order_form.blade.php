@@ -24,16 +24,18 @@
         <div class="c-personal-details-box single-details-box-inner">
             <div class="form-group">
                 <label>Full name</label>
-                <input type="text" name="name" id="name" @auth value="{{ Auth::user()->name }}" @endauth />
+                <input type="text" name="name" id="name"
+                    @auth('customer') value="{{ Auth::guard('customer')->user()->name }}" @endauth />
             </div>
             <div class="form-group">
                 <label>Email address</label>
-                <input type="email" name="email" id="email" @auth value="{{ Auth::user()->email }}" @endauth />
+                <input type="email" name="email" id="email"
+                    @auth('customer') value="{{ Auth::guard('customer')->user()->email }}" @endauth />
             </div>
             <div class="form-group">
                 <label>Phone number</label>
-                <input type="tel" name="phone" id="phone" @auth value="{{ Auth::user()->phone }}" @endauth
-                    required="" />
+                <input type="tel" name="phone" id="phone"
+                    @auth('customer') value="{{ Auth::guard('customer')->user()->phone }}" @endauth required="" />
             </div>
         </div>
     </div>
@@ -79,16 +81,16 @@
         @endif
     @endauth --}}
 
-     @php
-        if (Auth::user()) {
+    @php
+        if (Auth::guard('customer')->check()) {
             $savedAddressed = DB::table('user_addresses')
-                ->where('user_id', Auth::user()->id)
+                ->where('user_id', Auth::guard('customer')->user()->id)
                 ->where('is_default', 1) // Fetch only default addresses
                 ->get();
         }
     @endphp
 
-    @auth
+    @auth('customer')
         @if (count($savedAddressed) > 0)
             <div class="single-details-checkout-widget">
                 <h5 class="checkout-widget-title">Saved Addresses</h5>
@@ -129,7 +131,7 @@
             <div class="form-group">
                 <label>Street address *</label>
                 <input type="text" name="shipping_address" id="shipping_address"
-                    @auth value="{{ Auth::user()->address }}" @endauth />
+                    @auth('customer') value="{{ Auth::guard('customer')->user()->address }}" @endauth />
             </div>
             <div class="form-group">
                 <label>Select district *</label>
@@ -317,12 +319,12 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Auto-apply the first saved address if it exists and is checked
-    const firstSavedAddress = document.querySelector('input[name="saved_address"]:checked');
-    if (firstSavedAddress) {
-        const addressSlug = firstSavedAddress.id.replace('saved_address_', '');
-        applySavedAddress(addressSlug);
-    }
-});
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto-apply the first saved address if it exists and is checked
+        const firstSavedAddress = document.querySelector('input[name="saved_address"]:checked');
+        if (firstSavedAddress) {
+            const addressSlug = firstSavedAddress.id.replace('saved_address_', '');
+            applySavedAddress(addressSlug);
+        }
+    });
 </script>

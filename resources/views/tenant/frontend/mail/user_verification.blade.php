@@ -68,7 +68,7 @@
             Please use the following verification code to complete your signup process:
 
             <div class="verification-code">
-                {{ $mailData['verification_code'] }}
+                {{ $mailData['verification_code'] ?? ($mailData['code'] ?? '000000') }}
             </div>
 
             If you didn’t request this, you can safely ignore this email.<br><br>

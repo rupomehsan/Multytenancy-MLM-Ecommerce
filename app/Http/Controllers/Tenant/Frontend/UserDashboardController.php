@@ -25,7 +25,8 @@ class UserDashboardController extends Controller
     {
 
         $order_status = $request->order_status;
-        $query = DB::table('orders')->where('user_id', Auth::user()->id);
+        $query = DB::table('orders')->where('user_id', Auth::guard('customer')->user()->id);
+
 
         if ($order_status !== null && in_array($order_status, [0, 1, 2, 3, 4, 5, 6])) {
             $query->where('order_status', $order_status)->orderBy('id', 'desc');
@@ -62,7 +63,7 @@ class UserDashboardController extends Controller
             ->where('order_id', $order->id)
             ->get();
 
-        $user = Auth::user()->user_type;
+        $user = Auth::guard('customer')->user()->user_type;
         if ($user == 4) {
             return view($this->base_url . 'customer_panel.pages.delivery.order_details', compact('order', 'orderItems'));
         }
@@ -83,7 +84,7 @@ class UserDashboardController extends Controller
         $wishlistedItems = DB::table('wish_lists')
             ->join('products', 'wish_lists.product_id', 'products.id')
             ->leftJoin('units', 'products.unit_id', 'units.id')
-            ->where('wish_lists.user_id', Auth::user()->id)
+            ->where('wish_lists.user_id', Auth::guard('customer')->user()->id)
             ->select('products.name', 'products.image', 'products.price', 'products.discount_price', 'units.name as unit_name', 'products.slug as product_slug')
             ->orderBy('products.id', 'desc')
             ->get();
@@ -93,7 +94,7 @@ class UserDashboardController extends Controller
 
     public function clearAllWishlist()
     {
-        DB::table('wish_lists')->where('user_id', Auth::user()->id)->delete();
+        DB::table('wish_lists')->where('user_id', Auth::guard('customer')->user()->id)->delete();
         Toastr::success('Removed All Items from Wishlists');
         return back();
     }
@@ -106,7 +107,7 @@ class UserDashboardController extends Controller
     public function updatePassword(Request $request)
     {
 
-        if ($request->old_password && !Auth::user()->provider_id && !Hash::check($request->old_password, Auth::user()->password)) {
+        if ($request->old_password && !Auth::guard('customer')->user()->provider_id && !Hash::check($request->old_password, Auth::guard('customer')->user()->password)) {
             Toastr::error('Your old password is wrong');
             return back();
         }
@@ -116,7 +117,7 @@ class UserDashboardController extends Controller
             return back();
         }
 
-        DB::table('users')->where('id', Auth::user()->id)->update([
+        DB::table('users')->where('id', Auth::guard('customer')->user()->id)->update([
             'password' => Hash::make($request->new_password),
         ]);
 
@@ -126,7 +127,7 @@ class UserDashboardController extends Controller
 
     public function myPayments()
     {
-        $userId = Auth::user()->id;
+        $userId = Auth::guard('customer')->user()->id;
         $currentMonthSpent = DB::table('orders')->where('user_id', $userId)->where('order_status', '!=', 4)->where('created_at', 'like', date("Y-m") . '%')->sum('total');
         $lastSixMonthSpent = DB::table('orders')->where('user_id', $userId)->where('order_status', '!=', 4)->where('created_at', '>=', date("Y-m-d", strtotime("-6 month")) . " 23:59:59")->sum('total');
         $totalSpent = DB::table('orders')->where('user_id', $userId)->where('order_status', '!=', 4)->sum('total');
@@ -142,7 +143,7 @@ class UserDashboardController extends Controller
         $appliedCoupons = DB::table('orders')
             ->join('promo_codes', 'orders.coupon_code', 'promo_codes.code')
             ->select('promo_codes.*')
-            ->where('orders.user_id', Auth::user()->id)
+            ->where('orders.user_id', Auth::guard('customer')->user()->id)
             ->groupBy('promo_codes.code')
             ->get();
 
@@ -154,7 +155,7 @@ class UserDashboardController extends Controller
         $productReviews = DB::table('product_reviews')
             ->join('products', 'product_reviews.product_id', 'products.id')
             ->select('products.name', 'products.image', 'product_reviews.rating', 'product_reviews.review', 'product_reviews.id', 'product_reviews.status')
-            ->where('product_reviews.user_id', Auth::user()->id)
+            ->where('product_reviews.user_id', Auth::guard('customer')->user()->id)
             ->orderBy('product_reviews.id', 'desc')
             ->paginate(5);
 
@@ -163,14 +164,14 @@ class UserDashboardController extends Controller
 
     public function deleteProductReview($id)
     {
-        DB::table('product_reviews')->where('id', $id)->where('user_id', Auth::user()->id)->delete();
+        DB::table('product_reviews')->where('id', $id)->where('user_id', Auth::guard('customer')->user()->id)->delete();
         Toastr::success('Review is Deleted');
         return back();
     }
 
     public function updateProductReview(Request $request)
     {
-        DB::table('product_reviews')->where('id', $request->product_review_id)->where('user_id', Auth::user()->id)->update([
+        DB::table('product_reviews')->where('id', $request->product_review_id)->where('user_id', Auth::guard('customer')->user()->id)->update([
             'rating' => $request->review_rating,
             'review' => $request->review_text,
             'status' => 0
@@ -186,7 +187,7 @@ class UserDashboardController extends Controller
 
     public function removeUserImage()
     {
-        DB::table('users')->where('id', Auth::user()->id)->update([
+        DB::table('users')->where('id', Auth::guard('customer')->user()->id)->update([
             'image' => null,
         ]);
         Toastr::success('Successfully Removed the Image');
@@ -195,7 +196,7 @@ class UserDashboardController extends Controller
 
     public function unlinkGoogleAccount()
     {
-        DB::table('users')->where('id', Auth::user()->id)->update([
+        DB::table('users')->where('id', Auth::guard('customer')->user()->id)->update([
             'provider_name' => null,
             'provider_id' => null,
         ]);
@@ -206,7 +207,7 @@ class UserDashboardController extends Controller
     public function updateProfile(Request $request)
     {
 
-        $image = Auth::user()->image;
+        $image = Auth::guard('customer')->user()->image;
         if ($request->hasFile('image')) {
             $get_attachment = $request->file('image');
             $attachment_name = str::random(5) . time() . '.' . $get_attachment->getClientOriginalExtension();
@@ -233,7 +234,7 @@ class UserDashboardController extends Controller
         }
 
 
-        DB::table('users')->where('id', Auth::user()->id)->update([
+        DB::table('users')->where('id', Auth::guard('customer')->user()->id)->update([
             'name' => $request->name,
             'image' => $image,
             'address' => $request->address,
@@ -246,7 +247,7 @@ class UserDashboardController extends Controller
     public function sendOtpProfile(Request $request)
     {
         $randomCode = rand(1000, 9999);
-        $userInfo = Auth::user();
+        $userInfo = Auth::guard('customer')->user();
 
         session(['type' => $request->type, 'emailPhone' => $request->emailPhone]);
 
@@ -336,7 +337,7 @@ class UserDashboardController extends Controller
         $type = session('type');
         $emailPhone = session('emailPhone');
 
-        $userInfo = Auth::user();
+        $userInfo = Auth::guard('customer')->user();
         if ($userInfo->verification_code == $verificationCode) {
             if ($type == 'phone') {
 
@@ -373,14 +374,14 @@ class UserDashboardController extends Controller
 
     public function userAddress()
     {
-        $addresses = DB::table('user_addresses')->where('user_id', Auth::user()->id)->get();
+        $addresses = DB::table('user_addresses')->where('user_id', Auth::guard('customer')->user()->id)->get();
         return view($this->base_url . 'customer_panel.pages.user_address', compact('addresses'));
     }
 
     public function saveUserAddress(Request $request)
     {
 
-        // $addressInfo = DB::table('user_addresses')->where('user_id', Auth::user()->id)->where('address_type', $request->address_type)->first();
+        // $addressInfo = DB::table('user_addresses')->where('user_id', Auth::guard('customer')->user()->id)->where('address_type', $request->address_type)->first();
         // if ($addressInfo) {
         //     Toastr::error($request->address_type . ' Address already Exists', 'Delete the Previous One');
         //     return back();
@@ -388,7 +389,7 @@ class UserDashboardController extends Controller
 
         $districtInfo = DB::table('districts')->where('id', $request->shipping_district_id)->first();
         $upazilaInfo = DB::table('upazilas')->where('id', $request->shipping_thana_id)->first();
-        $userId = Auth::user()->id;
+        $userId = Auth::guard('customer')->user()->id;
         $setAsDefault = $request->has('set_as_default') ? 1 : 0;
 
         // If setting as default, remove default from all other addresses
@@ -401,13 +402,13 @@ class UserDashboardController extends Controller
         DB::table('user_addresses')->insert([
             'user_id' => $userId,
             'address_type' => $request->address_type,
-            'name' => Auth::user()->name,
+            'name' => Auth::guard('customer')->user()->name,
             'address' => $request->adress_line,
             'country' => 'Bangladesh',
             'city' => $districtInfo ? $districtInfo->name : '',
             'state' => $upazilaInfo ? $upazilaInfo->name : '',
             'post_code' => $request->postal_code,
-            'phone' => Auth::user()->phone,
+            'phone' => Auth::guard('customer')->user()->phone,
             'slug' => str::random(5) . time(),
             'is_default' => $setAsDefault,
             'created_at' => Carbon::now(),
@@ -431,12 +432,12 @@ class UserDashboardController extends Controller
         $upazilaInfo = DB::table('upazilas')->where('id', $request->edit_shipping_thana_id)->first();
 
         DB::table('user_addresses')->where('slug', $request->address_slug)->update([
-            'name' => Auth::user()->name,
+            'name' => Auth::guard('customer')->user()->name,
             'address' => $request->edit_address_line,
             'city' => $districtInfo ? $districtInfo->name : '',
             'state' => $upazilaInfo ? $upazilaInfo->name : '',
             'post_code' => $request->edit_postal_Code,
-            'phone' => Auth::user()->phone,
+            'phone' => Auth::guard('customer')->user()->phone,
             'updated_at' => Carbon::now(),
         ]);
 
@@ -447,7 +448,7 @@ class UserDashboardController extends Controller
     {
         $addressSlug = $request->address_slug;
         $isDefault = $request->is_default;
-        $userId = Auth::user()->id;
+        $userId = Auth::guard('customer')->user()->id;
 
         // First, check if the address belongs to the current user
         $address = DB::table('user_addresses')

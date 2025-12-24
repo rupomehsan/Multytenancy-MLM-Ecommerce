@@ -11,6 +11,24 @@ use App\Http\Controllers\Api\BlogController;
 
 Route::group(['namespace' => 'Api'], function () {
 
+    // Referral code validation endpoint
+    Route::get('validate-referral', function (\Illuminate\Http\Request $request) {
+        $code = $request->get('code');
+
+        if (!$code) {
+            return response()->json(['valid' => false, 'message' => 'Referral code is required']);
+        }
+
+        $exists = \App\Modules\ECOMMERCE\Managements\UserManagements\Users\Database\Models\User::where('referral_code', $code)
+            ->where('user_type', 3) // Only customer referrals
+            ->exists();
+
+        return response()->json([
+            'valid' => $exists,
+            'message' => $exists ? 'Valid referral code' : 'Invalid referral code'
+        ]);
+    });
+
     // authentication api | middleware(['throttle:5,1']) means 5 requests can be made in 1 minute
     Route::post('user/registration', [AuthenticationController::class, 'userRegistration']); //->middleware(['throttle:5,1']);
     Route::post('user/verification', [AuthenticationController::class, 'userVerification']);
@@ -26,7 +44,7 @@ Route::group(['namespace' => 'Api'], function () {
 
     Route::post('subscribe/for/updates', [ApiController::class, 'subscriptionForUpdates']);
     Route::post('upload/profile/photo', [ProfileController::class, 'uploadProfilePhoto']);
-    Route::middleware('auth:sanctum')->group( function () {
+    Route::middleware('auth:sanctum')->group(function () {
         Route::get('user/profile/info', [ApiController::class, 'userProfileInfo']);
         Route::post('user/profile/update', [ApiController::class, 'userProfileUpdate']); //for app only
 
@@ -87,7 +105,7 @@ Route::group(['namespace' => 'Api'], function () {
     Route::get('get/payment/gateways', [ApiController::class, 'getPaymentGateways']);
     Route::post('order/preview', [ApiController::class, 'orderPreview']);
     Route::get('get/delivery/charge/{district}', [ApiController::class, 'getdeliveryCharge']);
-    
+
     // new api for districts and thana
     Route::get('get/all/districts', [ApiController::class, 'getAllDistricts']);
     Route::post('district/wise/thana', [ApiController::class, 'getDistrictWiseThana']);
@@ -101,7 +119,7 @@ Route::group(['namespace' => 'Api'], function () {
 
 
     // order api start
-    Route::middleware('auth:sanctum')->group( function () {
+    Route::middleware('auth:sanctum')->group(function () {
         Route::post('order/checkout', [ApiController::class, 'orderCheckout']);
         Route::post('order/checkout/app/only', [ApiController::class, 'orderCheckoutAppOnly']);
         Route::get('get/my/orders', [ApiController::class, 'getMyOrders']);
@@ -122,7 +140,7 @@ Route::group(['namespace' => 'Api'], function () {
     Route::post('get/cart/items', [CartController::class, 'getCartItems']);
 
     Route::get('get/all/coupons', [CartController::class, 'getAllCoupons']);
-    Route::middleware('auth:sanctum')->group( function () {
+    Route::middleware('auth:sanctum')->group(function () {
         Route::post('apply/coupon', [CartController::class, 'applyCoupon']);
         Route::post('order/cart/checkout', [CartController::class, 'cartCheckout']);
         Route::post('order/checkout/buy/now/app', [CartController::class, 'checkoutBuyNow']); // for app only
@@ -139,7 +157,7 @@ Route::group(['namespace' => 'Api'], function () {
 
     // support ticket api routes
     Route::post('upload/support/ticket/file', [SupportController::class, 'uploadSupportTicketFile']);
-    Route::middleware('auth:sanctum')->group( function () {
+    Route::middleware('auth:sanctum')->group(function () {
         Route::post('submit/support/ticket', [SupportController::class, 'submitSupportTicket']);
         Route::post('send/support/ticket/message', [SupportController::class, 'sendSupportTicketMessage']);
         Route::get('get/all/support/tickets', [SupportController::class, 'getAllSupportTickets']);
@@ -163,5 +181,4 @@ Route::group(['namespace' => 'Api'], function () {
     Route::get('get/all/blogs', [BlogController::class, 'getAllBlogs']);
     Route::post('get/category/wise/blogs', [BlogController::class, 'getCategoryWiseBlogs']);
     Route::get('blog/details/{slug}', [BlogController::class, 'blogDetails']);
-
 });

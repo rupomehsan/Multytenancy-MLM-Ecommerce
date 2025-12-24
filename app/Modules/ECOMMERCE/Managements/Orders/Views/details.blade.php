@@ -88,60 +88,16 @@
                                 <p class="mb-1"><strong>Order Date: </strong>
                                     {{ date('jS F, Y', strtotime($order->order_date)) }}</p>
                                 <p class="mb-1"><strong>Order Status: </strong>
-                                    @php
-
-                                        if ($order->order_status == 0) {
-                                            echo '<span class="badge badge-soft-warning" style="padding: 2px 10px !important;">Pending</span>';
-                                        } elseif ($order->order_status == 1) {
-                                            echo '<span class="badge badge-soft-info" style="padding: 2px 10px !important;">Approved</span>';
-                                        } elseif ($order->order_status == 2) {
-                                            echo '<span class="badge badge-soft-primary" style="padding: 2px 10px !important;">Dispatch</span>';
-                                        } elseif ($order->order_status == 3) {
-                                            echo '<span class="badge badge-soft-info" style="padding: 2px 10px !important;">Intransit</span>';
-                                        } elseif ($order->order_status == 4) {
-                                            echo '<span class="badge badge-soft-success" style="padding: 2px 10px !important;">Delivered</span>';
-                                        } elseif ($order->order_status == 5) {
-                                            echo '<span class="badge badge-soft-dark" style="padding: 2px 10px !important;">Return</span>';
-                                        } else {
-                                            echo '<span class="badge badge-soft-danger" style="padding: 2px 10px !important;">Cancelled</span>';
-                                        }
-                                    @endphp
+                                    {!! $order->orderStatusBadge !!}
                                 </p>
                                 <p class="mb-1"><strong>Delivery Method: </strong>
-                                    @php
-                                        if ($order->delivery_method == 1) {
-                                            echo '<span class="badge badge-soft-success" style="padding: 3px 5px !important;">Home Delivery</span>';
-                                        }
-                                        if ($order->delivery_method == 2) {
-                                            echo '<span class="badge badge-soft-success" style="padding: 3px 5px !important;">Store Pickup</span>';
-                                        }
-                                    @endphp
+                                    {!! $deliveryMethodBadge !!}
                                 </p>
                                 <p class="mb-1"><strong>Payment Method: </strong>
-                                    @php
-                                        if ($order->payment_method == null) {
-                                            echo '<span class="badge badge-soft-danger" style="padding: 2px 10px !important;">Unpaid</span>';
-                                        } elseif ($order->payment_method == 1) {
-                                            echo '<span class="badge badge-soft-info" style="padding: 2px 10px !important;">COD</span>';
-                                        } elseif ($order->payment_method == 2) {
-                                            echo '<span class="badge badge-soft-success" style="padding: 2px 10px !important;">bKash</span>';
-                                        } elseif ($order->payment_method == 3) {
-                                            echo '<span class="badge badge-soft-success" style="padding: 2px 10px !important;">Nagad</span>';
-                                        } else {
-                                            echo '<span class="badge badge-soft-success" style="padding: 2px 10px !important;">Card</span>';
-                                        }
-                                    @endphp
+                                    {!! $paymentMethodBadge !!}
                                 </p>
                                 <p class="mb-1"><strong>Payment Status: </strong>
-                                    @php
-                                        if ($order->payment_status == 0) {
-                                            echo '<span class="badge badge-soft-warning" style="padding: 2px 10px !important;">Unpaid</span>';
-                                        } elseif ($order->payment_status == 1) {
-                                            echo '<span class="badge badge-soft-success" style="padding: 2px 10px !important;">Paid</span>';
-                                        } else {
-                                            echo '<span class="badge badge-soft-danger" style="padding: 2px 10px !important;">Failed</span>';
-                                        }
-                                    @endphp
+                                    {!! $paymentStatusBadge !!}
                                 </p>
                                 @if ($order->reference_code)
                                     <p class="mb-1"><strong>Reference: </strong>
@@ -203,47 +159,6 @@
                                             $sl = 1;
                                         @endphp
                                         @foreach ($orderDetails as $details)
-                                            @php
-                                                if ($details->color_id) {
-                                                    $colorInfo = App\Models\Color::where(
-                                                        'id',
-                                                        $details->color_id,
-                                                    )->first();
-                                                }
-                                                if ($details->storage_id) {
-                                                    $storageInfo = App\Models\StorageType::where(
-                                                        'id',
-                                                        $details->storage_id,
-                                                    )->first();
-                                                }
-                                                if ($details->sim_id) {
-                                                    $simInfo = App\Models\Sim::where('id', $details->sim_id)->first();
-                                                }
-                                                if ($details->region_id) {
-                                                    $regionInfo = DB::table('country')
-                                                        ->where('id', $details->region_id)
-                                                        ->first();
-                                                }
-                                                if ($details->warrenty_id) {
-                                                    $warrentyInfo = App\Models\ProductWarrenty::where(
-                                                        'id',
-                                                        $details->warrenty_id,
-                                                    )->first();
-                                                }
-                                                if ($details->device_condition_id) {
-                                                    $deviceCondition = App\Models\DeviceCondition::where(
-                                                        'id',
-                                                        $details->device_condition_id,
-                                                    )->first();
-                                                }
-                                                if ($details->size_id) {
-                                                    $productSize = App\Models\ProductSize::where(
-                                                        'id',
-                                                        $details->size_id,
-                                                    )->first();
-                                                }
-                                            @endphp
-
                                             <tr>
                                                 <td class="text-center">{{ $sl++ }}</td>
                                                 <td>
@@ -260,32 +175,28 @@
                                                     Cartoon: {{ $details->warehouse_room_cartoon_title }}
                                                 </td>
                                                 <td class="text-center">
-                                                    @if ($details->color_id)
-                                                        Color: {{ $colorInfo ? $colorInfo->name : '' }} |
+                                                    @if (isset($details->color_name))
+                                                        Color: {{ $details->color_name }} |
                                                     @endif
-                                                    @if ($details->storage_id)
-                                                        Storage:
-                                                        {{ $storageInfo ? $storageInfo->ram : '' }}/{{ $storageInfo ? $storageInfo->rom : '' }}
-                                                        |
+                                                    @if (isset($details->storage_info))
+                                                        Storage: {{ $details->storage_info }} |
                                                     @endif
-                                                    @if ($details->sim_id)
-                                                        SIM: {{ $simInfo ? $simInfo->name : '' }}
+                                                    @if (isset($details->sim_name))
+                                                        SIM: {{ $details->sim_name }}
                                                     @endif
-                                                    @if ($details->size_id)
-                                                        Size: {{ $productSize ? $productSize->name : '' }}
+                                                    @if (isset($details->size_name))
+                                                        Size: {{ $details->size_name }}
                                                     @endif
 
                                                     <br>
-                                                    @if ($details->region_id)
-                                                        Region: {{ $regionInfo ? $regionInfo->name : '' }} |
+                                                    @if (isset($details->region_name))
+                                                        Region: {{ $details->region_name }} |
                                                     @endif
-                                                    @if ($details->warrenty_id)
-                                                        Warrenty:
-                                                        {{ $warrentyInfo ? $warrentyInfo->name : '' }} |
+                                                    @if (isset($details->warranty_name))
+                                                        Warranty: {{ $details->warranty_name }} |
                                                     @endif
-                                                    @if ($details->device_condition_id)
-                                                        Condition:
-                                                        {{ $deviceCondition ? $deviceCondition->name : '' }}
+                                                    @if (isset($details->device_condition_name))
+                                                        Condition: {{ $details->device_condition_name }}
                                                     @endif
                                                 </td>
                                                 <td class="text-center">{{ $details->qty }} {{ $details->unit_name }}</td>
@@ -392,33 +303,16 @@
                                 <label style="margin-bottom: .2rem; font-weight: 500;">Order Status :</label>
                                 <select name="order_status" class="form-control" required>
                                     <option value="">Change Status</option>
-                                    <option value="0" @if ($order->order_status == 0) selected @endif disabled>
-                                        Pending
-                                    </option>
-                                    <option value="1" @if ($order->order_status == 1) selected @endif
-                                        @if (!in_array($order->order_status, [0])) disabled @endif>
-                                        Approved
-                                    </option>
-                                    <option value="2" @if ($order->order_status == 2) selected @endif
-                                        @if (!in_array($order->order_status, [1, 2])) disabled @endif>
-                                        Dispatch
-                                    </option>
-                                    <option value="3" @if ($order->order_status == 3) selected @endif
-                                        @if (in_array($order->order_status, [0, 1, 2, 3, 4, 5, 6])) disabled @endif>
-                                        Intransit
-                                    </option>
-                                    <option value="4" @if ($order->order_status == 4) selected @endif
-                                        @if (in_array($order->order_status, [0, 1, 2, 3, 4, 5, 6])) disabled @endif>
-                                        Delivered
-                                    </option>
-                                    <option value="5" @if ($order->order_status == 5) selected @endif
-                                        @if (in_array($order->order_status, [0, 1, 2, 3, 4, 5, 6])) disabled @endif>
-                                        Return
-                                    </option>
-                                    <option value="6" @if ($order->order_status == 6) selected @endif
-                                        @if (!in_array($order->order_status, [0, 1, 2, 3])) disabled @endif>
-                                        Cancel
-                                    </option>
+                                    @foreach ($orderStatuses as $statusValue => $statusName)
+                                        @php
+                                            $isAvailable = array_key_exists($statusValue, $availableStatuses);
+                                        @endphp
+                                        <option value="{{ $statusValue }}"
+                                            @if ($order->order_status == $statusValue) selected @endif
+                                            @if (!$isAvailable) disabled @endif>
+                                            {{ $statusName }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
 
@@ -456,12 +350,21 @@
         }
     </script>
     <script>
+        const ORDER_STATUS_DISPATCH = {{ $statusConstants['STATUS_DISPATCH'] }};
+        const ORDER_STATUS_INTRANSIT = {{ $statusConstants['STATUS_INTRANSIT'] }};
+        const ORDER_STATUS_CANCELLED = {{ $statusConstants['STATUS_CANCELLED'] }};
+        const ORDER_STATUS_DELIVERED = {{ $statusConstants['STATUS_DELIVERED'] }};
+        const ORDER_STATUS_RETURN = {{ $statusConstants['STATUS_RETURN'] }};
         document.querySelector('select[name="order_status"]').addEventListener('change', function() {
             const deliveryManGroup = document.getElementById('delivery-man-group');
-            if (this.value == '2') { // 2 is the value for "Dispatch"
+            const deliveryManSelect = document.querySelector('select[name="delivery_man_id"]');
+
+            if (this.value == ORDER_STATUS_DISPATCH) {
                 deliveryManGroup.style.display = 'block';
+                deliveryManSelect.required = true;
             } else {
                 deliveryManGroup.style.display = 'none';
+                deliveryManSelect.required = false;
             }
         });
 
@@ -471,12 +374,18 @@
             const deliveryManGroup = document.getElementById('delivery-man-group');
             const deliveryManSelect = document.querySelector('select[name="delivery_man_id"]');
 
-            if (orderStatus == '2' || orderStatus == '3' || orderStatus == '4' || orderStatus ==
-                '5') { // 2 is Dispatch, 3 is Intransit, 4 is Delivered, 5 is Return
+            if (orderStatus == ORDER_STATUS_DISPATCH || orderStatus == ORDER_STATUS_INTRANSIT ||
+                orderStatus == ORDER_STATUS_DELIVERED || orderStatus == ORDER_STATUS_RETURN) {
                 deliveryManGroup.style.display = 'block';
 
-                // Disable select for status 3, 4, or 5
-                if (orderStatus == '3' || orderStatus == '4' || orderStatus == '5') {
+                // Make required only for dispatch status
+                if (orderStatus == ORDER_STATUS_DISPATCH) {
+                    deliveryManSelect.required = true;
+                }
+
+                // Disable select for status 3 (Intransit), 5 (Delivered), or 6 (Return)
+                if (orderStatus == ORDER_STATUS_INTRANSIT || orderStatus == ORDER_STATUS_DELIVERED ||
+                    orderStatus == ORDER_STATUS_RETURN) {
                     deliveryManSelect.disabled = true;
                 }
             }

@@ -17,6 +17,8 @@ use App\Http\Controllers\Controller;
 
 class CheckoutController extends Controller
 {
+    protected $baseRoute = 'tenant.frontend.pages.checkout.';
+    protected $rootRoute = 'tenant.frontend.pages.';
     public function checkout()
     {
 
@@ -31,7 +33,7 @@ class CheckoutController extends Controller
             return redirect('/');
         }
 
-        return view('checkout.checkout');
+        return view($this->baseRoute . 'checkout');
     }
 
     public function applyCoupon(Request $request)
@@ -47,7 +49,7 @@ class CheckoutController extends Controller
                     'discount' => 0
                 ]);
                 session()->forget('original_subtotal');
-                $checkoutTotalAmount = view('checkout.order_total')->render();
+                $checkoutTotalAmount = view($this->baseRoute . 'order_total')->render();
                 return response()->json(['message' => 'Coupon Already Used', 'status' => 0, 'checkoutTotalAmount' => $checkoutTotalAmount]);
             }
 
@@ -57,7 +59,7 @@ class CheckoutController extends Controller
                     'discount' => 0
                 ]);
                 session()->forget('original_subtotal');
-                $checkoutTotalAmount = view('checkout.order_total')->render();
+                $checkoutTotalAmount = view($this->baseRoute . 'order_total')->render();
                 return response()->json(['message' => 'Coupon is Expired', 'status' => 0, 'checkoutTotalAmount' => $checkoutTotalAmount]);
             }
 
@@ -72,7 +74,7 @@ class CheckoutController extends Controller
                     'discount' => 0
                 ]);
                 session()->forget('original_subtotal');
-                $checkoutTotalAmount = view('checkout.order_total')->render();
+                $checkoutTotalAmount = view($this->baseRoute . 'order_total')->render();
                 return response()->json(['message' => 'Sorry! Minimum Order Amount is ' . $couponInfo->minimum_order_amount, 'status' => 0, 'checkoutTotalAmount' => $checkoutTotalAmount]);
             }
 
@@ -91,8 +93,8 @@ class CheckoutController extends Controller
                 'coupon_minimum_order_amount' => $couponInfo->minimum_order_amount ?? 0  // Store minimum order amount
             ]);
 
-            $checkoutTotalAmount = view('checkout.order_total')->render();
-            $checkoutCoupon = view('checkout.coupon')->render();
+            $checkoutTotalAmount = view($this->baseRoute . 'order_total')->render();
+            $checkoutCoupon = view($this->baseRoute . 'coupon')->render();
             return response()->json(['message' => 'Coupon Applied Successfully', 'status' => 1, 'checkoutTotalAmount' => $checkoutTotalAmount, 'checkoutCoupon' => $checkoutCoupon]);
         } else {
             session([
@@ -100,8 +102,8 @@ class CheckoutController extends Controller
                 'discount' => 0
             ]);
             session()->forget(['original_subtotal', 'coupon_type', 'coupon_minimum_order_amount']);
-            $checkoutTotalAmount = view('checkout.order_total')->render();
-            $checkoutCoupon = view('checkout.coupon')->render();
+            $checkoutTotalAmount = view($this->baseRoute . 'order_total')->render();
+            $checkoutCoupon = view($this->baseRoute . 'coupon')->render();
             return response()->json(['message' => 'Sorry No Coupon Found', 'status' => 0, 'checkoutTotalAmount' => $checkoutTotalAmount, 'checkoutCoupon' => $checkoutCoupon]);
         }
     }
@@ -130,7 +132,7 @@ class CheckoutController extends Controller
         session(['delivery_cost' => $districtWiseDeliveryCharge]);
 
         $data = DB::table('upazilas')->where("district_id", $request->district_id)->select('name', 'id')->orderBy('name', 'asc')->get();
-        $checkoutTotalAmount = view('checkout.order_total')->render();
+        $checkoutTotalAmount = view($this->baseRoute . 'order_total')->render();
         return response()->json(['data' => $data, 'checkoutTotalAmount' => $checkoutTotalAmount]);
     }
 
@@ -166,7 +168,7 @@ class CheckoutController extends Controller
         } else {
             session(['delivery_cost' => 0]);
         }
-        $checkoutTotalAmount = view('checkout.order_total')->render();
+        $checkoutTotalAmount = view($this->baseRoute . 'order_total')->render();
         return response()->json(['checkoutTotalAmount' => $checkoutTotalAmount]);
     }
 
@@ -236,7 +238,7 @@ class CheckoutController extends Controller
         $orderId = DB::table('orders')->insertGetId([
             'order_no' => time() . rand(100, 999),
             'order_from' => 1,
-            'user_id' => auth()->user() ? auth()->user()->id : null,
+            'user_id' => Auth::guard('customer')->check() ? Auth::guard('customer')->user()->id : null,
             'order_date' => date("Y-m-d H:i:s"),
             'estimated_dd' => date('Y-m-d', strtotime("+7 day", strtotime(date("Y-m-d")))),
             'delivery_method' => $request->delivery_method,
@@ -491,6 +493,11 @@ class CheckoutController extends Controller
             session()->forget('discount');
             session()->forget('delivery_cost');
             session()->forget('cart');
+            
+            // Redirect authenticated users to their orders page, guests to order preview
+            if (Auth::guard('customer')->check()) {
+                return redirect('/my/orders')->with('success', 'Order placed successfully!');
+            }
             return redirect('order/' . $orderInfo->slug);
         }
 
@@ -597,7 +604,7 @@ class CheckoutController extends Controller
             $billingInfo = DB::table('billing_addresses')->where('order_id', $orderInfo->id)->first();
             // for data layer end
 
-            return view('order_preview', compact('orderInfo', 'orderdItems', 'shippingInfo', 'billingInfo'));
+            return view($this->rootRoute . 'order_preview', compact('orderInfo', 'orderdItems', 'shippingInfo', 'billingInfo'));
         } else {
             Toastr::error('No Order Found');
             return redirect('/');
@@ -641,8 +648,8 @@ class CheckoutController extends Controller
         session()->forget(['coupon', 'discount', 'original_subtotal', 'coupon_type', 'coupon_minimum_order_amount']);
 
         // Get updated order total and coupon section for response
-        $checkoutTotalAmount = view('checkout.order_total')->render();
-        $checkoutCoupon = view('checkout.coupon')->render();
+        $checkoutTotalAmount = view($this->baseRoute . 'order_total')->render();
+        $checkoutCoupon = view($this->baseRoute . 'coupon')->render();
 
         return response()->json([
             'message' => 'Coupon removed successfully',

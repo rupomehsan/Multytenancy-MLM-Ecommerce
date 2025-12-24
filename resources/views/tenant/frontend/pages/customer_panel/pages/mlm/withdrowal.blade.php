@@ -638,7 +638,7 @@
                 <i class="fi-rr-piggy-bank"></i>
                 Available Balance
             </div>
-            <div class="mlm-summary-value">৳15,680</div>
+            <div class="mlm-summary-value">৳{{ number_format($availableBalance, 2) }}</div>
             <div class="mlm-summary-subtitle">Ready to withdraw</div>
         </div>
 
@@ -647,8 +647,9 @@
                 <i class="fi-rr-clock"></i>
                 Pending Requests
             </div>
-            <div class="mlm-summary-value">৳4,200</div>
-            <div class="mlm-summary-subtitle">3 requests pending</div>
+            <div class="mlm-summary-value">৳{{ number_format($pendingAmount, 2) }}</div>
+            <div class="mlm-summary-subtitle">{{ $pendingCount }} {{ $pendingCount == 1 ? 'request' : 'requests' }} pending
+            </div>
         </div>
 
         <div class="mlm-summary-card completed">
@@ -656,7 +657,7 @@
                 <i class="fi-rr-check-circle"></i>
                 Total Withdrawn
             </div>
-            <div class="mlm-summary-value">৳85,450</div>
+            <div class="mlm-summary-value">৳{{ number_format($totalWithdrawn, 2) }}</div>
             <div class="mlm-summary-subtitle">All time</div>
         </div>
 
@@ -665,8 +666,9 @@
                 <i class="fi-rr-cross-circle"></i>
                 Rejected Amount
             </div>
-            <div class="mlm-summary-value">৳2,800</div>
-            <div class="mlm-summary-subtitle">2 requests rejected</div>
+            <div class="mlm-summary-value">৳{{ number_format($rejectedAmount, 2) }}</div>
+            <div class="mlm-summary-subtitle">{{ $rejectedCount }} {{ $rejectedCount == 1 ? 'request' : 'requests' }}
+                rejected</div>
         </div>
     </div>
 
@@ -700,24 +702,31 @@
 
         <!-- Filters -->
         <div class="mlm-filters">
-            <div class="mlm-filter-group">
-                <label for="statusFilter">Status</label>
-                <select id="statusFilter">
-                    <option value="">All Status</option>
-                    <option value="pending">Pending</option>
-                    <option value="processing">Processing</option>
-                    <option value="completed">Completed</option>
-                    <option value="rejected">Rejected</option>
-                </select>
-            </div>
-            <div class="mlm-filter-group">
-                <label for="dateFrom">Date From</label>
-                <input type="date" id="dateFrom">
-            </div>
-            <div class="mlm-filter-group">
-                <label for="dateTo">Date To</label>
-                <input type="date" id="dateTo">
-            </div>
+            <form method="GET" action="{{ route('customer.mlm.withdrawal_requests') }}" style="display: contents;">
+                <div class="mlm-filter-group">
+                    <label for="statusFilter">Status</label>
+                    <select id="statusFilter" name="status" onchange="this.form.submit()">
+                        <option value="">All Status</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing
+                        </option>
+                        <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
+                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed
+                        </option>
+                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                    </select>
+                </div>
+                <div class="mlm-filter-group">
+                    <label for="dateFrom">Date From</label>
+                    <input type="date" id="dateFrom" name="date_from" value="{{ request('date_from') }}"
+                        onchange="this.form.submit()">
+                </div>
+                <div class="mlm-filter-group">
+                    <label for="dateTo">Date To</label>
+                    <input type="date" id="dateTo" name="date_to" value="{{ request('date_to') }}"
+                        onchange="this.form.submit()">
+                </div>
+            </form>
         </div>
 
         <!-- Table -->
@@ -736,111 +745,101 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Row 1 -->
-                    <tr>
-                        <td><strong>#WD-1058</strong></td>
-                        <td>Dec 5, 2024<br><small class="text-muted">10:30 AM</small></td>
-                        <td><span class="mlm-amount">৳5,000.00</span></td>
-                        <td>Bank Transfer</td>
-                        <td>ACC-****4582</td>
-                        <td><span class="mlm-status-badge completed">Completed</span></td>
-                        <td>Dec 6, 2024</td>
-                        <td><small>Transferred successfully</small></td>
-                    </tr>
-
-                    <!-- Row 2 -->
-                    <tr>
-                        <td><strong>#WD-1057</strong></td>
-                        <td>Dec 4, 2024<br><small class="text-muted">02:15 PM</small></td>
-                        <td><span class="mlm-amount">৳2,500.00</span></td>
-                        <td>bKash</td>
-                        <td>01712****56</td>
-                        <td><span class="mlm-status-badge processing">Processing</span></td>
-                        <td>-</td>
-                        <td><small>Under review</small></td>
-                    </tr>
-
-                    <!-- Row 3 -->
-                    <tr>
-                        <td><strong>#WD-1056</strong></td>
-                        <td>Dec 3, 2024<br><small class="text-muted">11:45 AM</small></td>
-                        <td><span class="mlm-amount">৳1,700.00</span></td>
-                        <td>Nagad</td>
-                        <td>01812****89</td>
-                        <td><span class="mlm-status-badge pending">Pending</span></td>
-                        <td>-</td>
-                        <td><small>Awaiting approval</small></td>
-                    </tr>
-
-                    <!-- Row 4 -->
-                    <tr>
-                        <td><strong>#WD-1055</strong></td>
-                        <td>Dec 1, 2024<br><small class="text-muted">04:20 PM</small></td>
-                        <td><span class="mlm-amount">৳3,200.00</span></td>
-                        <td>Bank Transfer</td>
-                        <td>ACC-****7823</td>
-                        <td><span class="mlm-status-badge completed">Completed</span></td>
-                        <td>Dec 2, 2024</td>
-                        <td><small>Transferred successfully</small></td>
-                    </tr>
-
-                    <!-- Row 5 -->
-                    <tr>
-                        <td><strong>#WD-1054</strong></td>
-                        <td>Nov 28, 2024<br><small class="text-muted">09:15 AM</small></td>
-                        <td><span class="mlm-amount">৳1,500.00</span></td>
-                        <td>Rocket</td>
-                        <td>01912****34</td>
-                        <td><span class="mlm-status-badge rejected">Rejected</span></td>
-                        <td>Nov 29, 2024</td>
-                        <td><small>Invalid account details</small></td>
-                    </tr>
-
-                    <!-- Row 6 -->
-                    <tr>
-                        <td><strong>#WD-1053</strong></td>
-                        <td>Nov 25, 2024<br><small class="text-muted">03:30 PM</small></td>
-                        <td><span class="mlm-amount">৳4,800.00</span></td>
-                        <td>bKash</td>
-                        <td>01612****78</td>
-                        <td><span class="mlm-status-badge completed">Completed</span></td>
-                        <td>Nov 26, 2024</td>
-                        <td><small>Transferred successfully</small></td>
-                    </tr>
-
-                    <!-- Row 7 -->
-                    <tr>
-                        <td><strong>#WD-1052</strong></td>
-                        <td>Nov 22, 2024<br><small class="text-muted">01:45 PM</small></td>
-                        <td><span class="mlm-amount">৳2,900.00</span></td>
-                        <td>Bank Transfer</td>
-                        <td>ACC-****3421</td>
-                        <td><span class="mlm-status-badge completed">Completed</span></td>
-                        <td>Nov 23, 2024</td>
-                        <td><small>Transferred successfully</small></td>
-                    </tr>
+                    @forelse($withdrawalRequests as $request)
+                        @php
+                            $paymentDetails = json_decode($request->payment_details, true);
+                            $accountNumber = $paymentDetails['account_number'] ?? 'N/A';
+                            // Mask account number
+                            if (strlen($accountNumber) > 4) {
+                                $maskedAccount = substr($accountNumber, 0, 3) . '****' . substr($accountNumber, -2);
+                            } else {
+                                $maskedAccount = $accountNumber;
+                            }
+                        @endphp
+                        <tr>
+                            <td><strong>#WD-{{ str_pad($request->id, 4, '0', STR_PAD_LEFT) }}</strong></td>
+                            <td>
+                                {{ \Carbon\Carbon::parse($request->created_at)->format('M j, Y') }}<br>
+                                <small
+                                    class="text-muted">{{ \Carbon\Carbon::parse($request->created_at)->format('h:i A') }}</small>
+                            </td>
+                            <td><span class="mlm-amount">৳{{ number_format($request->amount, 2) }}</span></td>
+                            <td>{{ $request->payment_method }}</td>
+                            <td>{{ $maskedAccount }}</td>
+                            <td>
+                                <span class="mlm-status-badge {{ $request->status }}">
+                                    {{ ucfirst($request->status) }}
+                                </span>
+                            </td>
+                            <td>
+                                @if ($request->processed_at)
+                                    {{ \Carbon\Carbon::parse($request->processed_at)->format('M j, Y') }}
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td>
+                                @if ($request->admin_notes)
+                                    <small>{{ $request->admin_notes }}</small>
+                                @else
+                                    <small>{{ $request->status == 'pending' ? 'Awaiting approval' : '-' }}</small>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="8" class="text-center" style="padding: 40px;">
+                                <i class="fi-rr-wallet" style="font-size: 48px; color: var(--gray-300);"></i>
+                                <p style="margin-top: 16px; color: var(--gray-600);">No withdrawal requests found</p>
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
         <!-- Pagination -->
-        <div class="mlm-pagination">
-            <div class="mlm-pagination-info">
-                Showing 1 to 7 of 24 entries
+        @if ($withdrawalRequests->total() > 0)
+            <div class="mlm-pagination">
+                <div class="mlm-pagination-info">
+                    Showing {{ $withdrawalRequests->firstItem() ?? 0 }} to {{ $withdrawalRequests->lastItem() ?? 0 }} of
+                    {{ $withdrawalRequests->total() }} entries
+                </div>
+                @if ($withdrawalRequests->hasPages())
+                    <div class="mlm-pagination-buttons">
+                        @if ($withdrawalRequests->onFirstPage())
+                            <button class="mlm-pagination-btn" disabled>
+                                <i class="fi-rr-angle-left"></i>
+                            </button>
+                        @else
+                            <a href="{{ $withdrawalRequests->appends(request()->query())->previousPageUrl() }}"
+                                class="mlm-pagination-btn">
+                                <i class="fi-rr-angle-left"></i>
+                            </a>
+                        @endif
+
+                        @foreach ($withdrawalRequests->appends(request()->query())->getUrlRange(1, $withdrawalRequests->lastPage()) as $page => $url)
+                            @if ($page == $withdrawalRequests->currentPage())
+                                <button class="mlm-pagination-btn active">{{ $page }}</button>
+                            @else
+                                <a href="{{ $url }}" class="mlm-pagination-btn">{{ $page }}</a>
+                            @endif
+                        @endforeach
+
+                        @if ($withdrawalRequests->hasMorePages())
+                            <a href="{{ $withdrawalRequests->appends(request()->query())->nextPageUrl() }}"
+                                class="mlm-pagination-btn">
+                                <i class="fi-rr-angle-right"></i>
+                            </a>
+                        @else
+                            <button class="mlm-pagination-btn" disabled>
+                                <i class="fi-rr-angle-right"></i>
+                            </button>
+                        @endif
+                    </div>
+                @endif
             </div>
-            <div class="mlm-pagination-buttons">
-                <button class="mlm-pagination-btn" disabled>
-                    <i class="fi-rr-angle-left"></i>
-                </button>
-                <button class="mlm-pagination-btn active">1</button>
-                <button class="mlm-pagination-btn">2</button>
-                <button class="mlm-pagination-btn">3</button>
-                <button class="mlm-pagination-btn">4</button>
-                <button class="mlm-pagination-btn">
-                    <i class="fi-rr-angle-right"></i>
-                </button>
-            </div>
-        </div>
+        @endif
     </div>
 
     <!-- Withdrawal Modal -->
@@ -850,13 +849,18 @@
                 <h3><i class="fi-rr-wallet"></i> New Withdrawal Request</h3>
                 <button class="mlm-modal-close" onclick="closeWithdrawalModal()">×</button>
             </div>
-            <form action="{{ url('/customer/mlm/submit-withdrawal-request') }}" method="POST">
+            <form action="{{ url('/customer/mlm/submit-withdrawal-request') }}" method="POST" id="withdrawalForm">
                 @csrf
                 <div class="mlm-modal-body">
                     <!-- Balance Info -->
                     <div class="mlm-balance-info">
                         <h4>Available Balance</h4>
-                        <p class="amount">৳15,680.00</p>
+                        <p class="amount">৳{{ number_format($availableBalance, 2) }}</p>
+                        @if ($availableBalance < 500)
+                            <p style="color: var(--danger-color); font-size: 14px; margin-top: 8px;">
+                                <i class="fi-rr-info"></i> Insufficient balance for withdrawal (Minimum: ৳500)
+                            </p>
+                        @endif
                     </div>
 
                     <!-- Amount -->
@@ -864,9 +868,19 @@
                         <label class="mlm-form-label">
                             Withdrawal Amount <span>*</span>
                         </label>
-                        <input type="number" name="amount" class="mlm-form-input" placeholder="Enter amount" required
-                            min="500" max="15680" step="0.01">
-                        <p class="mlm-form-help">Minimum withdrawal: ৳500 | Maximum: ৳15,680</p>
+                        <input type="number" name="amount" id="withdrawalAmount"
+                            class="mlm-form-input @error('amount') is-invalid @enderror" placeholder="Enter amount"
+                            required min="500" max="{{ $availableBalance }}" step="0.01"
+                            value="{{ old('amount') }}" {{ $availableBalance < 500 ? 'disabled' : '' }}>
+                        <p class="mlm-form-help">
+                            Minimum: ৳500 | Available: ৳{{ number_format($availableBalance, 2) }}
+                        </p>
+                        @error('amount')
+                            <span class="invalid-feedback"
+                                style="color: var(--danger-color); font-size: 13px; display: block; margin-top: 4px;">
+                                {{ $message }}
+                            </span>
+                        @enderror
                     </div>
 
                     <!-- Method -->
@@ -874,13 +888,21 @@
                         <label class="mlm-form-label">
                             Withdrawal Method <span>*</span>
                         </label>
-                        <select name="method" class="mlm-form-select" required>
+                        <select name="method" class="mlm-form-select @error('method') is-invalid @enderror" required
+                            {{ $availableBalance < 500 ? 'disabled' : '' }}>
                             <option value="">Select Method</option>
-                            <option value="bank">Bank Transfer</option>
-                            <option value="bkash">bKash</option>
-                            <option value="nagad">Nagad</option>
-                            <option value="rocket">Rocket</option>
+                            <option value="Bank Transfer" {{ old('method') == 'Bank Transfer' ? 'selected' : '' }}>Bank
+                                Transfer</option>
+                            <option value="bKash" {{ old('method') == 'bKash' ? 'selected' : '' }}>bKash</option>
+                            <option value="Nagad" {{ old('method') == 'Nagad' ? 'selected' : '' }}>Nagad</option>
+                            <option value="Rocket" {{ old('method') == 'Rocket' ? 'selected' : '' }}>Rocket</option>
                         </select>
+                        @error('method')
+                            <span class="invalid-feedback"
+                                style="color: var(--danger-color); font-size: 13px; display: block; margin-top: 4px;">
+                                {{ $message }}
+                            </span>
+                        @enderror
                     </div>
 
                     <!-- Account Number -->
@@ -888,9 +910,17 @@
                         <label class="mlm-form-label">
                             Account Number <span>*</span>
                         </label>
-                        <input type="text" name="account_number" class="mlm-form-input"
-                            placeholder="Enter account number" required>
+                        <input type="text" name="account_number"
+                            class="mlm-form-input @error('account_number') is-invalid @enderror"
+                            placeholder="Enter account number" required value="{{ old('account_number') }}"
+                            {{ $availableBalance < 500 ? 'disabled' : '' }}>
                         <p class="mlm-form-help">For mobile banking: Enter your mobile number</p>
+                        @error('account_number')
+                            <span class="invalid-feedback"
+                                style="color: var(--danger-color); font-size: 13px; display: block; margin-top: 4px;">
+                                {{ $message }}
+                            </span>
+                        @enderror
                     </div>
 
                     <!-- Account Holder Name -->
@@ -898,8 +928,17 @@
                         <label class="mlm-form-label">
                             Account Holder Name <span>*</span>
                         </label>
-                        <input type="text" name="account_holder" class="mlm-form-input"
-                            placeholder="Enter account holder name" required>
+                        <input type="text" name="account_holder"
+                            class="mlm-form-input @error('account_holder') is-invalid @enderror"
+                            placeholder="Enter account holder name" required
+                            value="{{ old('account_holder', auth('customer')->user()->name ?? '') }}"
+                            {{ $availableBalance < 500 ? 'disabled' : '' }}>
+                        @error('account_holder')
+                            <span class="invalid-feedback"
+                                style="color: var(--danger-color); font-size: 13px; display: block; margin-top: 4px;">
+                                {{ $message }}
+                            </span>
+                        @enderror
                     </div>
 
                     <!-- Notes -->
@@ -907,14 +946,22 @@
                         <label class="mlm-form-label">
                             Additional Notes (Optional)
                         </label>
-                        <textarea name="notes" class="mlm-form-textarea" placeholder="Add any additional information..."></textarea>
+                        <textarea name="notes" class="mlm-form-textarea @error('notes') is-invalid @enderror"
+                            placeholder="Add any additional information..." {{ $availableBalance < 500 ? 'disabled' : '' }}>{{ old('notes') }}</textarea>
+                        @error('notes')
+                            <span class="invalid-feedback"
+                                style="color: var(--danger-color); font-size: 13px; display: block; margin-top: 4px;">
+                                {{ $message }}
+                            </span>
+                        @enderror
                     </div>
                 </div>
                 <div class="mlm-modal-footer">
                     <button type="button" class="mlm-btn mlm-btn-outline" onclick="closeWithdrawalModal()">
                         Cancel
                     </button>
-                    <button type="submit" class="mlm-btn mlm-btn-success">
+                    <button type="submit" class="mlm-btn mlm-btn-success"
+                        {{ $availableBalance < 500 ? 'disabled' : '' }} id="submitWithdrawalBtn">
                         <i class="fi-rr-check"></i> Submit Request
                     </button>
                 </div>
@@ -942,14 +989,55 @@
             }
         });
 
-        // Filter functionality
-        document.getElementById('statusFilter').addEventListener('change', filterTable);
-        document.getElementById('dateFrom').addEventListener('change', filterTable);
-        document.getElementById('dateTo').addEventListener('change', filterTable);
+        // Auto-open modal if there are validation errors
+        @if ($errors->any())
+            document.addEventListener('DOMContentLoaded', function() {
+                openWithdrawalModal();
+            });
+        @endif
 
-        function filterTable() {
-            // Implement filter logic here
-            console.log('Filtering withdrawal requests...');
+        // Form validation
+        const withdrawalForm = document.getElementById('withdrawalForm');
+        const amountInput = document.getElementById('withdrawalAmount');
+        const availableBalance = {{ $availableBalance }};
+
+        if (withdrawalForm) {
+            withdrawalForm.addEventListener('submit', function(e) {
+                const amount = parseFloat(amountInput.value);
+
+                if (amount < 500) {
+                    e.preventDefault();
+                    alert('Minimum withdrawal amount is ৳500');
+                    amountInput.focus();
+                    return false;
+                }
+
+                if (amount > availableBalance) {
+                    e.preventDefault();
+                    alert('Insufficient balance. Available: ৳' + availableBalance.toFixed(2));
+                    amountInput.focus();
+                    return false;
+                }
+            });
+
+            // Real-time validation
+            if (amountInput) {
+                amountInput.addEventListener('input', function() {
+                    const amount = parseFloat(this.value);
+                    const submitBtn = document.getElementById('submitWithdrawalBtn');
+
+                    if (amount < 500) {
+                        this.style.borderColor = 'var(--danger-color)';
+                        if (submitBtn) submitBtn.disabled = true;
+                    } else if (amount > availableBalance) {
+                        this.style.borderColor = 'var(--danger-color)';
+                        if (submitBtn) submitBtn.disabled = true;
+                    } else {
+                        this.style.borderColor = 'var(--success-color)';
+                        if (submitBtn) submitBtn.disabled = false;
+                    }
+                });
+            }
         }
     </script>
 @endsection

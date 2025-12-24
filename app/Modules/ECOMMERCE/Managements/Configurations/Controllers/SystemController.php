@@ -97,6 +97,8 @@ class SystemController extends Controller
             ]);
         }
 
+
+
         EmailConfigure::where('slug', $request->email_config_slug)->update([
             'host' => $request->host,
             'port' => $request->port,
