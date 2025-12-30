@@ -35,6 +35,10 @@ class Order extends Model
     const PAYMENT_BKASH = 2;
     const PAYMENT_NAGAD = 3;
     const PAYMENT_CARD = 4;
+    const PAYMENT_BANK_TRANSFER = 5;
+    const PAYMENT_SSL_COMMERZ = 6;
+    const PAYMENT_PAYPAL = 7;
+    const PAYMENT_STRIPE = 8;
 
     // Payment Status Constants
     const PAYMENT_STATUS_UNPAID = 0;
@@ -42,8 +46,23 @@ class Order extends Model
     const PAYMENT_STATUS_FAILED = 2;
 
     // Delivery Method Constants
-    const DELIVERY_HOME = 1;
-    const DELIVERY_STORE_PICKUP = 2;
+    const DELIVERY_HOME = 1; // HOME_DELIVERY
+    const DELIVERY_STORE_PICKUP = 2; // STORE_PICKUP
+    const DELIVERY_POS_HANDOVER = 3; // POS_HANDOVER
+
+    // Order From Constants
+    const ORDER_FROM_WEB = 1;
+    const ORDER_FROM_APP = 2;
+    const ORDER_FROM_POS = 3;
+    const ORDER_FROM_SOCIAL = 4;
+
+    // Order Source Constants
+    const ORDER_SOURCE_ECOMMERCE = 1;
+    const ORDER_SOURCE_POS = 2;
+
+    // Complete Order Constants
+    const COMPLETE_ORDER_INCOMPLETE = 0; // Address missing
+    const COMPLETE_ORDER_COMPLETE = 1; // Address given
 
     /**
      * Get all order statuses
@@ -97,8 +116,25 @@ class Order extends Model
             self::PAYMENT_BKASH => 'bKash',
             self::PAYMENT_NAGAD => 'Nagad',
             self::PAYMENT_CARD => 'Card',
+            self::PAYMENT_BANK_TRANSFER => 'Bank Transfer',
+            self::PAYMENT_SSL_COMMERZ => 'SSLCommerz',
+            self::PAYMENT_PAYPAL => 'PayPal',
+            self::PAYMENT_STRIPE => 'Stripe',
         ];
         return $methods[$this->payment_method] ?? 'N/A';
+    }
+
+    /**
+     * Get delivery method name
+     */
+    public function getDeliveryMethodNameAttribute()
+    {
+        $methods = [
+            self::DELIVERY_HOME => 'Home Delivery',
+            self::DELIVERY_STORE_PICKUP => 'Store Pickup',
+            self::DELIVERY_POS_HANDOVER => 'POS Handover',
+        ];
+        return $methods[$this->delivery_method] ?? 'N/A';
     }
 
     /**

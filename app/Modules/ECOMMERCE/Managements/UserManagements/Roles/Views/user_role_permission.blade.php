@@ -104,7 +104,7 @@
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('view/user/role/permission') }}",
+            ajax: "{{ route('ViewUserRolePermission') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'

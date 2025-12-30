@@ -101,7 +101,7 @@
             stateSave: true,
             pageLength: 15,
             lengthMenu: [15, 25, 50, 100],
-            ajax: "{{ url('view/approved/orders') }}",
+            ajax: "{{ route('ViewApprovedOrders') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -161,7 +161,7 @@
             if (confirm("Are You sure to Cancel !")) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('cancel/order') }}" + '/' + slug,
+                    url: "{{ route('CancelOrder', '') }}" + '/' + slug,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Order has been Cancelled", "Cancelled Successfully");
@@ -178,7 +178,7 @@
             if (confirm("Are You sure to In Transit !")) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('intransit/order') }}" + '/' + slug,
+                    url: "{{ route('IntransitOrder', '') }}" + '/' + slug,
                     success: function(data) {
                         table.draw(false);
                         toastr.success("Order has been Approved", "Approved Successfully");

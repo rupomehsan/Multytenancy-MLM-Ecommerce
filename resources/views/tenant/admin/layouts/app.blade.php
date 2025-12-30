@@ -121,6 +121,28 @@
 
 
         }
+
+        /* Collapsed sidebar styles */
+        .sidebar-collapsed .vertical-menu {
+            width: 0 !important;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .sidebar-collapsed .main-content {
+            margin-left: 0 !important;
+        }
+
+        .sidebar-collapsed #page-topbar {
+            left: 0;
+        }
+
+        /* Smooth transitions for sidebar collapse */
+        .vertical-menu,
+        .main-content,
+        #page-topbar {
+            transition: all 0.3s ease-in-out;
+        }
     </style>
     <style>
         /* Override any large-screen padding that pushes topbar content — keep it fixed at 0 */
@@ -229,22 +251,72 @@
     <script src="{{ url('tenant/admin/assets') }}/js/search_product_ajax.js"></script>
 
     <script>
-        const handleScroll = () => {
-            var Sidebar = document.querySelector('.simplebar-content-wrapper')
-            var scrollPosition = Sidebar.scrollTop;
-            localStorage.setItem('scroll_nav', scrollPosition);
-        }
-        document.addEventListener('DOMContentLoaded', function() {
-            var Sidebar = document.querySelector('.simplebar-content-wrapper');
-            const Location = window.location.pathname;
-            Sidebar.onscroll = handleScroll;
+        // Auto-scroll to active menu item
+        function scrollToActiveMenuItem() {
+            const sidebarContainer = document.querySelector('.simplebar-content-wrapper');
+            if (!sidebarContainer) return;
 
-            let scroll_nav = localStorage.getItem('scroll_nav');
-            if (scroll_nav && Location != '/dashboard') {
-                Sidebar.scrollTop = scroll_nav;
-            } else {
-                Sidebar.scrollTop = 0;
-                localStorage.setItem('scroll_nav', 0);
+            // Find the active menu item - check multiple possible selectors
+            let activeMenuItem = document.querySelector('#side-menu a.active');
+
+            // If not found, check for active parent menu item
+            if (!activeMenuItem) {
+                const activeLi = document.querySelector('#side-menu li.mm-active');
+                if (activeLi) {
+                    activeMenuItem = activeLi.querySelector('a');
+                }
+            }
+
+            // If still not found, check for sub-menu active items
+            if (!activeMenuItem) {
+                activeMenuItem = document.querySelector('#side-menu .sub-menu a.active');
+            }
+
+            if (activeMenuItem) {
+                // Get the actual offset relative to the scrollable container
+                const menuRect = activeMenuItem.getBoundingClientRect();
+                const containerRect = sidebarContainer.getBoundingClientRect();
+                const currentScroll = sidebarContainer.scrollTop;
+
+                // Calculate offset from top of container
+                const relativeTop = menuRect.top - containerRect.top + currentScroll;
+                const containerHeight = sidebarContainer.clientHeight;
+                const itemHeight = activeMenuItem.offsetHeight;
+
+                // Center the active item in the viewport
+                const scrollPosition = relativeTop - (containerHeight / 2) + (itemHeight / 2);
+
+                // Scroll to position
+                sidebarContainer.scrollTo({
+                    top: Math.max(0, scrollPosition),
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const Sidebar = document.querySelector('.simplebar-content-wrapper');
+            if (!Sidebar) return;
+
+            // Scroll to active menu item after page loads and menu initializes
+            // Use multiple timeouts to ensure it works even with slow initialization
+            setTimeout(() => scrollToActiveMenuItem(), 100);
+            setTimeout(() => scrollToActiveMenuItem(), 500);
+            setTimeout(() => scrollToActiveMenuItem(), 1000);
+
+            // Also monitor for menu class changes (when expanding/collapsing)
+            const observer = new MutationObserver(() => {
+                setTimeout(() => scrollToActiveMenuItem(), 100);
+            });
+
+            const sideMenu = document.getElementById('side-menu');
+            if (sideMenu) {
+                observer.observe(sideMenu, {
+                    attributes: true,
+                    attributeFilter: ['class'],
+                    subtree: true,
+                    childList: true
+                });
             }
         });
 

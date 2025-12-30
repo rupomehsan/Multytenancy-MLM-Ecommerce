@@ -51,7 +51,7 @@
                     <h4 class="card-title mb-3">Product List</h4>
                     <div class="table-responsive">
                         <label id="customFilter">
-                            <a href="{{ url('/add/new/product') }}" class="btn btn-primary btn-sm"
+                            <a href="{{ route('AddNewProduct') }}" class="btn btn-primary btn-sm"
                                 style="margin-left: 5px"><b><i class="fas fa-plus"></i> Add New Product</b></a>
                         </label>
                         <table class="table table-bordered mb-0 data-table">
@@ -107,7 +107,7 @@
             processing: true,
             serverSide: true,
             stateSave: true,
-            ajax: "{{ url('view/all/product') }}",
+            ajax: "{{ route('ViewAllProducts') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -199,7 +199,7 @@
                 }
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/product') }}" + '/' + slug,
+                    url: "{{ route('DeleteProduct', '') }}" + '/' + slug,
                     success: function(data) {
                         if (data.data == 1) {
                             table.draw(false);

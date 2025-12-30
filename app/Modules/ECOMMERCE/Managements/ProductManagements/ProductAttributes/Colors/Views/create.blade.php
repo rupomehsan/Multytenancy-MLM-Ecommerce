@@ -25,7 +25,7 @@
                     </div>
 
                     <form class="needs-validation p-4 shadow rounded bg-white" method="POST"
-                        action="{{ url('/save/new/product-color') }}" enctype="multipart/form-data" novalidate>
+                        action="{{ route('SaveNewProductColor') }}" enctype="multipart/form-data" novalidate>
                         @csrf
 
                         <h4 class="mb-4">Add New Product Color</h4>

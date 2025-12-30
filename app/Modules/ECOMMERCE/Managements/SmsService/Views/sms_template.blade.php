@@ -137,7 +137,7 @@
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('/view/sms/templates') }}",
+            ajax: "{{ route('ViewSmsTemplates') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'

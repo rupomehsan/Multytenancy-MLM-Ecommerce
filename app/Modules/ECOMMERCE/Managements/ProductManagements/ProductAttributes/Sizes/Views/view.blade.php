@@ -126,7 +126,7 @@
                 // Append the Rearrange Category button to the search input area
                 var searchBox = this.api().table().container().querySelector('.dataTables_filter');
                 var rearrangeButton = $(
-                    '<a href="{{ url('/add/new/product-size') }}" class="btn btn-success btn-sm" style="margin-left: 5px;"><b><i class="fas fa-plus"></i> Add Attribute</b></a>'
+                    '<a href="{{ route('AddNewProductSize') }}" class="btn btn-success btn-sm" style="margin-left: 5px;"><b><i class="fas fa-plus"></i> Add Attribute</b></a>'
                 );
                 $(searchBox).append(rearrangeButton);
             }

@@ -76,7 +76,7 @@
                     <h4 class="card-title mb-3">View All Customer Source Types</h4>
                     <div class="table-responsive">
                         <label id="customFilter">
-                            <a href="{{ url('/add/new/supplier-source') }}" class="btn btn-primary btn-sm"
+                            <a href="{{ route('AddNewSupplierSource') }}" class="btn btn-primary btn-sm"
                                 style="margin-left: 5px"><b><i class="fas fa-plus"></i> Add New Type</b></a>
                         </label>
                         <table class="table table-bordered mb-0 data-table">
@@ -180,7 +180,7 @@
                 }
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/supplier-source') }}" + '/' + supplierSourceSlug,
+                    url: "{{ route('DeleteSupplierSource', '') }}" + '/' + supplierSourceSlug,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Supplier source type has been Deleted", "Deleted Successfully");

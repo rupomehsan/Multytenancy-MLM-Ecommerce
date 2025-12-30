@@ -80,7 +80,7 @@
             processing: true,
             serverSide: true,
             stateSave: true,
-            ajax: "{{ url('/view/all/side-banner') }}",
+            ajax: "{{ route('ViewAllSideBanners') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'

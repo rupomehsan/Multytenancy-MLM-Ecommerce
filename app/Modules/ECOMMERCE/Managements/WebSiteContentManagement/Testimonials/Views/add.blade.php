@@ -117,7 +117,7 @@
                 var subCategoryId = this.value;
                 $("#childcategory_id").html('');
                 $.ajax({
-                    url: "{{ url('/subcategory/wise/childcategory') }}",
+                    url: "{{ route('SubcategoryWiseChildcategory') }}",
                     type: "POST",
                     data: {
                         subcategory_id: subCategoryId,

@@ -2,15 +2,13 @@
 
 namespace App\Modules\CRM\Managements\SubscribedUsers\Controllers;
 
-use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
-use App\Mail\ContactRequestReply;
-use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
-
-use App\Modules\CRM\Managements\SubscribedUsers\Database\Models\SubscribedUsers;
-use App\Modules\CRM\Managements\SubscribedUsers\Database\Models\SubscribedUsersExcel;
+use App\Modules\CRM\Managements\SubscribedUsers\Actions\ViewAllSubscribedUsers;
+use App\Modules\CRM\Managements\SubscribedUsers\Actions\DeleteSubscribedUsers;
+use App\Modules\CRM\Managements\SubscribedUsers\Actions\DownloadSubscribedUsersExcel;
+use App\Modules\CRM\Managements\SubscribedUsers\Actions\GetSubscribedUsersForEmail;
+use App\Modules\CRM\Managements\SubscribedUsers\Actions\SendBulkEmail;
 
 class SubscribedUsersController extends Controller
 {
@@ -22,52 +20,36 @@ class SubscribedUsersController extends Controller
     public function viewAllSubscribedUsers(Request $request)
     {
         if ($request->ajax()) {
-
-            $data = SubscribedUsers::orderBy('id', 'desc')->get();
-
-            return Datatables::of($data)
-                ->editColumn('created_at', function ($data) {
-                    return date('l jS \o\f F Y h:i:s A', strtotime($data->created_at));
-                })
-                ->addIndexColumn()
-                ->addColumn('action', function ($data) {
-                    $btn = ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->id . '" data-original-title="Delete" class="btn-sm btn-danger rounded deleteBtn"><i class="fas fa-trash-alt"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+            return ViewAllSubscribedUsers::execute($request);
         }
         return view('subscribed_users');
     }
 
     public function deleteSubscribedUsers($id)
     {
-        SubscribedUsers::where('id', $id)->delete();
-        return response()->json(['success' => 'Deleted successfully.']);
+        $result = DeleteSubscribedUsers::execute($id);
+        return response()->json(['success' => $result['message']]);
     }
 
     public function downloadSubscribedUsersExcel()
     {
-        return Excel::download(new SubscribedUsersExcel, 'subscribed_users.xlsx');
+        return DownloadSubscribedUsersExcel::execute();
     }
 
     public function sendEmailPage()
     {
-        $subscribedUsers = SubscribedUsers::orderBy('id', 'desc')->get();
-        return view('send_email_subscribed_users', compact('subscribedUsers'));
+        $result = GetSubscribedUsersForEmail::execute();
+        return view('send_email_subscribed_users', compact('subscribedUsers'))->with($result);
     }
 
     public function sendBulkEmail(Request $request)
     {
-        $emails = $request->input('emails', []);
-        $subject = $request->input('subject');
-        $message = $request->input('message');
-        if (empty($emails) || !$subject || !$message) {
-            return response()->json(['error' => 'Please select at least one email and fill subject/message.'], 422);
+        $result = SendBulkEmail::execute($request);
+        
+        if ($result['status'] == 'error') {
+            return response()->json(['error' => $result['message']], $result['code']);
         }
-        foreach ($emails as $email) {
-            Mail::to($email)->queue(new ContactRequestReply($subject, $message));
-        }
-        return response()->json(['success' => 'Emails are being sent via queue.']);
+        
+        return response()->json(['success' => $result['message']]);
     }
 }

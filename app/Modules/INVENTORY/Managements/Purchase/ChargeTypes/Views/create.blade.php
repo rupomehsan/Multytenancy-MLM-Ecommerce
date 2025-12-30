@@ -25,7 +25,7 @@
                         </a>
                     </div>
 
-                    <form class="needs-validation" method="POST" action="{{ url('save/new/purchase-product/charge') }}"
+                    <form class="needs-validation" method="POST" action="{{ route('SaveNewPurchaseProductCharge') }}"
                         enctype="multipart/form-data">
                         @csrf
 

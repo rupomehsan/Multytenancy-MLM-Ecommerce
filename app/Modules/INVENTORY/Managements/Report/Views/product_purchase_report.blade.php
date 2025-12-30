@@ -94,7 +94,7 @@
                     start_date: startDate,
                     end_date: endDate,
                 },
-                url: "{{ url('generate/product/purchase/report') }}",
+                url: "{{ route('generateProductPurchaseReport') }}",
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {

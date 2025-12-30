@@ -11,31 +11,16 @@
     {{-- Dashboard --}}
     {{-- Dashboard --}}
     <li>
-        <a href="{{ url('/admin/dashboard') }}" data-active-paths="{{ url('/admin/dashboard') }}">
+        <a href="{{ route('admin.dashboard') }}" data-active-paths="{{ route('admin.dashboard') }}">
             <i class="feather-shopping-cart"></i>
-            <span> E-Dashboard</span>
+            <span>Dashboard</span>
         </a>
     </li>
+
+
+
     <li>
-        <a href="{{ url('/crm-home') }}" data-active-paths="{{ url('/crm-home') }}">
-            <i class="feather-user-check"></i>
-            <span> CRM Dashboard</span>
-        </a>
-    </li>
-    <li>
-        <a href="{{ url('/accounts-home') }}" data-active-paths="{{ url('/accounts-home') }}">
-            <i class="feather-dollar-sign"></i>
-            <span> Accounts Dashboard</span>
-        </a>
-    </li>
-    <li>
-        <a href="{{ url('/inventory-home') }}" data-active-paths="{{ url('/inventory-home') }}">
-            <i class="feather-box"></i>
-            <span> Inventory Dashboard</span>
-        </a>
-    </li>
-    <li>
-        <a href="{{ url('/create/new/order') }}" data-active-paths="{{ url('/create/new/order') }}">
+        <a href="{{ route('CreateNewOrder') }}" data-active-paths="{{ route('CreateNewOrder') }}">
             <i class="feather-credit-card"></i>
             <span> POS</span>
         </a>
@@ -51,7 +36,7 @@
             <i class="feather-home"></i> <span>MLM Dashboard</span></a>
     </li>
     <li>
-        <a href="javascript: void(0);" class="has-arrow">
+        <a href="javascript:void(0);" class="has-arrow">
             <i class="feather-percent"></i>
             <span>Commissions</span>
         </a>
@@ -67,7 +52,7 @@
         </ul>
     </li>
     <li>
-        <a href="javascript: void(0);" class="has-arrow">
+        <a href="javascript:void(0);" class="has-arrow">
             <i class="feather-activity"></i>
             <span>Referrals</span>
         </a>
@@ -91,7 +76,7 @@
         </ul>
     </li>
     <li>
-        <a href="javascript: void(0);" class="has-arrow">
+        <a href="javascript:void(0);" class="has-arrow">
             <i class="feather-credit-card"></i>
             <span>Wallet</span>
         </a>
@@ -108,7 +93,7 @@
     </li>
 
     <li>
-        <a href="javascript: void(0);" class="has-arrow">
+        <a href="javascript:void(0);" class="has-arrow">
             <i class="feather-arrow-down-circle"></i>
             <span>Withdrawals</span>
         </a>
@@ -129,7 +114,7 @@
     </li>
 
     {{-- <li>
-        <a href="javascript: void(0);" class="has-arrow">
+        <a  onclick="return false;" class="has-arrow">
             <i class="feather-bar-chart-2"></i> <span>MLM Reports</span>
         </a>
         <ul class="sub-menu" aria-expanded="false">
@@ -177,45 +162,45 @@
 
     <li class="menu-title" style="color: khaki; text-shadow: 1px 1px 2px black;">E-commerce Modules</li>
     <li>
-        <a href="javascript: void(0);" class="has-arrow">
+        <a href="javascript:void(0);" class="has-arrow">
             <i class="feather-settings"></i>
             <span>Config</span>
         </a>
         <ul class="sub-menu" aria-expanded="false">
             <li>
-                <a href="{{ url('/config/setup') }}" data-active-paths="{{ url('/config/setup') }}">Setup Your
+                <a href="{{ route('ConfigSetup') }}" data-active-paths="{{ route('ConfigSetup') }}">Setup
+                    Your
                     Config</a>
             </li>
 
             {{-- tech industry --}}
             {{-- @if (DB::table('config_setups')->where('code', 'storage')->first())
-            <li><a href="{{ url('/view/all/storages') }}">Storage</a></li>
+            <li><a href="{{ route('ViewAllStorages') }}">Storage</a></li>
             @endif
             @if (DB::table('config_setups')->where('code', 'sim')->first())
-            <li><a href="{{ url('/view/all/sims') }}">SIM Type</a></li>
+            <li><a href="{{ route('ViewAllSims') }}">SIM Type</a></li>
             @endif
             @if (DB::table('config_setups')->where('code', 'device_condition')->first())
-            <li><a href="{{ url('/view/all/device/conditions') }}">Device Condition</a></li>
+            <li><a href="{{ route('ViewAllDeviceConditions') }}">Device Condition</a></li>
             @endif --}}
 
             {{-- <li>
-                <a href="javascript: void(0);" class="has-arrow"><i class="fas fa-sms"></i><span>SMS Service</span></a>
+                <a  onclick="return false;" class="has-arrow"><i class="fas fa-sms"></i><span>SMS Service</span></a>
                 <ul class="sub-menu" aria-expanded="false">
-                    <li><a href="{{ url('/view/sms/templates') }}">SMS Templates</a></li>
-                    <li><a href="{{ url('/send/sms/page') }}">Send SMS</a></li>
-                    <li><a href="{{ url('/view/sms/history') }}">SMS History</a></li>
+                    <li><a href="{{ route('ViewSmsTemplates') }}">SMS Templates</a></li>
+                    <li><a href="{{ route('SendSmsPage') }}">Send SMS</a></li>
+                    <li><a href="{{ route('ViewSmsHistory') }}">SMS History</a></li>
                 </ul>
             </li> --}}
 
             <li>
-                <a href="{{ url('/view/email/credential') }}" data-active-paths="{{ url('/view/email/credential') }}">
+                <a href="{{ route('ViewEmailCredentials') }}" data-active-paths="{{ route('ViewEmailCredentials') }}">
                     Email Configure (SMTP)
                 </a>
             </li>
-            {{-- <li><a href="{{ url('/view/email/templates') }}">Email Templates</a></li> --}}
-            {{-- <li><a href="{{ url('/setup/sms/gateways') }}">SMS Gateway</a></li> --}}
-            <li><a href="{{ url('/setup/payment/gateways') }}"
-                    data-active-paths="{{ url('/setup/payment/gateways') }}">
+            {{-- <li><a href="{{ url('/admin/view/email/templates') }}">Email Templates</a></li> --}}
+            {{-- <li><a href="{{ route('SetupSmsGateways') }}">SMS Gateway</a></li> --}}
+            <li><a href="{{ route('ViewPaymentGateways') }}" data-active-paths="{{ route('ViewPaymentGateways') }}">
                     Payment Gateway
                 </a>
             </li>
@@ -223,17 +208,17 @@
         </ul>
     </li>
     <li>
-        <a href="javascript: void(0);" class="has-arrow"><i class="feather-box"></i><span>Product
+        <a href="javascript:void(0);" class="has-arrow"><i class="feather-box"></i><span>Product
                 Management</span></a>
         <ul class="sub-menu" aria-expanded="false">
 
             {{-- Section: Products (Category/Subcategory/Child) --}}
             <li>
-                <a href="javascript: void(0);" class="has-arrow">Product Categories</a>
+                <a href="javascript:void(0);" class="has-arrow">Product Categories</a>
                 <ul class="sub-menu" aria-expanded="false">
                     <li>
-                        <a href="{{ url('/view/all/category') }}"
-                            data-active-paths="{{ url('/view/all/category') }},{{ url('/add/new/category') }},{{ url('/edit/category/*') }},{{ url('/rearrange/category') }}">
+                        <a href="{{ route('ViewAllCategory') }}"
+                            data-active-paths="{{ route('ViewAllCategory') }},{{ route('AddNewCategory') }},{{ url('/admin/edit/category/*') }},{{ route('RearrangeCategory') }}">
                             <i class="feather-sliders"></i>
                             <span>Category</span>
                             <span style="color:lightgreen"
@@ -241,8 +226,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url('/view/all/subcategory') }}"
-                            data-active-paths="{{ url('/view/all/subcategory') }},{{ url('/add/new/subcategory') }},{{ url('/edit/subcategory/*') }},{{ url('/rearrange/subcategory') }}">
+                        <a href="{{ route('ViewAllSubcategory') }}"
+                            data-active-paths="{{ route('ViewAllSubcategory') }},{{ route('AddNewSubcategory') }},{{ url('/admin/edit/subcategory/*') }},{{ route('RearrangeSubcategory') }}">
                             <i class="feather-command"></i>
                             <span>Subcategory</span>
                             <span style="color:lightgreen"
@@ -250,8 +235,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url('/view/all/childcategory') }}"
-                            data-active-paths="{{ url('/view/all/childcategory') }},{{ url('/add/new/childcategory') }},{{ url('/edit/childcategory/*') }},{{ url('/rearrange/childcategory') }}">
+                        <a href="{{ route('ViewAllChildcategory') }}"
+                            data-active-paths="{{ route('ViewAllChildcategory') }},{{ route('AddNewChildcategory') }},{{ url('/admin/edit/childcategory/*') }}">
                             <i class="feather-git-pull-request"></i>
                             <span>Child Category</span>
                             <span style="color:lightgreen"
@@ -263,13 +248,13 @@
 
             {{-- Section: Attributes --}}
             <li>
-                <a href="javascript: void(0);" class="has-arrow">Product Attributes</a>
+                <a href="javascript:void(0);" class="has-arrow">Product Attributes</a>
                 <ul class="sub-menu" aria-expanded="false">
                     {{-- Fashion Industry / Sizes --}}
                     @if (DB::table('config_setups')->where('code', 'product_size')->first())
                         <li>
-                            <a href="{{ url('/view/all/sizes') }}"
-                                data-active-paths="{{ url('/view/all/sizes') }},{{ url('/rearrange/size') }}">Product
+                            <a href="{{ route('ViewAllSizes') }}"
+                                data-active-paths="{{ route('ViewAllSizes') }},{{ route('RearrangeSize') }}">Product
                                 Sizes</a>
                         </li>
                     @endif
@@ -277,56 +262,56 @@
                     {{-- Common Attributes --}}
                     @if (DB::table('config_setups')->where('code', 'color')->first())
                         <li>
-                            <a href="{{ url('/view/all/colors') }}"
-                                data-active-paths="{{ url('/view/all/colors') }}">Product Colors</a>
+                            <a href="{{ route('ViewAllColors') }}"
+                                data-active-paths="{{ route('ViewAllColors') }}">Product Colors</a>
                         </li>
                     @endif
 
                     @if (DB::table('config_setups')->where('code', 'measurement_unit')->first())
                         <li>
-                            <a href="{{ url('/view/all/units') }}"
-                                data-active-paths="{{ url('/view/all/units') }}">Measurement Units</a>
+                            <a href="{{ route('ViewAllUnits') }}"
+                                data-active-paths="{{ route('ViewAllUnits') }}">Measurement Units</a>
                         </li>
                     @endif
 
                     <li>
-                        <a href="{{ url('/view/all/brands') }}"
-                            data-active-paths="{{ url('/view/all/brands') }},{{ url('/add/new/brand') }},{{ url('/rearrange/brands') }},{{ url('edit/brand/*') }}">Product
+                        <a href="{{ route('ViewAllBrands') }}"
+                            data-active-paths="{{ route('ViewAllBrands') }},{{ route('AddNewBrand') }},{{ route('RearrangeBrands') }},{{ url('edit/brand/*') }}">Product
                             Brands</a>
                     </li>
                     <li>
-                        <a href="{{ url('/view/all/models') }}"
-                            data-active-paths="{{ url('/view/all/models') }}, {{ url('add/new/model') }},{{ url('edit/model/*') }}">Models
+                        <a href="{{ route('ViewAllModels') }}"
+                            data-active-paths="{{ route('ViewAllModels') }}, {{ url('add/new/model') }},{{ url('edit/model/*') }}">Models
                             of Brand</a>
                     </li>
                     <li>
-                        <a href="{{ url('/view/all/flags') }}"
-                            data-active-paths="{{ url('/view/all/flags') }}">Product Flags</a>
+                        <a href="{{ route('ViewAllFlags') }}"
+                            data-active-paths="{{ route('ViewAllFlags') }}">Product Flags</a>
                     </li>
                 </ul>
             </li>
 
             {{-- Section: Manage Products (listing, reviews, Q/A) --}}
             <li>
-                <a href="javascript: void(0);" class="has-arrow">Manage Products</a>
+                <a href="javascript:void(0);" class="has-arrow">Manage Products</a>
                 <ul class="sub-menu" aria-expanded="false">
                     <li>
-                        <a href="{{ url('/view/all/product') }}"
-                            data-active-paths="{{ url('/view/all/product') }},{{ url('/add/new/product') }},{{ url('/edit/product/*') }},{{ url('/rearrange/product') }}">
+                        <a href="{{ route('ViewAllProducts') }}"
+                            data-active-paths="{{ route('ViewAllProducts') }},{{ route('AddNewProduct') }},{{ url('/admin/edit/product/*') }}">
                             View All Products
                             <span style="color:lightgreen"
                                 title="Total Products">({{ DB::table('products')->where('is_package', false)->count() }})</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url('/view/product/reviews') }}"
-                            data-active-paths="{{ url('/view/product/reviews') }}">Products's Review
+                        <a href="{{ route('ViewAllProductReviews') }}"
+                            data-active-paths="{{ route('ViewAllProductReviews') }}">Products's Review
                             <span style="color:goldenrod" title="Indicate Pending Review">(@php echo DB::table('product_reviews')->where('status', 0)->count(); @endphp)</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url('/view/product/question/answer') }}"
-                            data-active-paths="{{ url('/view/product/question/answer') }}">Product Ques/Ans
+                        <a href="{{ route('ViewAllQuestionAnswer') }}"
+                            data-active-paths="{{ route('ViewAllQuestionAnswer') }}">Product Ques/Ans
                             <span style="color:goldenrod"
                                 title="Indicate Unanswered Questions">(@php
                                     echo DB::table('product_question_answers')
@@ -338,8 +323,8 @@
                     </li>
 
                     <li>
-                        <a href="{{ url('/package-products') }}"
-                            data-active-paths="{{ url('/package-products') }}, {{ url('/package-products/create') }}, {{ url('/package-products/*/edit') }}, {{ url('/package-products/*/manage-items') }}">
+                        <a href="{{ route('PackageProducts.Index') }}"
+                            data-active-paths="{{ route('PackageProducts.Index') }}, {{ route('PackageProducts.Create') }}, {{ url('/admin/package-products/*/edit') }}, {{ url('/admin/package-products/*/manage-items') }}">
                             <i class="feather-package"></i> Package Products
                             <span style="color:lightgreen" title="Total Package Products">
                                 ({{ DB::table('products')->where('is_package', true)->count() }})
@@ -355,21 +340,21 @@
 
 
     <li>
-        <a href="javascript: void(0);" class="has-arrow">
+        <a href="javascript:void(0);" class="has-arrow">
             <i class="feather-shopping-cart"></i>
             <span>Order Management</span>
         </a>
         <ul class="sub-menu" aria-expanded="false">
             <li>
-                <a style="color: white !important;" href="{{ url('/view/orders') }}"
-                    data-active-paths="{{ url('/view/orders') }}, {{ url('create/new/order') }},{{ url('order/details/*') }}">
+                <a style="color: white !important;" href="{{ route('ViewAllOrders') }}"
+                    data-active-paths="{{ route('ViewAllOrders') }}, {{ url('create/new/order') }},{{ url('order/details/*') }}">
                     All Orders
                     (@php echo DB::table('orders')->count(); @endphp)
                 </a>
             </li>
             <li>
-                <a style="color: rgb(126, 125, 125) !important;" href="{{ url('/view/pending/orders') }}"
-                    data-active-paths="{{ url('/view/pending/orders') }}, {{ url('order/edit/*') }}">
+                <a style="color: rgb(126, 125, 125) !important;" href="{{ route('ViewPendigOrders') }}"
+                    data-active-paths="{{ route('ViewPendigOrders') }}, {{ url('order/edit/*') }}">
                     Pending Orders
                     (@php
                         echo DB::table('orders')->where('order_status', Order::STATUS_PENDING)->count();
@@ -377,8 +362,8 @@
                 </a>
             </li>
             <li>
-                <a class="text-primary" href="{{ url('/view/approved/orders') }}"
-                    data-active-paths="{{ url('/view/approved/orders') }}">
+                <a class="text-primary" href="{{ route('ViewApprovedOrders') }}"
+                    data-active-paths="{{ route('ViewApprovedOrders') }}">
                     Approved Orders
                     (@php
                         echo DB::table('orders')->where('order_status', Order::STATUS_APPROVED)->count();
@@ -386,8 +371,8 @@
                 </a>
             </li>
             <li>
-                <a style="color: wheat !important;" href="{{ url('/view/dispatch/orders') }}"
-                    data-active-paths="{{ url('/view/dispatch/orders') }}">
+                <a style="color: wheat !important;" href="{{ route('viewDispatchOrders') }}"
+                    data-active-paths="{{ route('viewDispatchOrders') }}">
                     Dispatch Orders
                     (@php
                         echo DB::table('orders')->where('order_status', Order::STATUS_DISPATCH)->count();
@@ -395,8 +380,8 @@
                 </a>
             </li>
             <li>
-                <a style="color: violet !important;" href="{{ url('/view/intransit/orders') }}"
-                    data-active-paths="{{ url('/view/intransit/orders') }}">
+                <a style="color: violet !important;" href="{{ route('ViewIntransitOrders') }}"
+                    data-active-paths="{{ route('ViewIntransitOrders') }}">
                     Intransit Orders
                     (@php
                         echo DB::table('orders')->where('order_status', Order::STATUS_INTRANSIT)->count();
@@ -404,8 +389,8 @@
                 </a>
             </li>
             <li>
-                <a class="text-warning" href="{{ url('/view/cancelled/orders') }}"
-                    data-active-paths="{{ url('/view/cancelled/orders') }}">
+                <a class="text-warning" href="{{ route('ViewCancelledOrders') }}"
+                    data-active-paths="{{ route('ViewCancelledOrders') }}">
                     Cancelled Orders
                     (@php
                         echo DB::table('orders')->where('order_status', Order::STATUS_CANCELLED)->count();
@@ -413,8 +398,8 @@
                 </a>
             </li>
             <li>
-                <a style="color: #0c0 !important;" href="{{ url('/view/delivered/orders') }}"
-                    data-active-paths="{{ url('/view/delivered/orders') }}">
+                <a style="color: #0c0 !important;" href="{{ route('ViewDeliveredOrders') }}"
+                    data-active-paths="{{ route('ViewDeliveredOrders') }}">
                     Delivered Orders
                     (@php
                         echo DB::table('orders')->where('order_status', Order::STATUS_DELIVERED)->count();
@@ -422,8 +407,8 @@
                 </a>
             </li>
             <li>
-                <a style="color: tomato !important;" href="{{ url('/view/return/orders') }}"
-                    data-active-paths="{{ url('/view/return/orders') }}">
+                <a style="color: tomato !important;" href="{{ route('ViewReturnOrders') }}"
+                    data-active-paths="{{ route('ViewReturnOrders') }}">
                     Return Orders
                     (@php
                         echo DB::table('orders')->where('order_status', Order::STATUS_RETURN)->count();
@@ -450,21 +435,21 @@
         </ul>
     </li>
     {{-- <li>
-        <a href="javascript: void(0);" class="has-arrow"><i class="feather-box"></i><span>Old Purchase
+        <a  onclick="return false;" class="has-arrow"><i class="feather-box"></i><span>Old Purchase
                 Product</span></a>
         <ul class="sub-menu" aria-expanded="false">
-            <li><a href="{{ url('/add/new/product-purchase/quotation') }}">Add Quotation</a></li>
+            <li><a href="{{ route('AddNewPurchaseProductQuotation') }}">Add Quotation</a></li>
             <li>
-                <a href="{{ url('/view/all/product-purchase/quotation') }}">
+                <a href="{{ route('ViewAllPurchaseProductQuotation') }}">
                     All Quotations
                     <span style="color:lightgreen" title="Total Product Quotations">
                         ({{DB::table('product_purchase_quotations')->count()}})
                     </span>
                 </a>
             </li>
-            <li><a href="{{ url('/add/new/product-purchase/order') }}">Add Order</a></li>
+            <li><a href="{{ route('AddNewPurchaseProductOrder') }}">Add Order</a></li>
             <li>
-                <a href="{{ url('/view/all/product-purchase/order') }}">
+                <a href="{{ route('ViewAllPurchaseProductOrder') }}">
                     All Orders
                     <span style="color:lightgreen" title="Total Product Orders">
                         ({{DB::table('product_purchase_orders')->count()}})
@@ -489,8 +474,8 @@
 
     </li>
     <li>
-        <a href="{{ url('/view/all/promo/codes') }}"
-            data-active-paths="{{ url('/view/all/promo/codes') }},{{ url('/add/new/code') }},{{ url('/edit/promo/code/*') }}">
+        <a href="{{ route('ViewAllPromoCodes') }}"
+            data-active-paths="{{ route('ViewAllPromoCodes') }},{{ route('AddPromoCode') }},{{ url('/admin/edit/promo/code/*') }}">
             <i class="feather-gift"></i>
             <span>Promo Codes</span>
             <span style="color:lightgreen" title="Total Products">
@@ -499,24 +484,24 @@
         </a>
     </li>
 
-    {{-- <li><a href="{{ url('/file-manager') }}"><i class="fas fa-folder-open"></i><span>File Manager</span></a></li>
+    {{-- <li><a href="{{ route('FileManager') }}"><i class="fas fa-folder-open"></i><span>File Manager</span></a></li>
     --}}
 
     <li>
-        <a href="javascript: void(0);" class="has-arrow">
+        <a href="javascript:void(0);" class="has-arrow">
             <i class="feather-bell"></i>
             <span>Push Notification</span>
         </a>
         <ul class="sub-menu" aria-expanded="false">
             <li>
-                <a href="{{ url('/send/notification/page') }}"
-                    data-active-paths="{{ url('/send/notification/page') }}">
+                <a href="{{ route('SendNotificationPage') }}"
+                    data-active-paths="{{ route('SendNotificationPage') }}">
                     Send Notification
                 </a>
             </li>
             <li>
-                <a href="{{ url('/view/all/notifications') }}"
-                    data-active-paths="{{ url('/view/all/notifications') }}">
+                <a href="{{ route('ViewAllNotifications') }}"
+                    data-active-paths="{{ route('ViewAllNotifications') }}">
                     Prevoious Notifications
                 </a>
             </li>
@@ -524,35 +509,35 @@
     </li>
 
     <li>
-        <a href="{{ url('/view/customers/wishlist') }}" data-active-paths="{{ url('/view/customers/wishlist') }}">
+        <a href="{{ route('CustomersWishlist') }}" data-active-paths="{{ route('CustomersWishlist') }}">
             <i class="feather-heart"></i>
             <span>Customer's Wishlist</span>
         </a>
     </li>
     <li>
-        <a href="{{ url('/view/delivery/charges') }}" data-active-paths="{{ url('/view/delivery/charges') }}">
+        <a href="{{ route('ViewAllDeliveryCharges') }}" data-active-paths="{{ route('ViewAllDeliveryCharges') }}">
             <i class="feather-truck"></i>
             <span>Delivery Charges</span>
         </a>
     </li>
     <li>
-        <a href="{{ url('/view/upazila/thana') }}" data-active-paths="{{ url('/view/upazila/thana') }}">
+        <a href="{{ route('ViewUpazilaThana') }}" data-active-paths="{{ route('ViewUpazilaThana') }}">
             <i class="dripicons-location"></i>
             <span>Upazila & Thana</span>
         </a>
     </li>
-    <li><a href="{{ url('/view/payment/history') }}" data-active-paths="{{ url('/view/payment/history') }}">
+    <li><a href="{{ route('ViewPaymentHistory') }}" data-active-paths="{{ route('ViewPaymentHistory') }}">
             <i class="feather-dollar-sign"></i>
             <span>Payment History</span>
         </a>
     </li>
 
     <li>
-        <a href="javascript: void(0);" class="has-arrow"><i class="feather-printer"></i><span>Generate
+        <a href="javascript:void(0);" class="has-arrow"><i class="feather-printer"></i><span>Generate
                 Report</span></a>
         <ul class="sub-menu" aria-expanded="false">
             <li>
-                <a href="{{ url('/sales/report') }}" data-active-paths="{{ url('/sales/report') }}">Sales
+                <a href="{{ route('SalesReport') }}" data-active-paths="{{ route('SalesReport') }}">Sales
                     Report</a>
             </li>
         </ul>
@@ -566,8 +551,14 @@
 
     <li class="menu-title" style="color: khaki; text-shadow: 1px 1px 2px black;">Inventory Modules</li>
     <li>
-        <a href="{{ url('/view/all/product-warehouse') }}"
-            data-active-paths="{{ url('/view/all/product-warehouse') }}, {{ url('/add/new/product-warehouse') }}, {{ url('/edit/product-warehouse/*') }}">
+        <a href="{{ route('inventory.home') }}" data-active-paths="{{ route('inventory.home') }}">
+            <i class="feather-box"></i>
+            <span> Inventory Dashboard</span>
+        </a>
+    </li>
+    <li>
+        <a href="{{ route('ViewAllProductWarehouse') }}"
+            data-active-paths="{{ route('ViewAllProductWarehouse') }}, {{ route('AddNewProductWarehouse') }}, {{ url('/admin/edit/product-warehouse/*') }}">
             <i class="feather-box"></i>
             <span>Product Warehouse</span>
             <span style="color:lightgreen" title="Total Product Warehouses">
@@ -576,8 +567,8 @@
         </a>
     </li>
     <li>
-        <a href="{{ url('/view/all/product-warehouse-room') }}"
-            data-active-paths="{{ url('/view/all/product-warehouse-room') }}, {{ url('/add/new/product-warehouse-room') }}, {{ url('/edit/product-warehouse-room/*') }}">
+        <a href="{{ route('ViewAllProductWarehouseRoom') }}"
+            data-active-paths="{{ route('ViewAllProductWarehouseRoom') }}, {{ route('AddNewProductWarehouseRoom') }}, {{ url('/admin/edit/product-warehouse-room/*') }}">
             <i class="feather-box"></i>Warehouse Room
             <span style="color:lightgreen" title="Total Product Warehouse Rooms">
                 ({{ DB::table('product_warehouse_rooms')->count() }})
@@ -585,8 +576,8 @@
         </a>
     </li>
     <li>
-        <a href="{{ url('/view/all/product-warehouse-room-cartoon') }}"
-            data-active-paths="{{ url('/view/all/product-warehouse-room-cartoon') }}, {{ url('/add/new/product-warehouse-room-cartoon') }}, {{ url('/edit/product-warehouse-room-cartoon/*') }}">
+        <a href="{{ route('ViewAllProductWarehouseRoomCartoon') }}"
+            data-active-paths="{{ route('ViewAllProductWarehouseRoomCartoon') }}, {{ route('AddNewProductWarehouseRoomCartoon') }}, {{ url('/admin/edit/product-warehouse-room-cartoon/*') }}">
             <i class="feather-box"></i> Room Cartoon
             <span style="color:lightgreen" title="Total Product Warehouse Room cartoons">
                 ({{ DB::table('product_warehouse_room_cartoons')->count() }})
@@ -594,8 +585,8 @@
         </a>
     </li>
     <li>
-        <a href="{{ url('/view/all/supplier-source') }}"
-            data-active-paths="{{ url('/view/all/supplier-source') }}, {{ url('/add/new/supplier-source') }}, {{ url('/edit/supplier-source/*') }}">
+        <a href="{{ route('ViewAllSupplierSource') }}"
+            data-active-paths="{{ route('ViewAllSupplierSource') }}, {{ route('AddNewSupplierSource') }}, {{ url('/admin/edit/supplier-source/*') }}">
             <i class="feather-box"></i> Supplier Src Type
             <span style="color:lightgreen" title="Total CS Types">
                 ({{ DB::table('supplier_source_types')->count() }})
@@ -604,8 +595,8 @@
     </li>
 
     <li>
-        <a href="{{ url('/view/all/product-supplier') }}"
-            data-active-paths="{{ url('/view/all/product-supplier') }}, {{ url('/add/new/product-supplier') }}, {{ url('/edit/product-supplier/*') }}">
+        <a href="{{ route('ViewAllProductSupplier') }}"
+            data-active-paths="{{ route('ViewAllProductSupplier') }}, {{ route('AddNewProductSupplier') }}, {{ url('/admin/edit/product-supplier/*') }}">
             <i class="feather-box"></i> Product Suppliers
             <span style="color:lightgreen" title="Total Product Suppliers">
                 ({{ DB::table('product_suppliers')->count() }})
@@ -615,31 +606,31 @@
 
 
     <li>
-        <a href="javascript: void(0);" class="has-arrow">
+        <a href="javascript:void(0);" class="has-arrow">
             <i class="feather-box"></i>
             <span>Product Purchase</span>
         </a>
         <ul class="sub-menu" aria-expanded="false">
             <li>
-                <a href="{{ url('/view/all/purchase-product/charge') }}"
-                    data-active-paths="{{ url('/view/all/purchase-product/charge') }}, {{ url('/add/new/purchase-product/charge') }}, {{ url('/edit/purchase-product/charge/*') }}">
+                <a href="{{ route('ViewAllPurchaseProductCharge') }}"
+                    data-active-paths="{{ route('ViewAllPurchaseProductCharge') }}, {{ route('AddNewPurchaseProductCharge') }}, {{ url('/admin/edit/purchase-product/charge/*') }}">
                     Other Charge Types
                 </a>
             </li>
             <li>
-                <a href="{{ url('/view/all/purchase-product/quotation') }}"
-                    data-active-paths="{{ url('/view/all/purchase-product/quotation') }}, {{ url('/add/new/purchase-product/quotation') }}, {{ url('/edit/purchase-product/quotation/*') }}, {{ url('edit/purchase-product/sales/quotation/*') }}">
+                <a href="{{ route('ViewAllPurchaseProductQuotation') }}"
+                    data-active-paths="{{ route('ViewAllPurchaseProductQuotation') }}, {{ route('AddNewPurchaseProductQuotation') }}, {{ url('/admin/edit/purchase-product/quotation/*') }}, {{ url('edit/purchase-product/sales/quotation/*') }}">
                     View All Quotations
                     <span style="color:lightgreen" title="Total Product Purchase Quotations">
                         ({{ DB::table('product_purchase_quotations')->count() }})
                     </span>
                 </a>
             </li>
-            {{-- <a href="javascript: void(0);" class="has-arrow"><i class="feather-box"></i><span>Order</span></a> --}}
+            {{-- <a  onclick="return false;" class="has-arrow"><i class="feather-box"></i><span>Order</span></a> --}}
 
             <li>
-                <a href="{{ url('/view/all/purchase-product/order') }}"
-                    data-active-paths="{{ url('/view/all/purchase-product/order') }}, {{ url('/add/new/purchase-product/order') }}, {{ url('/edit/purchase-product/order/*') }}, {{ url('edit/purchase-product/sales/order/*') }}">
+                <a href="{{ route('ViewAllPurchaseProductOrder') }}"
+                    data-active-paths="{{ route('ViewAllPurchaseProductOrder') }}, {{ route('AddNewPurchaseProductOrder') }}, {{ url('/admin/edit/purchase-product/order/*') }}, {{ url('edit/purchase-product/sales/order/*') }}">
                     View All Orders
                     <span style="color:lightgreen" title="Total Product Purchase Orders">
                         ({{ DB::table('product_purchase_orders')->count() }})
@@ -651,14 +642,14 @@
     </li>
 
     <li>
-        <a href="javascript: void(0);" class="has-arrow">
+        <a href="javascript:void(0);" class="has-arrow">
             <i class="feather-printer"></i>
             <span>Generate Report</span>
         </a>
         <ul class="sub-menu" aria-expanded="false">
             <li>
-                <a href="{{ url('/product/purchase/report') }}"
-                    data-active-paths="{{ url('/product/purchase/report') }}">
+                <a href="{{ route('generateProductPurchaseReport') }}"
+                    data-active-paths="{{ route('generateProductPurchaseReport') }}">
                     Product Purchase Report
                 </a>
             </li>
@@ -672,6 +663,12 @@
     {{-- Start Accounts Module --}}
 
     <li class="menu-title" style="color: khaki; text-shadow: 1px 1px 2px black;">Accounts Modules</li>
+    <li>
+        <a href="{{ route('accounts.home') }}" data-active-paths="{{ route('accounts.home') }}">
+            <i class="feather-dollar-sign"></i>
+            <span> Accounts Dashboard</span>
+        </a>
+    </li>
     <li>
         <a href="javascript:void(0);" class="has-arrow">
             <i class="feather-layers"></i><span>Chart of Accounts</span>
@@ -754,7 +751,7 @@
         Route::get('/balance-sheet-report', [ReceiveVoucherController::class, 'balanceSheetReport'])->name('reports.balance-sheet-report');
         Route::get('/income-statement-report', [ContraVoucherController::class, 'incomeStatementReport'])->name('reports.income-statement-report'); -->
     <li>
-        <a href="javascript: void(0);" class="has-arrow"><i class="feather-settings"></i><span>Reports</span></a>
+        <a href="javascript:void(0);" class="has-arrow"><i class="feather-settings"></i><span>Reports</span></a>
         <ul class="sub-menu" aria-expanded="false">
             <li>
                 <a href="{{ route('reports.journal-report') }}"
@@ -795,8 +792,8 @@
 
 
     {{-- <li>
-        <a href="{{ url('/view/all/payment-type') }}"
-            data-active-paths="{{ url('/view/all/payment-type') }}, {{ url('/add/new/payment-type') }}, {{ url('/edit/payment-type/*') }}">
+        <a href="{{ route('ViewAllPaymentType') }}"
+            data-active-paths="{{ route('ViewAllPaymentType') }}, {{ route('AddNewPaymentType') }}, {{ url('/admin/edit/payment-type/*') }}">
             <i class="feather-box"></i> Payment Types
             <span style="color:lightgreen" title="Total CS Types">
                 ({{ DB::table('db_paymenttypes')->count() }})
@@ -805,8 +802,8 @@
     </li>
     <li>
 
-        <a href="{{ url('/view/all/expense-category') }}"
-            data-active-paths="{{ url('/view/all/expense-category') }}, {{ url('/add/new/expense-category') }}, {{ url('/edit/expense-category/*') }}">
+        <a href="{{ route('ViewAllExpenseCategory') }}"
+            data-active-paths="{{ route('ViewAllExpenseCategory') }}, {{ route('AddNewExpenseCategory') }}, {{ url('/admin/edit/expense-category/*') }}">
             <i class="feather-box"></i> Expense Categories
             <span style="color:lightgreen" title="Total Categories">
                 ({{ DB::table('db_expense_categories')->count() }})
@@ -815,8 +812,8 @@
 
     </li>
     <li>
-        <a href="{{ url('/view/all/ac-account') }}"
-            data-active-paths="{{ url('/view/all/ac-account') }}, {{ url('/add/new/ac-account') }}, {{ url('/edit/ac-account/*') }}">
+        <a href="{{ route('ViewAllAcAccount') }}"
+            data-active-paths="{{ route('ViewAllAcAccount') }}, {{ route('AddNewAcAccount') }}, {{ url('/admin/edit/ac-account/*') }}">
             <i class="feather-box"></i> All Accounts
             <span style="color:lightgreen" title="Total Accounts">
                 ({{ DB::table('ac_accounts')->count() }})
@@ -825,7 +822,7 @@
     </li>
     <li>
         <a href="{{ route('ViewAllExpense') }}"
-            data-active-paths="{{ route('ViewAllExpense') }}, {{ url('/add/new/expense') }}, {{ url('/edit/expense/*') }}">
+            data-active-paths="{{ route('ViewAllExpense') }}, {{ route('AddNewExpense') }}, {{ url('/admin/edit/expense/*') }}">
             <i class="feather-box"></i> All Expenses
             <span style="color:lightgreen" title="Total Expenses">
                 ({{ DB::table('db_expenses')->count() }})
@@ -834,7 +831,7 @@
     </li>
     <li>
         <a href="{{ route('ViewAllDeposit') }}"
-            data-active-paths="{{ route('ViewAllDeposit') }}, {{ url('/add/new/deposit') }}, {{ url('/edit/deposit/*') }}">
+            data-active-paths="{{ route('ViewAllDeposit') }}, {{ route('AddNewDeposit') }}, {{ url('/admin/edit/deposit/*') }}">
             <i class="feather-box"></i> All Deposits
             <span style="color:lightgreen" title="Total Deposits">
                 ({{ DB::table('ac_transactions')->count() }})
@@ -844,7 +841,7 @@
 
 
     <!-- <li>
-        <a href="javascript: void(0);" class="has-arrow"><i class="feather-settings"></i><span>Reports</span></a>
+        <a  onclick="return false;" class="has-arrow"><i class="feather-settings"></i><span>Reports</span></a>
         <ul class="sub-menu" aria-expanded="false">
             <li>
                 <a href="{{ route('journal.index') }}" data-active-paths="{{ route('journal.index') }}">
@@ -887,8 +884,14 @@
 
     <li class="menu-title" style="color: khaki; text-shadow: 1px 1px 2px black;">CRM Modules</li>
     <li>
-        <a href="{{ url('/view/all/customer-source') }}"
-            data-active-paths="{{ url('/view/all/customer-source') }}, {{ url('/add/new/customer-source') }}, {{ url('/edit/customer-source/*') }}">
+        <a href="{{ route('crm.home') }}" data-active-paths="{{ route('crm.home') }}">
+            <i class="feather-user-check"></i>
+            <span> CRM-Dashboard</span>
+        </a>
+    </li>
+    <li>
+        <a href="{{ route('ViewAllCustomerSource') }}"
+            data-active-paths="{{ route('ViewAllCustomerSource') }}, {{ route('AddNewCustomerSource') }}, {{ url('/admin/edit/customer-source/*') }}">
             <i class="feather-box"></i> Customer Src Type
             <span style="color:lightgreen" title="Total CS Types">
                 ({{ DB::table('customer_source_types')->count() }})
@@ -897,8 +900,8 @@
     </li>
     <li>
 
-        <a href="{{ url('/view/all/customer-category') }}"
-            data-active-paths="{{ url('/view/all/customer-category') }}, {{ url('/add/new/customer-category') }}, {{ url('/edit/customer-category/*') }}">
+        <a href="{{ route('ViewAllCustomerCategory') }}"
+            data-active-paths="{{ route('ViewAllCustomerCategory') }}, {{ route('AddNewCustomerCategory') }}, {{ url('/admin/edit/customer-category/*') }}">
             <i class="feather-box"></i> Customer Category
             <span style="color:lightgreen" title="Total Categories">
                 ({{ DB::table('customer_categories')->count() }})
@@ -907,8 +910,8 @@
 
     </li>
     <li>
-        <a href="{{ url('/view/all/customer') }}"
-            data-active-paths="{{ url('/view/all/customer') }}, {{ url('/add/new/customers') }}, {{ url('/edit/customers/*') }}">
+        <a href="{{ route('ViewAllCustomers') }}"
+            data-active-paths="{{ route('ViewAllCustomers') }}, {{ route('AddNewCustomers') }}, {{ url('/admin/edit/customers/*') }}">
             <i class="feather-box"></i> Customers
             <span style="color:lightgreen" title="Total Customers">
                 ({{ DB::table('customers')->count() }})
@@ -917,7 +920,7 @@
     </li>
     <li>
         <a href="{{ route('ViewAllCustomerEcommerce') }}"
-            data-active-paths="{{ route('ViewAllCustomerEcommerce') }}, {{ url('/add/new/customer-ecommerce') }}, {{ url('/edit/customer-ecommerce/*') }}">
+            data-active-paths="{{ route('ViewAllCustomerEcommerce') }}, {{ route('AddNewCustomerEcommerce') }}, {{ url('/admin/edit/customer-ecommerce/*') }}">
             <i class="feather-box"></i> E-Customer
             <span style="color:lightgreen" title="Total Contact Histories">
                 ({{ DB::table('users')->where('user_type', 3)->count() }})
@@ -926,7 +929,7 @@
     </li>
     <li>
         <a href="{{ route('ViewAllCustomerContactHistories') }}"
-            data-active-paths="{{ route('ViewAllCustomerContactHistories') }}, {{ url('/add/new/customer-contact-history') }}, {{ url('/edit/customer-contact-history/*') }}">
+            data-active-paths="{{ route('ViewAllCustomerContactHistories') }}, {{ route('AddNewCustomerContactHistories') }}, {{ url('/admin/edit/customer-contact-history/*') }}">
             <i class="feather-box"></i> Contacts History
             <span style="color:lightgreen" title="Total Contact Histories">
                 ({{ DB::table('customer_contact_histories')->count() }})
@@ -934,8 +937,8 @@
         </a>
     </li>
     <li>
-        <a href="{{ url('/view/all/customer-next-contact-date') }}"
-            data-active-paths="{{ url('/view/all/customer-next-contact-date') }}, {{ url('/add/new/customer-next-contact-date') }}, {{ url('/edit/customer-next-contact-date/*') }}">
+        <a href="{{ route('ViewAllCustomerNextContactDate') }}"
+            data-active-paths="{{ route('ViewAllCustomerNextContactDate') }}, {{ route('AddNewCustomerNextContactDate') }}, {{ url('/admin/edit/customer-next-contact-date/*') }}">
             <i class="feather-box"></i> Next Date Contacts
             <span style="color:lightgreen" title="Total Contact Histories">
                 ({{ DB::table('customer_next_contact_dates')->count() }})
@@ -944,14 +947,14 @@
     </li>
 
     <li>
-        <a href="javascript: void(0);" class="has-arrow">
+        <a href="javascript:void(0);" class="has-arrow">
             <i class="fas fa-headset"></i>
             <span>Support Ticket</span>
         </a>
         <ul class="sub-menu" aria-expanded="false">
             <li>
-                <a style="color: skyblue !important;" href="{{ url('/pending/support/tickets') }}"
-                    data-active-paths="{{ url('/pending/support/tickets') }}, {{ url('view/support/messages/*') }}">
+                <a style="color: skyblue !important;" href="{{ route('PendingSupportTickets') }}"
+                    data-active-paths="{{ route('PendingSupportTickets') }}, {{ url('view/support/messages/*') }}">
                     Pending Supports
                     (@php
                         echo DB::table('support_tickets')->where('status', 0)->orWhere('status', 1)->count();
@@ -959,8 +962,8 @@
                 </a>
             </li>
             <li>
-                <a style="color: #0c0 !important;" href="{{ url('/solved/support/tickets') }}"
-                    data-active-paths="{{ url('/solved/support/tickets') }},{{ url('view/support/messages/*') }}">
+                <a style="color: #0c0 !important;" href="{{ route('SolvedSupportTickets') }}"
+                    data-active-paths="{{ route('SolvedSupportTickets') }},{{ url('view/support/messages/*') }}">
                     Solved Supports
                     (@php
                         echo DB::table('support_tickets')->where('status', 2)->count();
@@ -968,8 +971,8 @@
                 </a>
             </li>
             <li>
-                <a style="color: goldenrod !important;" href="{{ url('/on/hold/support/tickets') }}"
-                    data-active-paths="{{ url('/on/hold/support/tickets') }},{{ url('view/support/messages/*') }}">
+                <a style="color: goldenrod !important;" href="{{ route('OnHoldSupportTickets') }}"
+                    data-active-paths="{{ route('OnHoldSupportTickets') }},{{ url('view/support/messages/*') }}">
                     On Hold Supports
                     (@php
                         echo DB::table('support_tickets')->where('status', 4)->count();
@@ -977,8 +980,8 @@
                 </a>
             </li>
             <li>
-                <a style="color: red !important;" href="{{ url('/rejected/support/tickets') }}"
-                    data-active-paths="{{ url('/rejected/support/tickets') }},{{ url('view/support/messages/*') }}">
+                <a style="color: red !important;" href="{{ route('RejectedSupportTickets') }}"
+                    data-active-paths="{{ route('RejectedSupportTickets') }},{{ url('view/support/messages/*') }}">
                     Rejected Supports
                     (@php
                         echo DB::table('support_tickets')->where('status', 3)->count();
@@ -988,15 +991,13 @@
         </ul>
     </li>
     <li>
-        <a href="{{ url('/view/all/contact/requests') }}"
-            data-active-paths="{{ url('/view/all/contact/requests') }}">
+        <a href="{{ route('ViewAllContactRequests') }}" data-active-paths="{{ route('ViewAllContactRequests') }}">
             <i class="feather-phone-forwarded"></i>
             <span>Contact Request</span>
         </a>
     </li>
     <li>
-        <a href="{{ url('/view/all/subscribed/users') }}"
-            data-active-paths="{{ url('/view/all/subscribed/users') }}">
+        <a href="{{ route('ViewAllSubscribedUsers') }}" data-active-paths="{{ route('ViewAllSubscribedUsers') }}">
             <i class="feather-user-check"></i>
             <span>Subscribed Users</span>
         </a>
@@ -1010,28 +1011,29 @@
     <li class="menu-title" style="color: khaki; text-shadow: 1px 1px 2px black;">User Role Permission</li>
 
     <li>
-        <a href="{{ url('/view/system/users') }}"
-            data-active-paths="{{ url('/view/system/users') }}, {{ url('add/new/system/user') }}, {{ url('edit/system/user/*') }}">
+        <a href="{{ route('ViewAllSystemUsers') }}"
+            data-active-paths="{{ route('ViewAllSystemUsers') }}, {{ url('add/new/system/user') }}, {{ url('edit/system/user/*') }}">
             <i class="fas fa-user-shield"></i>
             <span>System Users</span>
         </a>
     </li>
     <li>
-        <a href="{{ url('/view/user/roles') }}"
-            data-active-paths="{{ url('/view/user/roles') }}, {{ url('/new/user/role') }}, {{ url('/edit/user/role/*') }}">
+        <a href="{{ route('ViewAllUserRoles') }}"
+            data-active-paths="{{ route('ViewAllUserRoles') }}, {{ url('/admin/new/user/role') }}, {{ url('/admin/edit/user/role/*') }}">
             <i class="feather-user-plus"></i>
             <span>User Roles</span>
         </a>
     </li>
     <li>
-        <a href="{{ url('/view/user/role/permission') }}"
-            data-active-paths="{{ url('/view/user/role/permission') }}, {{ url('/assign/role/permission/*') }}">
+        <a href="{{ route('ViewUserRolePermission') }}"
+            data-active-paths="{{ route('ViewUserRolePermission') }}, {{ url('/admin/assign/role/permission/*') }}">
             <i class="mdi mdi-security"></i>
             <span>Assign Role Permission</span>
         </a>
     </li>
     <li>
-        <a href="{{ url('/view/permission/routes') }}" data-active-paths="{{ url('/view/permission/routes') }}">
+        <a href="{{ route('ViewAllPermissionRoutes') }}"
+            data-active-paths="{{ route('ViewAllPermissionRoutes') }}">
             <i class="feather-git-merge"></i>
             <span>Permission Routes</span>
         </a>
@@ -1044,37 +1046,37 @@
     <li class="menu-title" style="color: khaki; text-shadow: 1px 1px 2px black;">Website Config</li>
 
     <li>
-        <a href="{{ url('/general/info') }}" data-active-paths="{{ url('/general/info') }}">
+        <a href="{{ route('GeneralInfo') }}" data-active-paths="{{ route('GeneralInfo') }}">
             <i class="feather-grid"></i>
             <span>General Info</span>
         </a>
     </li>
     <li>
-        <a href="{{ url('/website/theme/page') }}" data-active-paths="{{ url('/website/theme/page') }}">
+        <a href="{{ route('WebsiteThemePage') }}" data-active-paths="{{ route('WebsiteThemePage') }}">
             <i class="mdi mdi-format-color-fill" style="font-size: 18px"></i>
             <span>Website Theme Color</span>
         </a>
     </li>
     <li>
-        <a href="{{ url('/social/media/page') }}" data-active-paths="{{ url('/social/media/page') }}">
+        <a href="{{ route('SocialMediaPage') }}" data-active-paths="{{ route('SocialMediaPage') }}">
             <i class="mdi mdi-link-variant" style="font-size: 17px"></i>
             <span>Social Media Links</span>
         </a>
     </li>
     <li>
-        <a href="{{ url('/seo/homepage') }}" data-active-paths="{{ url('/seo/homepage') }}">
+        <a href="{{ route('SeoHomePage') }}" data-active-paths="{{ route('SeoHomePage') }}">
             <i class="dripicons-search"></i>
             <span>Home Page SEO</span>
         </a>
     </li>
     <li>
-        <a href="{{ url('/custom/css/js') }}" data-active-paths="{{ url('/custom/css/js') }}">
+        <a href="{{ route('CustomCssJs') }}" data-active-paths="{{ route('CustomCssJs') }}">
             <i class="feather-code"></i>
             <span>Custom CSS & JS</span>
         </a>
     </li>
     <li>
-        <a href="{{ url('/social/chat/script/page') }}" data-active-paths="{{ url('/social/chat/script/page') }}">
+        <a href="{{ route('SocialChatScriptPage') }}" data-active-paths="{{ route('SocialChatScriptPage') }}">
             <i class="mdi mdi-code-brackets"></i>
             <span>Social & Chat Scripts</span>
         </a>
@@ -1086,100 +1088,100 @@
     <li class="menu-title" style="color: khaki; text-shadow: 1px 1px 2px black;">Content Management</li>
 
     <li>
-        <a href="javascript: void(0);" class="has-arrow"><i class="feather-image"></i><span>Sliders &
+        <a href="javascript:void(0);" class="has-arrow"><i class="feather-image"></i><span>Sliders &
                 Banners</span></a>
         <ul class="sub-menu" aria-expanded="false">
             <li>
-                <a href="{{ url('/view/all/sliders') }}"
-                    data-active-paths="{{ url('/view/all/sliders') }}, {{ url('/add/new/slider') }}, 
-                {{ url('/edit/slider/*') }}, {{ url('/rearrange/slider') }}">
+                <a href="{{ route('ViewAllSliders') }}"
+                    data-active-paths="{{ route('ViewAllSliders') }}, {{ route('AddNewSlider') }}, 
+                {{ url('/admin/edit/slider/*') }}, {{ route('RearrangeSlider') }}">
                     View All Sliders
                 </a>
             </li>
             <li>
-                <a href="{{ url('/view/all/banners') }}"
-                    data-active-paths="{{ url('/view/all/banners') }}, {{ url('/add/new/banner') }}, 
-                 {{ url('/edit/banner/*') }}, {{ url('/rearrange/banners') }}">
+                <a href="{{ route('ViewAllBanners') }}"
+                    data-active-paths="{{ route('ViewAllBanners') }}, {{ route('AddNewBanner') }}, 
+                 {{ url('/admin/edit/banner/*') }}, {{ route('RearrangeBanners') }}">
                     View All Banners
                 </a>
             </li>
             <li>
-                <a href="{{ url('/view/promotional/banner') }}"
-                    data-active-paths="{{ url('/view/promotional/banner') }}">
+                <a href="{{ route('ViewPromotionalBanner') }}"
+                    data-active-paths="{{ route('ViewPromotionalBanner') }}">
                     Promotional Banner
                 </a>
             </li>
             <li>
-                <a href="{{ url('/view/all/side-banner') }}"
-                    data-active-paths="{{ url('/view/all/side-banner') }}, {{ url('/add/new/side-banner') }}, {{ url('edit/side-banner/*') }}">
+                <a href="{{ route('ViewAllSideBanner') }}"
+                    data-active-paths="{{ route('ViewAllSideBanner') }}, {{ route('AddNewSideBanner') }}, {{ url('edit/side-banner/*') }}">
                     Side Banner
                 </a>
             </li>
         </ul>
     </li>
     <li>
-        <a href="{{ url('/view/testimonials') }}"
-            data-active-paths="{{ url('/view/testimonials') }}, 
-        {{ url('/add/testimonial') }}, {{ url('/edit/testimonial/*') }}">
+        <a href="{{ route('ViewTestimonials') }}"
+            data-active-paths="{{ route('ViewTestimonials') }}, 
+        {{ route('AddTestimonial') }}, {{ url('/admin/edit/testimonial/*') }}">
             <i class="feather-message-square"></i>
             <span>Testimonials</span>
         </a>
     </li>
     <li>
-        <a href="javascript: void(0);" class="has-arrow"><i class="feather-file-text"></i><span>Manage
+        <a href="javascript:void(0);" class="has-arrow"><i class="feather-file-text"></i><span>Manage
                 Blogs</span></a>
         <ul class="sub-menu" aria-expanded="false">
             <li>
-                <a href="{{ url('/blog/categories') }}"
-                    data-active-paths="{{ url('/blog/categories') }}, {{ url('/rearrange/blog/category') }}">
+                <a href="{{ route('BlogCategories') }}"
+                    data-active-paths="{{ route('BlogCategories') }}, {{ route('RearrangeBlogCategory') }}">
                     Blog Categories
                 </a>
             </li>
             <li>
-                <a href="{{ url('/add/new/blog') }}" data-active-paths="{{ url('/add/new/blog') }}">
+                <a href="{{ route('AddNewBlog') }}" data-active-paths="{{ route('AddNewBlog') }}">
                     Write a Blog
                 </a>
             </li>
             <li>
-                <a href="{{ url('/view/all/blogs') }}"
-                    data-active-paths="{{ url('/view/all/blogs') }}, {{ url('/edit/blog/*') }}">
+                <a href="{{ route('ViewAllBlogs') }}"
+                    data-active-paths="{{ route('ViewAllBlogs') }}, {{ url('/admin/edit/blog/*') }}">
                     View All Blogs
                 </a>
             </li>
         </ul>
     </li>
     <li>
-        <a href="javascript: void(0);" class="has-arrow">
+        <a href="javascript:void(0);" class="has-arrow">
             <i class="feather-alert-triangle"></i>
             <span>Terms & Policies</span>
         </a>
         <ul class="sub-menu" aria-expanded="false">
             <li>
-                <a href="{{ url('/terms/and/condition') }}" data-active-paths="{{ url('/terms/and/condition') }}">
+                <a href="{{ route('ViewTermsAndCondition') }}"
+                    data-active-paths="{{ route('ViewTermsAndCondition') }}">
                     Terms & Condition
                 </a>
             </li>
             <li>
-                <a href="{{ url('/view/privacy/policy') }}" data-active-paths="{{ url('/view/privacy/policy') }}">
+                <a href="{{ route('ViewPrivacyPolicy') }}" data-active-paths="{{ route('ViewPrivacyPolicy') }}">
                     Privacy Policy
                 </a>
             </li>
             <li>
-                <a href="{{ url('/view/shipping/policy') }}"
-                    data-active-paths="{{ url('/view/shipping/policy') }}">
+                <a href="{{ route('ViewShippingPolicy') }}" data-active-paths="{{ route('ViewShippingPolicy') }}">
                     Shipping Policy
                 </a>
             </li>
             <li>
-                <a href="{{ url('/view/return/policy') }}" data-active-paths="{{ url('/view/return/policy') }}">
+                <a href="{{ route('ViewReturnPolicy') }}" data-active-paths="{{ route('ViewReturnPolicy') }}">
                     Return Policy
                 </a>
             </li>
         </ul>
     </li>
     <li>
-        <a href="{{ url('/view/all/pages') }}"
-            data-active-paths="{{ url('/view/all/pages') }}, {{ url('/create/new/page') }}, {{ url('edit/custom/page/*') }}">
+        <a href="{{ route('ViewCustomPages') }}"
+            data-active-paths="{{ route('ViewCustomPages') }}, {{ route('CreateNewPage') }}, {{ url('edit/custom/page/*') }}">
             <i class="feather-file-plus"></i>
             <span>Custom Pages</span>
             <span style="color:lightgreen" title="Total Outlets">
@@ -1188,8 +1190,8 @@
         </a>
     </li>
     <li>
-        <a href="{{ url('/view/all/outlet') }}"
-            data-active-paths="{{ url('/view/all/outlet') }}, {{ url('/add/new/outlet') }}, {{ url('/edit/outlet/*') }}">
+        <a href="{{ route('ViewAllOutlet') }}"
+            data-active-paths="{{ route('ViewAllOutlet') }}, {{ route('AddNewOutlet') }}, {{ url('/admin/edit/outlet/*') }}">
             <i class="feather-box"></i> View All Outlets
             <span style="color:lightgreen" title="Total Outlets">
                 ({{ DB::table('outlets')->count() }})
@@ -1197,9 +1199,9 @@
         </a>
     </li>
     <li>
-        <a href="{{ url('/view/all/video-gallery') }}"
-            data-active-paths="{{ url('/view/all/video-gallery') }}, {{ url('/add/new/video-gallery') }}, 
-            {{ url('/edit/video-gallery/*') }}">
+        <a href="{{ route('ViewAllVideoGallery') }}"
+            data-active-paths="{{ route('ViewAllVideoGallery') }}, {{ route('AddNewVideoGallery') }}, 
+            {{ url('/admin/edit/video-gallery/*') }}">
             <i class="feather-box"></i> View All Videos
             <span style="color:lightgreen" title="Total Videos">
                 ({{ DB::table('video_galleries')->count() }})
@@ -1207,14 +1209,14 @@
         </a>
     </li>
     <li>
-        <a href="{{ url('/about/us/page') }}" data-active-paths="{{ url('/about/us/page') }}">
+        <a href="{{ route('AboutUsPage') }}" data-active-paths="{{ route('AboutUsPage') }}">
             <i class="feather-globe"></i>
             <span>About Us</span>
         </a>
     </li>
     <li>
-        <a href="{{ url('/view/all/faqs') }}"
-            data-active-paths="{{ url('/view/all/faqs') }}, {{ url('/add/new/faq') }}, {{ url('/edit/faq/*') }}">
+        <a href="{{ route('ViewAllFaqs') }}"
+            data-active-paths="{{ route('ViewAllFaqs') }}, {{ route('AddNewFaq') }}, {{ url('/admin/edit/faq/*') }}">
             <i class="far fa-question-circle"></i>
             <span>FAQ's</span>
         </a>
@@ -1226,84 +1228,83 @@
     <li class="menu-title" style="color: khaki; text-shadow: 1px 1px 2px black;">Download & Backup</li>
 
     <li>
-        <a href="{{ url('/download/database/backup') }}"
-            data-active-paths="{{ url('/download/database/backup') }}"
+        <a href="{{ route('DownloadDBBackup') }}" data-active-paths="{{ route('DownloadDBBackup') }}"
             onclick="return confirm('Are you sure you want to download the database backup?');">
             <i class="feather-database"></i>
             Database Backup
         </a>
     </li>
     <li>
-        <a href="javascript: void(0);" class="has-arrow">
+        <a href="javascript:void(0);" class="has-arrow">
             <i class="feather-image"></i>
             <span>Images Backup</span>
         </a>
         <ul class="sub-menu" aria-expanded="false">
             <li>
-                <a href="{{ url('/download/all/images/backup') }}"
-                    data-active-paths="{{ url('/download/all/images/backup') }}"
+                <a href="{{ route('DownloadAllImagesBackup') }}"
+                    data-active-paths="{{ route('DownloadAllImagesBackup') }}"
                     onclick="return confirm('Are you sure you want to download all images backup? This may take some time.');">
                     All Images Backup
                 </a>
             </li>
             <li>
-                <a href="{{ url('/download/product/files/backup') }}"
-                    data-active-paths="{{ url('/download/product/files/backup') }}"
+                <a href="{{ route('DownloadProductFilesBackup') }}"
+                    data-active-paths="{{ route('DownloadProductFilesBackup') }}"
                     onclick="return confirm('Are you sure you want to download the product images backup?');">
                     Product Images
                 </a>
             </li>
             <li>
-                <a href="{{ url('/download/user/files/backup') }}"
-                    data-active-paths="{{ url('/download/user/files/backup') }}"
+                <a href="{{ route('DownloadUserFilesBackup') }}"
+                    data-active-paths="{{ route('DownloadUserFilesBackup') }}"
                     onclick="return confirm('Are you sure you want to download the user images backup?');">
                     User Images
                 </a>
             </li>
             <li>
-                <a href="{{ url('/download/banner/files/backup') }}"
-                    data-active-paths="{{ url('/download/banner/files/backup') }}"
+                <a href="{{ route('DownloadBannerFilesBackup') }}"
+                    data-active-paths="{{ route('DownloadBannerFilesBackup') }}"
                     onclick="return confirm('Are you sure you want to download the banner images backup?');">
                     Banner Images
                 </a>
             </li>
             <li>
-                <a href="{{ url('/download/category/files/backup') }}"
-                    data-active-paths="{{ url('/download/category/files/backup') }}"
+                <a href="{{ route('DownloadCategoryFilesBackup') }}"
+                    data-active-paths="{{ route('DownloadCategoryFilesBackup') }}"
                     onclick="return confirm('Are you sure you want to download the category icon backup?');">
                     Category Icons
                 </a>
             </li>
             <li>
-                <a href="{{ url('/download/subcategory/files/backup') }}"
+                <a href="{{ route('DownloadSubcategoryFilesBackup') }}"
                     onclick="return confirm('Are you sure you want to download the subcategory backup?');">
                     Subcategory Images
                 </a>
             </li>
             <li>
-                <a href="{{ url('/download/flag/files/backup') }}"
-                    data-active-paths="{{ url('/download/flag/files/backup') }}"
+                <a href="{{ route('DownloadFlagFilesBackup') }}"
+                    data-active-paths="{{ route('DownloadFlagFilesBackup') }}"
                     onclick="return confirm('Are you sure you want to download the flag icon backup?');">
                     Flag Icons
                 </a>
             </li>
             <li>
-                <a href="{{ url('/download/ticket/files/backup') }}"
-                    data-active-paths="{{ url('/download/ticket/files/backup') }}"
+                <a href="{{ route('DownloadTicketFilesBackup') }}"
+                    data-active-paths="{{ route('DownloadTicketFilesBackup') }}"
                     onclick="return confirm('Are you sure you want to download the ticket files backup?');">
                     Ticket Files
                 </a>
             </li>
             <li>
-                <a href="{{ url('/download/blog/files/backup') }}"
-                    data-active-paths="{{ url('/download/blog/files/backup') }}"
+                <a href="{{ route('DownloadBlogFilesBackup') }}"
+                    data-active-paths="{{ route('DownloadBlogFilesBackup') }}"
                     onclick="return confirm('Are you sure you want to download the blog files backup?');">
                     Blog Images
                 </a>
             </li>
             <li>
-                <a href="{{ url('/download/other/files/backup') }}"
-                    data-active-paths="{{ url('/download/other/files/backup') }}"
+                <a href="{{ route('DownloadOtherFilesBackup') }}"
+                    data-active-paths="{{ route('DownloadOtherFilesBackup') }}"
                     onclick="return confirm('Are you sure you want to download the other images backup?');">
                     Other Images
                 </a>
@@ -1314,26 +1315,26 @@
 
 
     <li>
-        <a href="javascript: void(0);" class="has-arrow">
+        <a href="javascript:void(0);" class="has-arrow">
             <i class="feather-box"></i>
             <span>Demo Products</span>
         </a>
         <ul class="sub-menu" aria-expanded="false">
             <li>
-                <a href="{{ url('/generate/demo/products') }}"
-                    data-active-paths="{{ url('/generate/demo/products') }}">
+                <a href="{{ route('GenerateDemoProducts') }}"
+                    data-active-paths="{{ route('GenerateDemoProducts') }}">
                     Generate Products
                 </a>
             </li>
             <li>
-                <a href="{{ url('/remove/demo/products/page') }}"
-                    data-active-paths="{{ url('/remove/demo/products/page') }}">
+                <a href="{{ route('RemoveDemoProductsPage') }}"
+                    data-active-paths="{{ route('RemoveDemoProductsPage') }}">
                     Remove Products
                 </a>
             </li>
         </ul>
     </li>
-    <li><a href="{{ url('/clear/cache') }}"><i class="feather-rotate-cw"></i><span>Clear Cache</span></a></li>
+    <li><a href="{{ route('ClearCache') }}"><i class="feather-rotate-cw"></i><span>Clear Cache</span></a></li>
     <li>
         <a href="{{ route('admin.logout') }}"
             onclick="event.preventDefault(); if (confirm('Are you sure you want to logout?')) { document.getElementById('logout-form').submit(); }">
@@ -1429,6 +1430,112 @@
         }
         return null;
     }
+
+    // Smart Sidebar Auto-Scroll (No Interference with MetisMenu)
+    (function() {
+        'use strict';
+
+        let hasScrolledOnce = false;
+
+        // Scroll to active child menu item only on initial page load
+        function scrollToActiveMenuItem() {
+            if (hasScrolledOnce) return; // Only scroll once per page load
+
+            const sidebarContainer = document.querySelector('.left-side-menu') ||
+                document.querySelector('.sidebar') ||
+                document.querySelector('.simplebar-content-wrapper') ||
+                document.querySelector('#side-menu')?.parentElement;
+
+            if (!sidebarContainer) return;
+
+            // Find active child menu items (not parent dropdowns)
+            const activeChildItems = document.querySelectorAll('#side-menu .sub-menu li > a');
+            let activeItem = null;
+
+            // Look for active child in submenu first
+            for (let item of activeChildItems) {
+                const href = item.getAttribute('href');
+                const isActive = item.closest('li')?.classList.contains('mm-active') ||
+                    item.classList.contains('active') ||
+                    href === window.location.pathname ||
+                    (href && window.location.pathname.includes(href));
+
+                if (isActive && href && href !== '#' && !href.includes('javascript:')) {
+                    activeItem = item;
+                    break;
+                }
+            }
+
+            // Fallback to top-level active items (but not parent dropdowns)
+            if (!activeItem) {
+                const topLevelItems = document.querySelectorAll('#side-menu > li > a:not(.has-arrow)');
+                for (let item of topLevelItems) {
+                    const href = item.getAttribute('href');
+                    const isActive = item.closest('li')?.classList.contains('mm-active') ||
+                        item.classList.contains('active') ||
+                        href === window.location.pathname;
+
+                    if (isActive && href && href !== '#' && !href.includes('javascript:')) {
+                        activeItem = item;
+                        break;
+                    }
+                }
+            }
+
+            if (!activeItem) return;
+
+            // Wait for MetisMenu to complete initialization
+            setTimeout(function() {
+                const containerRect = sidebarContainer.getBoundingClientRect();
+                const itemRect = activeItem.getBoundingClientRect();
+
+                // Only scroll if item is outside visible area
+                const isAboveView = itemRect.top < containerRect.top + 50;
+                const isBelowView = itemRect.bottom > containerRect.bottom - 50;
+
+                if (isAboveView || isBelowView) {
+                    const itemOffsetTop = activeItem.offsetTop;
+                    const containerHeight = sidebarContainer.clientHeight;
+                    const itemHeight = activeItem.offsetHeight;
+                    const scrollPosition = itemOffsetTop - (containerHeight / 2) + (itemHeight / 2);
+
+                    sidebarContainer.scrollTo({
+                        top: Math.max(0, scrollPosition),
+                        behavior: 'smooth'
+                    });
+
+                    hasScrolledOnce = true;
+                }
+            }, 400); // Increased delay for MetisMenu animation
+        }
+
+        // Prevent scrolling when clicking parent menu items
+        function preventParentMenuScroll() {
+            const parentMenuLinks = document.querySelectorAll(
+                'a.has-arrow, a[href="javascript:void(0);"], a[href="#"]');
+            parentMenuLinks.forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    // Prevent default anchor behavior that causes scrolling
+                    if (link.getAttribute('href') === '#' ||
+                        link.getAttribute('href') === 'javascript:void(0);' ||
+                        link.classList.contains('has-arrow')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        }
+
+        // Initialize only once on DOM ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                scrollToActiveMenuItem();
+                preventParentMenuScroll();
+            });
+        } else {
+            scrollToActiveMenuItem();
+            preventParentMenuScroll();
+        }
+    })();
 </script>
 
 <style>

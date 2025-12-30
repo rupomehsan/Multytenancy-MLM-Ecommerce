@@ -154,9 +154,9 @@
                     <h4 class="card-title mb-3">All Orders</h4>
                     <div class="table-responsive">
                         <label id="customFilter">
-                            <a href="{{ url('/create/new/order') }}" class="btn btn-primary btn-sm"
+                            <a href="{{ route('CreateNewOrder') }}" class="btn btn-primary btn-sm"
                                 style="margin-left: 5px"><b><i class="fas fa-plus"></i> Create Order</b></a>
-                            <a href="{{ url('/view/trash/orders') }}" class="btn btn-danger btn-sm"
+                            <a href="{{ route('ViewTrashOrders') }}" class="btn btn-danger btn-sm"
                                 style="margin-left: 5px"><b><i class="fas fa-trash"></i> Trashed Order</b></a>
                         </label>
                         <table class="table table-bordered mb-0 data-table">
@@ -198,7 +198,7 @@
             processing: true,
             serverSide: true,
             pageLength: 10,
-            ajax: "{{ url('view/orders') }}",
+            ajax: "{{ route('ViewAllOrders') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -281,7 +281,7 @@
             if (confirm("Are You sure to Approve !")) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('approve/order') }}" + '/' + slug,
+                    url: "{{ route('ApproveOrder', '') }}" + '/' + slug,
                     success: function(data) {
                         table.draw(false);
                         toastr.success("Order has been Approved", "Approved Successfully");
@@ -301,7 +301,7 @@
                 }
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/order') }}" + '/' + slug,
+                    url: "{{ route('DeleteOrder', '') }}" + '/' + slug,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Order has been Deleted", "Deleted Successfully");

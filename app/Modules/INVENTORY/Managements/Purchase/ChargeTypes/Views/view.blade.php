@@ -111,7 +111,7 @@
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('view/all/purchase-product/charge') }}",
+            ajax: "{{ route('ViewAllPurchaseProductCharge') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -153,7 +153,7 @@
                 }
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/purchase-product/charge') }}" + '/' + productOtherChargeSlug,
+                    url: "{{ route('DeletePurchaseProductCharge', '') }}" + '/' + productOtherChargeSlug,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Other Charge has been Deleted", "Deleted Successfully");

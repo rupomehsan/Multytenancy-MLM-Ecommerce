@@ -32,7 +32,7 @@
                             </div>
                             <div class="col-lg-4 text-right">
 
-                                <a href="{{ url('/home') }}" style="width: 130px;"
+                                <a href="{{ route('admin.dashboard') }}" style="width: 130px;"
                                     class="btn btn-danger d-inline-block text-white m-2" type="submit"><i
                                         class="mdi mdi-cancel"></i> Cancel</a>
                                 <button class="btn btn-primary m-2" type="submit" style="width: 140px;"><i
@@ -197,7 +197,7 @@
                                 </div>
 
                                 <div class="form-group text-center">
-                                    <a href="{{ url('/home') }}" style="width: 130px;"
+                                    <a href="{{ route('admin.dashboard') }}" style="width: 130px;"
                                         class="btn btn-danger d-inline-block text-white m-2" type="submit"><i
                                             class="mdi mdi-cancel"></i> Cancel</a>
                                     <button class="btn btn-primary m-2" type="submit" style="width: 140px;"><i
@@ -210,7 +210,7 @@
 
 
                         {{-- <div class="form-group text-center pt-3 mt-3">
-                            <a href="{{url('/home')}}" style="width: 130px;" class="btn btn-danger d-inline-block text-white m-2" type="submit"><i class="mdi mdi-cancel"></i> Cancel</a>
+                            <a href="{{route('admin.dashboard')}}" style="width: 130px;" class="btn btn-danger d-inline-block text-white m-2" type="submit"><i class="mdi mdi-cancel"></i> Cancel</a>
                             <button class="btn btn-primary m-2" type="submit" style="width: 140px;"><i class="fas fa-save"></i> Update Info</button>
                         </div> --}}
                     </form>

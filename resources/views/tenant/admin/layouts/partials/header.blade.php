@@ -1,8 +1,16 @@
   <header id="page-topbar">
       <div class="navbar-header">
           <div class="dropdown  ml-2" style="display:flex;gap:8px;align-items:center;">
+              <!-- Sidebar Toggle Button -->
+              <button type="button" class="btn text-white rounded d-flex align-items-center justify-content-center"
+                  id="sidebar-toggle-btn"
+                  style="width:42px; height:36px; padding:6px; background: linear-gradient(to right, #17263ADE, #2c3e50f5, #17263A);"
+                  title="Toggle Sidebar" aria-label="Toggle Sidebar">
+                  <i class="fas fa-bars" aria-hidden="true" style="font-size:16px;"></i>
+              </button>
+
               <!-- Icon-only Guest Checkout: checkbox is visually hidden but operable via label -->
-              <label class="btn text-white rounded mr-2 mb-0 d-flex align-items-center justify-content-center"
+              <label class="btn text-white rounded  mb-0 d-flex align-items-center justify-content-center"
                   style="cursor:pointer; width:42px; height:36px; padding:6px; background: linear-gradient(to right, #17263ADE, #2c3e50f5, #17263A);"
                   title="{{ isset($generalInfo) && $generalInfo->guest_checkout == 1 ? 'Guest Checkout: ON' : 'Guest Checkout: OFF' }}"
                   aria-label="{{ isset($generalInfo) && $generalInfo->guest_checkout == 1 ? 'Guest Checkout: ON' : 'Guest Checkout: OFF' }}">
@@ -105,7 +113,7 @@
                                     Profile
                                 </a> --}}
                       <a class="dropdown-item d-flex align-items-center justify-content-between"
-                          href="{{ url('/change/password/page') }}">
+                          href="{{ route('ChangePassword') }}">
                           <span class="d-none d-sm-inline-block"><i class="fas fa-key"></i> Change
                               Password</span>
                       </a>
@@ -154,6 +162,32 @@
                   gc.addEventListener('change', function() {
                       updateIcon(this.checked);
                   });
+              });
+
+              // Sidebar toggle functionality
+              document.addEventListener('DOMContentLoaded', function() {
+                  const toggleBtn = document.getElementById('sidebar-toggle-btn');
+                  const layoutWrapper = document.getElementById('layout-wrapper');
+
+                  // Check if sidebar state is saved in localStorage
+                  const isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+
+                  // Apply saved state on page load
+                  if (isSidebarCollapsed && layoutWrapper) {
+                      layoutWrapper.classList.add('sidebar-collapsed');
+                  }
+
+                  // Toggle sidebar when button is clicked
+                  if (toggleBtn) {
+                      toggleBtn.addEventListener('click', function() {
+                          if (layoutWrapper) {
+                              layoutWrapper.classList.toggle('sidebar-collapsed');
+                              // Save state to localStorage
+                              const isCollapsed = layoutWrapper.classList.contains('sidebar-collapsed');
+                              localStorage.setItem('sidebarCollapsed', isCollapsed);
+                          }
+                      });
+                  }
               });
           </script>
       </div>

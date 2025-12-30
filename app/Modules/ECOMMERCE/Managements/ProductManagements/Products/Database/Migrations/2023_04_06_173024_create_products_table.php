@@ -21,9 +21,10 @@ class CreateProductsTable extends Migration
             $table->unsignedBigInteger('brand_id')->nullable();
             $table->unsignedBigInteger('model_id')->nullable();
             $table->unsignedBigInteger('store_id')->nullable();
-            $table->string('name');
+            $table->string('name')->nullable();
+            $table->string('product_type')->nullable();
             $table->string('code')->nullable();
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->string('multiple_images')->nullable();
             $table->longText('short_description')->nullable();
             $table->longText('description')->nullable();

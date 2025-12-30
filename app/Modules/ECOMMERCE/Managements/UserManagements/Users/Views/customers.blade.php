@@ -129,7 +129,7 @@
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('view/all/customers') }}",
+            ajax: "{{ route('ViewAllCustomers') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -197,7 +197,7 @@
             if (confirm("Are You sure want to delete !")) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/customer') }}" + '/' + id,
+                    url: "{{ route('DeleteCustomer', '') }}" + '/' + id,
                     success: function(data) {
 
                         if (data.data == 1) {

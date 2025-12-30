@@ -377,7 +377,7 @@
                 $("#billing_thana_id").html('');
 
                 $.ajax({
-                    url: "{{ url('/district/wise/thana') }}",
+                    url: "{{ route('DistrictWiseThana') }}",
                     type: "POST",
                     data: {
                         district_id: district_id,
@@ -643,7 +643,11 @@
                 return false;
             }
 
-            $.get("{{ url('update/order/total') }}" + '/' + shippingCharge + '/' + discount, function(data) {
+            var updateTotalUrl =
+                "{{ route('UpdateOrderTotal', ['shipping_charge' => 'SHIPPING_PLACEHOLDER', 'discount' => 'DISCOUNT_PLACEHOLDER']) }}";
+            updateTotalUrl = updateTotalUrl.replace('SHIPPING_PLACEHOLDER', encodeURIComponent(shippingCharge)).replace(
+                'DISCOUNT_PLACEHOLDER', encodeURIComponent(discount));
+            $.get(updateTotalUrl, function(data) {
                 var newPrice = (currentPrice + shippingCharge) - discount;
                 var totalPriceDiv = document.getElementById("total_cart_calculation");
                 totalPriceDiv.innerText = '৳ ' + newPrice.toLocaleString("en-BD", {
@@ -661,7 +665,7 @@
                 var district_id = this.value;
                 $("#shipping_thana_id").html('');
                 $.ajax({
-                    url: "{{ url('/district/wise/thana') }}",
+                    url: "{{ route('DistrictWiseThana') }}",
                     type: "POST",
                     data: {
                         district_id: district_id,
@@ -686,7 +690,7 @@
                 var district_id = this.value;
                 $("#billing_thana_id").html('');
                 $.ajax({
-                    url: "{{ url('/district/wise/thana') }}",
+                    url: "{{ route('DistrictWiseThana') }}",
                     type: "POST",
                     data: {
                         district_id: district_id,
@@ -709,7 +713,7 @@
                 var district_id = this.value;
                 $("#customer_address_thana_id").html('');
                 $.ajax({
-                    url: "{{ url('/district/wise/thana/by/name') }}",
+                    url: "{{ route('DistrictWiseThanaByName') }}",
                     type: "POST",
                     data: {
                         district_id: district_id,

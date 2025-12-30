@@ -521,7 +521,7 @@
                                                                                 <tr>
                                                                                     <td class="text-center">
                                                                                         @if ($productVariant->image)
-                                                                                            <img src="{{ url('/uploads/productImages/' . $productVariant->image) }}"
+                                                                                            <img src="{{ url('/admin/uploads/productImages/' . $productVariant->image) }}"
                                                                                                 style="max-height: 40px; max-width: 40px;">
                                                                                         @endif
                                                                                         <input type="hidden"
@@ -1304,7 +1304,7 @@
             $(".addAnotherVariant").html("Adding...");
             $.ajax({
                 data: '',
-                url: "{{ url('/add/another/variant') }}",
+                url: "{{ route('AddAnotherVariant') }}",
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {
@@ -1405,7 +1405,7 @@
                 $("#subcategory_id").html('');
                 $("#childcategory_id").html('');
                 $.ajax({
-                    url: "{{ url('/category/wise/subcategory') }}",
+                    url: "{{ route('CategoryWiseSubcategory') }}",
                     type: "POST",
                     data: {
                         category_id: categoryId,
@@ -1431,7 +1431,7 @@
                 var subCategoryId = this.value;
                 $("#childcategory_id").html('');
                 $.ajax({
-                    url: "{{ url('/subcategory/wise/childcategory') }}",
+                    url: "{{ route('SubcategoryWiseChildcategory') }}",
                     type: "POST",
                     data: {
                         subcategory_id: subCategoryId,
@@ -1456,7 +1456,7 @@
                 var bandId = this.value;
                 $("#model_id").html('');
                 $.ajax({
-                    url: "{{ url('/brand/wise/model') }}",
+                    url: "{{ route('BrandWiseModel') }}",
                     type: "POST",
                     data: {
                         brand_id: bandId,

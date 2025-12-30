@@ -106,7 +106,7 @@
             pageLength: 10,
             processing: true,
             serverSide: true,
-            ajax: "{{ url('/view/permission/routes') }}",
+            ajax: "{{ route('ViewAllPermissionRoutes') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'

@@ -2,7 +2,7 @@
     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form id="customerCreateForm" action="{{ url('save/new/customer') }}" method="POST">
+            <form id="customerCreateForm" action="{{ route('SaveNewCustomerEcommerce') }}" method="POST">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">
@@ -15,8 +15,8 @@
                 <div class="modal-body text-left">
 
                     <div class="form-group">
-                        <label for="customer_name">Full Name <span class="text-danger">*</span></label>
-                        <input type="text" name="customer_name" id="customer_name" class="form-control"
+                        <label for="name">Full Name <span class="text-danger">*</span></label>
+                        <input type="text" name="name" id="name" class="form-control"
                             placeholder="Full Name" />
                         <div class="invalid-feedback">
                             <strong></strong>
@@ -24,8 +24,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="customer_phone">Phone Number <span class="text-danger">*</span></label>
-                        <input type="tel" name="customer_phone" id="customer_phone" class="form-control"
+                        <label for="phone">Phone Number <span class="text-danger">*</span></label>
+                        <input type="tel" name="phone" id="phone" class="form-control"
                             placeholder="Phone Number" />
                         <div class="invalid-feedback">
                             <strong></strong>
@@ -33,8 +33,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="customer_email">Email Address <span class="text-danger">*</span></label>
-                        <input type="email" name="customer_email" id="customer_email" class="form-control"
+                        <label for="email">Email Address <span class="text-danger">*</span></label>
+                        <input type="email" name="email" id="email" class="form-control"
                             placeholder="Email Address" />
                         <div class="invalid-feedback">
                             <strong></strong>
@@ -42,8 +42,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="customer_password">Password <span class="text-danger">*</span></label>
-                        <input type="password" name="password" id="customer_password" class="form-control"/>
+                        <label for="password">Password <span class="text-danger">*</span></label>
+                        <input type="password" name="password" id="password" class="form-control" />
                         <div class="invalid-feedback">
                             <strong></strong>
                         </div>

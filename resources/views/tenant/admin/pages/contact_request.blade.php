@@ -127,7 +127,7 @@
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('/view/all/contact/requests') }}",
+            ajax: "{{ route('ViewAllContactRequests') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'

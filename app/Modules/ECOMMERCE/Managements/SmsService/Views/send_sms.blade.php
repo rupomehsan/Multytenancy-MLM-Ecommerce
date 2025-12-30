@@ -223,7 +223,7 @@
             var templateId = value;
 
             $.ajax({
-                url: "{{ url('/get/template/description') }}",
+                url: "{{ route('GetTemplateDescription') }}",
                 type: "POST",
                 data: {
                     template_id: templateId,

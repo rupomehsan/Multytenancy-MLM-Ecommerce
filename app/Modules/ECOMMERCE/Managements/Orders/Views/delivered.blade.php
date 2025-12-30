@@ -101,7 +101,7 @@
             stateSave: true,
             pageLength: 15,
             lengthMenu: [15, 25, 50, 100],
-            ajax: "{{ url('view/delivered/orders') }}",
+            ajax: "{{ route('ViewDeliveredOrders') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'

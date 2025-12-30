@@ -102,7 +102,7 @@
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('/view/all/faqs') }}",
+            ajax: "{{ route('ViewAllFaq') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'

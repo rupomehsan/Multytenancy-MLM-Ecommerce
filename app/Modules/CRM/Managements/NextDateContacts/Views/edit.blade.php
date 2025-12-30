@@ -204,8 +204,10 @@
         document.getElementById('product_warehouse_id').addEventListener('change', function() {
             var warehouseId = this.value;
             if (warehouseId) {
-                // AJAX request to fetch related rooms
-                fetch(`/get-warehouse-rooms/${warehouseId}`)
+                // AJAX request to fetch related rooms using named route
+                var roomsUrl = "{{ route('GetWarehouseRoomsByWarehouse', ['warehouseId' => 'WAREHOUSE_ID']) }}";
+                roomsUrl = roomsUrl.replace('WAREHOUSE_ID', warehouseId);
+                fetch(roomsUrl)
                     .then(response => response.json())
                     .then(data => {
                         var roomSelect = document.getElementById('product_warehouse_room_id');

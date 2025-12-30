@@ -90,7 +90,7 @@
                 var categoryId = this.value;
                 $("#colFormLabe2").html('');
                 $.ajax({
-                    url: "{{ url('/category/wise/subcategory') }}",
+                    url: "{{ route('CategoryWiseSubcategory') }}",
                     type: "POST",
                     data: {
                         category_id: categoryId,

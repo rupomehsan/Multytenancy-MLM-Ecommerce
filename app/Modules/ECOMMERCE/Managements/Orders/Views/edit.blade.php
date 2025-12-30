@@ -477,7 +477,7 @@
                             <div class="text-right">
                                 <button type="submit" class="btn btn-primary waves-effect waves-light"><i
                                         class="fas fa-save"></i> Update Order</button>
-                                <a href="{{ url('/order/details') }}/{{ $order->slug }}"
+                                <a href="{{ url('/admin/order/details') }}/{{ $order->slug }}"
                                     class="btn btn-danger waves-effect waves-light"><i class="mdi mdi-cancel"></i>
                                     Cancel</a>
                             </div>
@@ -573,7 +573,7 @@
                     rowno: renum,
                     _token: '{{ csrf_token() }}'
                 },
-                url: "{{ url('/add/more/product') }}",
+                url: "{{ route('AddMoreProduct') }}",
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {
@@ -599,7 +599,7 @@
             $("#product_variant_id_" + renum).html('');
 
             $.ajax({
-                url: "{{ url('/get/product/variants') }}",
+                url: "{{ route('GetProductVariants') }}",
                 type: "POST",
                 data: {
                     product_id: productId,

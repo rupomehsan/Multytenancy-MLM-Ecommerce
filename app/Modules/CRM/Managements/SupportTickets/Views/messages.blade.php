@@ -40,7 +40,7 @@
                         <div class="row pt-1 border-top mt-2">
                             <div class="col-lg-6">
                                 @if ($data->attachment)
-                                    <a href="{{ url('/') }}/{{ $data->attachment }}" stream target="_blank"><i
+                                    <a href="{{ url('/admin/') }}/{{ $data->attachment }}" stream target="_blank"><i
                                             class="feather-download"></i> Download Attachment</a>
                                 @endif
                             </div>
@@ -60,7 +60,7 @@
                                 <div class="row pt-1 border-top mt-2">
                                     <div class="col-lg-6 text-left">
                                         @if ($msg->attachment)
-                                            <a href="{{ url('/') }}/{{ $msg->attachment }}" stream target="_blank"><i
+                                            <a href="{{ url('/admin/') }}/{{ $msg->attachment }}" stream target="_blank"><i
                                                     class="feather-download"></i> Download Attachment</a>
                                         @endif
                                     </div>
@@ -78,7 +78,7 @@
                                 <div class="row pt-1 border-top mt-2">
                                     <div class="col-lg-6">
                                         @if ($msg->attachment)
-                                            <a href="{{ url('/') }}/{{ $msg->attachment }}" stream target="_blank"><i
+                                            <a href="{{ url('/admin/') }}/{{ $msg->attachment }}" stream target="_blank"><i
                                                     class="feather-download"></i> Download Attachment</a>
                                         @endif
                                     </div>

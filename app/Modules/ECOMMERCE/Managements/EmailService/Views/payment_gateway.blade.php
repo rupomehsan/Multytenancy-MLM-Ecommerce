@@ -136,7 +136,7 @@
                         <h4 class="card-title mb-3">SSL Commerz Gateway</h4>
                         <div class="row" style="height: 120px;">
                             <div class="col-lg-12 text-center pt-4 pb-4">
-                                <img src="{{ url('/') }}/images/ssl_commerz.png" class="img-fluid"
+                                <img src="{{ url('/admin/') }}/images/ssl_commerz.png" class="img-fluid"
                                     style="max-width: 200px; max-height: 130px; padding-top: 20px; opacity:0.4">
                             </div>
                         </div>
@@ -162,7 +162,7 @@
 
                     <div class="row" style="height: 120px;">
                         <div class="col-lg-12 text-center pt-4 pb-4">
-                            <img src="{{url('/')}}/images/stripe_payment_gatway.png" style="max-width: 200px; max-height: 130px;">
+                            <img src="{{url('/admin/')}}/images/stripe_payment_gatway.png" style="max-width: 200px; max-height: 130px;">
                         </div>
                     </div>
 
@@ -258,7 +258,7 @@
 
                     <div class="row" style="height: 120px;">
                         <div class="col-lg-12 text-center pt-4 pb-4">
-                            <img src="{{url('/')}}/images/bkash_payment_gateway.png" style="max-width: 200px; max-height: 130px; height: 90px">
+                            <img src="{{url('/admin/')}}/images/bkash_payment_gateway.png" style="max-width: 200px; max-height: 130px; height: 90px">
                         </div>
                     </div>
 
@@ -354,7 +354,7 @@
 
                     <div class="row" style="height: 120px;">
                         <div class="col-lg-12 text-center pt-4 pb-4">
-                            <img src="{{url('/')}}/images/amar_pay.png" style="max-width: 220px; max-height: 130px; height: 65px">
+                            <img src="{{url('/admin/')}}/images/amar_pay.png" style="max-width: 220px; max-height: 130px; height: 65px">
                         </div>
                     </div>
 

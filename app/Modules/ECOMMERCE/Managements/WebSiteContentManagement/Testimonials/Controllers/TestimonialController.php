@@ -3,14 +3,13 @@
 namespace App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Testimonials\Controllers;
 
 use Illuminate\Http\Request;
-use DataTables;
-use Carbon\Carbon;
-use Illuminate\Support\Str;
 use Brian2694\Toastr\Facades\Toastr;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-
-use App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Testimonials\Database\Models\Testimonial;
+use App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Testimonials\Actions\ViewTestimonials;
+use App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Testimonials\Actions\SaveTestimonial;
+use App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Testimonials\Actions\DeleteTestimonial;
+use App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Testimonials\Actions\GetTestimonialForEdit;
+use App\Modules\ECOMMERCE\Managements\WebSiteContentManagement\Testimonials\Actions\UpdateTestimonial;
 
 class TestimonialController extends Controller
 {
@@ -18,28 +17,11 @@ class TestimonialController extends Controller
     {
         $this->loadModuleViewPath('ECOMMERCE/Managements/WebSiteContentManagement/Testimonials');
     }
+
     public function viewTestimonials(Request $request)
     {
         if ($request->ajax()) {
-
-            $data = Testimonial::orderBy('id', 'desc')->get();
-
-            return Datatables::of($data)
-                ->editColumn('rating', function ($data) {
-                    $rating = "";
-                    for ($i = 1; $i <= $data->rating; $i++) {
-                        $rating .= '<i class="feather-star" style="color: goldenrod;"></i>';
-                    }
-                    return $rating;
-                })
-                ->addIndexColumn()
-                ->addColumn('action', function ($data) {
-                    $btn = ' <a href="' . url('edit/testimonial') . '/' . $data->slug . '" class="mb-1 btn-sm btn-warning rounded"><i class="fas fa-edit"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->slug . '" data-original-title="Status" class="btn-sm btn-danger rounded deleteBtn"><i class="fas fa-trash-alt"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action', 'rating'])
-                ->make(true);
+            return ViewTestimonials::execute($request);
         }
         return view('view');
     }
@@ -51,101 +33,27 @@ class TestimonialController extends Controller
 
     public function saveTestimonial(Request $request)
     {
-        $request->validate([
-            'name' => 'required|max:255',
-            'rating' => 'required',
-            'description' => 'required'
-        ]);
-
-
-        $image = null;
-        if ($request->hasFile('image')) {
-            $get_image = $request->file('image');
-            $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $relativeDir = 'uploads/testimonial/';
-            $location = public_path($relativeDir);
-
-            if (!\Illuminate\Support\Facades\File::exists($location)) {
-                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
-            }
-
-            // Image::make($get_image)->save($location . $image_name, 80);
-            $get_image->move($location, $image_name);
-            $image = $relativeDir . $image_name;
-        }
-
-        Testimonial::insert([
-            'description' => $request->description,
-            'rating' => $request->rating,
-            'customer_name' => $request->name,
-            'designation' => $request->designation,
-            'customer_image' => $image,
-            'slug' => str::random(5) . time(),
-            'created_at' => Carbon::now(),
-        ]);
-
-        Toastr::success('Testimonial Saved', 'Success');
+        $result = SaveTestimonial::execute($request);
+        Toastr::success($result['message'], 'Success');
         return back();
     }
 
     public function deleteTestimonial($slug)
     {
-        $data = Testimonial::where('slug', $slug)->first();
-        if ($data->customer_image) {
-            if (file_exists(public_path($data->customer_image))) {
-                unlink(public_path($data->customer_image));
-            }
-        }
-        $data->delete();
-        return response()->json(['success' => 'Data deleted successfully.']);
+        $result = DeleteTestimonial::execute($slug);
+        return response()->json(['success' => $result['message']]);
     }
 
     public function editTestimonial($slug)
     {
-        $data = Testimonial::where('slug', $slug)->first();
-        return view('edit', compact('data'));
+        $result = GetTestimonialForEdit::execute($slug);
+        return view('edit')->with($result);
     }
 
     public function updateTestimonial(Request $request)
     {
-        $request->validate([
-            'name' => 'required|max:255',
-            'rating' => 'required',
-            'description' => 'required'
-        ]);
-
-        $data = Testimonial::where('slug', $request->slug)->first();
-
-        $image = $data->customer_image;
-        if ($request->hasFile('image')) {
-
-            if ($data->customer_image != '' && file_exists(public_path($data->customer_image))) {
-                unlink(public_path($data->customer_image));
-            }
-
-            $get_image = $request->file('image');
-            $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $relativeDir = 'uploads/testimonial/';
-            $location = public_path($relativeDir);
-
-            if (!\Illuminate\Support\Facades\File::exists($location)) {
-                \Illuminate\Support\Facades\File::makeDirectory($location, 0755, true);
-            }
-
-            // Image::make($get_image)->save($location . $image_name, 80);
-            $get_image->move($location, $image_name);
-            $image = $relativeDir . $image_name;
-        }
-
-        $data->customer_image = $image;
-        $data->description = $request->description;
-        $data->rating = $request->rating;
-        $data->customer_name = $request->name;
-        $data->designation = $request->designation;
-        $data->updated_at = Carbon::now();
-        $data->save();
-
-        Toastr::success('Testimonial Updated', 'Success');
+        $result = UpdateTestimonial::execute($request);
+        Toastr::success($result['message'], 'Success');
         return redirect('/view/testimonials');
     }
 }

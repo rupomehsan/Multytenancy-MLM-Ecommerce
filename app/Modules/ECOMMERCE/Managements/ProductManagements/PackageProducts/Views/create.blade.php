@@ -474,7 +474,7 @@
                 $("#subcategory_id").html('');
                 $("#childcategory_id").html('');
                 $.ajax({
-                    url: "{{ url('/category/wise/subcategory') }}",
+                    url: "{{ route('CategoryWiseSubcategory') }}",
                     type: "POST",
                     data: {
                         category_id: categoryId,
@@ -501,7 +501,7 @@
                 var subCategoryId = this.value;
                 $("#childcategory_id").html('');
                 $.ajax({
-                    url: "{{ url('/subcategory/wise/childcategory') }}",
+                    url: "{{ route('SubcategoryWiseChildcategory') }}",
                     type: "POST",
                     data: {
                         subcategory_id: subCategoryId,

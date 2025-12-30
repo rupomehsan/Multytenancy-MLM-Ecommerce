@@ -76,7 +76,7 @@
                     <h4 class="card-title mb-3">View All Outlets</h4>
                     <div class="table-responsive">
                         <label id="customFilter">
-                            <a href="{{ url('/add/new/outlet') }}" class="btn btn-primary btn-sm"
+                            <a href="{{ route('AddNewOutlet') }}" class="btn btn-primary btn-sm"
                                 style="margin-left: 5px"><b><i class="fas fa-plus"></i> Add New Outlet</b></a>
                         </label>
                         <table class="table table-bordered mb-0 data-table">

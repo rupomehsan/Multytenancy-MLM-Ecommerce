@@ -115,7 +115,7 @@
             processing: true,
             serverSide: true,
             pageLength: 15,
-            ajax: "{{ url('/view/sms/history') }}",
+            ajax: "{{ route('ViewSmsHistory') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'

@@ -25,7 +25,7 @@
                     </div>
 
                     <form class="needs-validation p-4 shadow rounded bg-white" method="POST"
-                        action="{{ url('/update/product-color') }}" novalidate>
+                        action="{{ route('UpdateProductColor') }}" novalidate>
                         @csrf
 
                         <h4 class="mb-4">Update Product Color</h4>

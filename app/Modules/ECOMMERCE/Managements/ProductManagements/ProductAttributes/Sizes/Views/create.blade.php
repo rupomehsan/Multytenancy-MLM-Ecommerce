@@ -23,7 +23,7 @@
                     </div>
 
                     <form class="needs-validation p-4 shadow rounded bg-white" method="POST"
-                        action="{{ url('/save/new/product-size') }}" enctype="multipart/form-data" novalidate>
+                        action="{{ route('SaveNewProductSize') }}" enctype="multipart/form-data" novalidate>
                         @csrf
 
                         <h4 class="mb-4">Add New Attribute</h4>

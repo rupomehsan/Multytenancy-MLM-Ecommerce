@@ -45,7 +45,7 @@
                 @if (isset($details['is_package']) && $details['is_package']) data-package-id="{{ $details['product_id'] ?? $id }}" @else data-product-id="{{ $id }}" @endif>
                 <div class="minicart__thumb">
                     <a
-                        href="{{ url(isset($details['is_package']) && $details['is_package'] ? 'package/details' : 'product/details') }}/{{ $details['slug'] }}">
+                        href="{{ url(isset($details['is_package']) && $details['is_package'] ? 'package/details' : 'product/details') }}/{{ $details['slug'] ?? '' }}">
                         @if (isset($details['has_variant']) && $details['has_variant'])
                             <img src="{{ url(env('ADMIN_URL') . '/uploads/productImages/' . $imageToShow) }}"
                                 alt="product-img" />
@@ -57,7 +57,7 @@
                 <div class="minicart__text">
                     <h3 class="minicart__subtitle h4">
                         <a
-                            href="{{ url(isset($details['is_package']) && $details['is_package'] ? 'package/details' : 'product/details') }}/{{ $details['slug'] }}">{{ substr($details['name'], 0, 25) }}..</a>
+                            href="{{ url(isset($details['is_package']) && $details['is_package'] ? 'package/details' : 'product/details') }}/{{ $details['slug'] ?? '' }}">{{ substr($details['name'] ?? '', 0, 25) }}..</a>
                         @if (isset($details['is_package']) && $details['is_package'])
                             <span class="package-badge"
                                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 5px;">Package</span>

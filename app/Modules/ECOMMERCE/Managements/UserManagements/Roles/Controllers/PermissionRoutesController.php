@@ -2,14 +2,14 @@
 
 namespace App\Modules\ECOMMERCE\Managements\UserManagements\Roles\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Brian2694\Toastr\Facades\Toastr;
-use Illuminate\Support\Facades\Route;
-use Yajra\DataTables\Facades\DataTables;
 use App\Http\Controllers\Controller;
-
+use App\Modules\ECOMMERCE\Managements\UserManagements\Roles\Actions\ViewAllPermissionRoutes;
+use App\Modules\ECOMMERCE\Managements\UserManagements\Roles\Actions\RegeneratePermissionRoutes;
+use App\Modules\ECOMMERCE\Managements\UserManagements\Roles\Actions\GetRoutesByGroup;
+use App\Modules\ECOMMERCE\Managements\UserManagements\Roles\Actions\GetRoutesByModule;
+use App\Modules\ECOMMERCE\Managements\UserManagements\Roles\Actions\GetRoutesByModuleAndGroup;
 use App\Modules\ECOMMERCE\Managements\UserManagements\Roles\Database\Models\PermissionRoutes;
 
 class PermissionRoutesController extends Controller
@@ -21,130 +21,22 @@ class PermissionRoutesController extends Controller
     public function viewAllPermissionRoutes(Request $request)
     {
         if ($request->ajax()) {
-
-            $data = PermissionRoutes::orderBy('route_group_name', 'asc')
-                ->orderBy('route_module_name', 'asc')
-                ->orderBy('name', 'asc')
-                ->get();
-            return DataTables::of($data)
-                ->editColumn('route_group_name', function ($data) {
-                    return '<span class="badge badge-primary">' . ($data->route_group_name ?: 'General') . '</span>';
-                })
-                ->editColumn('route_module_name', function ($data) {
-                    return '<span class="badge badge-info">' . ($data->route_module_name ?: 'Core') . '</span>';
-                })
-                ->editColumn('method', function ($data) {
-                    $methodColors = [
-                        'GET' => 'success',
-                        'POST' => 'primary',
-                        'PUT' => 'warning',
-                        'PATCH' => 'info',
-                        'DELETE' => 'danger'
-                    ];
-                    $color = $methodColors[$data->method] ?? 'secondary';
-                    return '<span class="badge badge-' . $color . '">' . $data->method . '</span>';
-                })
-                ->editColumn('created_at', function ($data) {
-                    return date("Y-m-d h:i:s a", strtotime($data->created_at));
-                })
-                ->editColumn('updated_at', function ($data) {
-                    if ($data->updated_at) {
-                        return date("Y-m-d h:i:s a", strtotime($data->updated_at));
-                    }
-                    return '-';
-                })
-                ->rawColumns(['route_group_name', 'route_module_name', 'method'])
-                ->addIndexColumn()
-                ->make(true);
+            return ViewAllPermissionRoutes::execute($request);
         }
         return view('permisson_routes');
     }
 
     public function regeneratePermissionRoutes()
     {
-        // 1. Get all modules from web.php require statements
-        $webFilePath = base_path('routes/web.php');
-        $modules = [];
-        if (file_exists($webFilePath)) {
-            $content = file_get_contents($webFilePath);
-            preg_match_all("/require\s+__DIR__\s*\.\s*'\/([^']+)\.php'\s*;/", $content, $matches);
-            if (!empty($matches[1])) {
-                foreach ($matches[1] as $routeFile) {
-                    $fileName = $routeFile . '.php';
-                    if (preg_match('/Routes$/', $routeFile)) {
-                        $moduleName = strtolower(preg_replace('/Routes$/', '', $routeFile));
-                    } else {
-                        $moduleName = strtolower($routeFile);
-                    }
-                    $modules[$moduleName] = base_path('routes/' . $fileName);
-                }
-            }
-        }
-
-        // 2. For each module file, scan for group comments and routes
-        $allRoutes = [];
-        foreach ($modules as $moduleName => $filePath) {
-            if (!file_exists($filePath)) continue;
-            $lines = file($filePath);
-            $currentGroup = 'General';
-            foreach ($lines as $line) {
-                $trimmed = trim($line);
-                // Detect group comment
-                if (preg_match('/^\/\/\s*(.+?)(?:\s+routes?|\s+start|\s+begin)?\s*$/i', $trimmed, $m)) {
-                    $groupName = trim($m[1]);
-                    if ($groupName && stripos($groupName, 'route') === false) {
-                        $currentGroup = ucwords($groupName);
-                    }
-                }
-                // Detect Route::... definition
-                if (preg_match('/Route::(get|post|put|patch|delete|options)\s*\(/i', $trimmed)) {
-                    // Try to extract route name
-                    $name = null;
-                    if (preg_match("/->name\(['\"]([^'\"]+)['\"]\)/", $trimmed, $nm)) {
-                        $name = $nm[1];
-                    }
-                    $allRoutes[] = [
-                        'module' => $moduleName,
-                        'group' => $currentGroup,
-                        'line' => $trimmed,
-                        'name' => $name
-                    ];
-                }
-            }
-        }
-
-        // 3. Remove all old permission routes
-        DB::table('permission_routes')->truncate();
-
-        // 4. Insert new permission routes
-        $now = now();
-        foreach ($allRoutes as $route) {
-            // Try to extract method and uri
-            if (preg_match('/Route::(get|post|put|patch|delete|options)\s*\(\s*["\']([^"\']+)["\']/', $route['line'], $rm)) {
-                $method = strtoupper($rm[1]);
-                $uri = $rm[2];
-            } else {
-                continue;
-            }
-            DB::table('permission_routes')->insert([
-                'route' => $uri,
-                'name' => $route['name'] ?? '',
-                'method' => $method,
-                'route_group_name' => $route['group'],
-                'route_module_name' => $route['module'],
-                'created_at' => $now,
-                'updated_at' => $now
-            ]);
-        }
-
-        Toastr::success("Permission Routes Regenerated Successfully! ", "Success");
+        $result = RegeneratePermissionRoutes::execute(request());
+        Toastr::success($result['message'], "Success");
         return back();
     }
 
     /**
-     * Get route modules from web.php require statements
+     * Get all modules from web.php require statements
      */
-    private function getRouteModulesFromWebFile()
+    private function getModulesFromWebFile()
     {
         $webFilePath = base_path('routes/web.php');
         $modules = [];
@@ -278,37 +170,8 @@ class PermissionRoutesController extends Controller
      */
     public function getRoutesByGroup()
     {
-        $routeGroups = PermissionRoutes::selectRaw('route_group_name, route_module_name, COUNT(*) as count')
-            ->groupBy('route_group_name', 'route_module_name')
-            ->orderBy('route_group_name')
-            ->orderBy('route_module_name')
-            ->get();
-
-        $groupedRoutes = [];
-        foreach ($routeGroups as $group) {
-            $routes = PermissionRoutes::where('route_group_name', $group->route_group_name)
-                ->where('route_module_name', $group->route_module_name)
-                ->orderBy('name')
-                ->get();
-
-            $groupKey = $group->route_group_name;
-            $moduleKey = $group->route_module_name ?: 'Core';
-
-            if (!isset($groupedRoutes[$groupKey])) {
-                $groupedRoutes[$groupKey] = [
-                    'total_count' => 0,
-                    'modules' => []
-                ];
-            }
-
-            $groupedRoutes[$groupKey]['modules'][$moduleKey] = [
-                'count' => $group->count,
-                'routes' => $routes
-            ];
-            $groupedRoutes[$groupKey]['total_count'] += $group->count;
-        }
-
-        return response()->json($groupedRoutes);
+        $result = GetRoutesByGroup::execute(request());
+        return response()->json($result['data']);
     }
 
     /**
@@ -316,24 +179,8 @@ class PermissionRoutesController extends Controller
      */
     public function getRoutesByModule()
     {
-        $routeModules = PermissionRoutes::selectRaw('route_module_name, COUNT(*) as count')
-            ->groupBy('route_module_name')
-            ->orderBy('route_module_name')
-            ->get();
-
-        $moduleRoutes = [];
-        foreach ($routeModules as $module) {
-            $routes = PermissionRoutes::where('route_module_name', $module->route_module_name)
-                ->orderBy('route_group_name')
-                ->orderBy('name')
-                ->get();
-            $moduleRoutes[$module->route_module_name ?: 'Core'] = [
-                'count' => $module->count,
-                'routes' => $routes
-            ];
-        }
-
-        return response()->json($moduleRoutes);
+        $result = GetRoutesByModule::execute(request());
+        return response()->json($result['data']);
     }
 
     /**
@@ -341,39 +188,7 @@ class PermissionRoutesController extends Controller
      */
     public function getRoutesByModuleAndGroup()
     {
-        $routes = PermissionRoutes::orderBy('route_module_name')
-            ->orderBy('route_group_name')
-            ->orderBy('name')
-            ->get();
-
-        $moduleGroupRoutes = [];
-
-        foreach ($routes as $route) {
-            $moduleName = $route->route_module_name ?: 'general';
-            $groupName = $route->route_group_name ?: 'General';
-
-            // Initialize module if not exists
-            if (!isset($moduleGroupRoutes[$moduleName])) {
-                $moduleGroupRoutes[$moduleName] = [
-                    'total_count' => 0,
-                    'groups' => []
-                ];
-            }
-
-            // Initialize group if not exists
-            if (!isset($moduleGroupRoutes[$moduleName]['groups'][$groupName])) {
-                $moduleGroupRoutes[$moduleName]['groups'][$groupName] = [
-                    'count' => 0,
-                    'routes' => []
-                ];
-            }
-
-            // Add route to group
-            $moduleGroupRoutes[$moduleName]['groups'][$groupName]['routes'][] = $route;
-            $moduleGroupRoutes[$moduleName]['groups'][$groupName]['count']++;
-            $moduleGroupRoutes[$moduleName]['total_count']++;
-        }
-
-        return $moduleGroupRoutes;
+        $result = GetRoutesByModuleAndGroup::execute(request());
+        return $result['data'];
     }
 }

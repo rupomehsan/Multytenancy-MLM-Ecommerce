@@ -22,7 +22,7 @@
                     <div class="card-body">
                         <h4 class="card-title mb-3">
                             <div class="row">
-                                <div class="col-lg-8">SSL Commerz Gateway asdfasdf</div>
+                                <div class="col-lg-8">SSL Commerz Gateway</div>
                                 <div class="col-lg-4 text-right">
                                     <input type="checkbox" class="switchery_checkbox" id="ssl_commerz"
                                         @if ($gateways[0]->status == 1) checked @endif value="ssl_commerz"
@@ -163,7 +163,7 @@
 
                     <div class="row" style="height: 120px;">
                         <div class="col-lg-12 text-center pt-4 pb-4">
-                            <img src="{{url('/')}}/images/stripe_payment_gatway.png" style="max-width: 200px; max-height: 130px;">
+                            <img src="{{url('/admin/')}}/images/stripe_payment_gatway.png" style="max-width: 200px; max-height: 130px;">
                         </div>
                     </div>
 
@@ -259,7 +259,7 @@
 
                     <div class="row" style="height: 120px;">
                         <div class="col-lg-12 text-center pt-4 pb-4">
-                            <img src="{{url('/')}}/images/bkash_payment_gateway.png" style="max-width: 200px; max-height: 130px; height: 90px">
+                            <img src="{{url('/admin/')}}/images/bkash_payment_gateway.png" style="max-width: 200px; max-height: 130px; height: 90px">
                         </div>
                     </div>
 
@@ -355,7 +355,7 @@
 
                     <div class="row" style="height: 120px;">
                         <div class="col-lg-12 text-center pt-4 pb-4">
-                            <img src="{{url('/')}}/images/amar_pay.png" style="max-width: 220px; max-height: 130px; height: 65px">
+                            <img src="{{url('/admin/')}}/images/amar_pay.png" style="max-width: 220px; max-height: 130px; height: 65px">
                         </div>
                     </div>
 

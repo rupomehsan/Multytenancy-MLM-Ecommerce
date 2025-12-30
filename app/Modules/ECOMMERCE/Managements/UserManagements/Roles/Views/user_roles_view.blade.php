@@ -103,7 +103,7 @@
             pageLength: 10,
             processing: true,
             serverSide: true,
-            ajax: "{{ url('/view/user/roles') }}",
+            ajax: "{{ route('ViewAllUserRoles') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'

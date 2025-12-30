@@ -15,7 +15,7 @@ Route::get('admin/login', [\App\Http\Controllers\Tenant\Admin\Auth\LoginControll
 Route::post('admin/login', [\App\Http\Controllers\Tenant\Admin\Auth\LoginController::class, 'login'])->name('admin.login.post');
 Route::post('admin/logout', [\App\Http\Controllers\Tenant\Admin\Auth\LoginController::class, 'logout'])->name('admin.logout');
 
-Route::group(['middleware' => ['auth:admin', 'CheckUserType', 'DemoMode']], function () {
+Route::prefix('admin')->middleware(['auth:admin', 'CheckUserType', 'DemoMode'])->group(function () {
 
     // Custom auth routes pointing to tenant frontend auth controllers
     // Login / Logout
@@ -109,11 +109,11 @@ Route::group(['middleware' => ['auth:admin', 'CheckUserType', 'DemoMode']], func
 | Utility routes to view and clear application cache and
 | other maintenance helpers (development use only).
 */
-Route::get('/clear/cache', function () {
+Route::prefix('admin')->get('/clear/cache', function () {
     Artisan::call('cache:clear');
     Artisan::call('config:clear');
     Artisan::call('view:clear');
     Artisan::call('route:clear');
     Toastr::success('All cache cleared!', 'Success');
     return redirect()->back();
-});
+})->name('ClearCache');

@@ -76,7 +76,7 @@
                     <h4 class="card-title mb-3">View All Product Warehouse Rooms</h4>
                     <div class="table-responsive">
                         <label id="customFilter">
-                            <a href="{{ url('/add/new/product-warehouse-room') }}" class="btn btn-primary btn-sm"
+                            <a href="{{ route('AddNewProductWarehouseRoom') }}" class="btn btn-primary btn-sm"
                                 style="margin-left: 5px"><b><i class="fas fa-plus"></i> Add Warehouse Room</b></a>
                         </label>
                         <table class="table table-bordered mb-0 data-table">
@@ -114,7 +114,7 @@
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('view/all/product-warehouse-room') }}",
+            ajax: "{{ route('ViewAllProductWarehouseRoom') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -188,7 +188,7 @@
                 }
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/product-warehouse-room') }}" + '/' + productWarehouseRoomSlug,
+                    url: "{{ route('DeleteProductWarehouseRoom', '') }}" + '/' + productWarehouseRoomSlug,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Product Warehouse room has been Deleted", "Deleted Successfully");

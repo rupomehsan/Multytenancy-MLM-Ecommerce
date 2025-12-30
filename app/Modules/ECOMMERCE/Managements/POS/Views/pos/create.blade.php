@@ -10,84 +10,686 @@
 @section('header_css')
     <link href="{{ asset('tenant/admin/assets') }}/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
     <link href="{{ asset('tenant/admin/assets') }}/css/pos.css" rel="stylesheet" type="text/css" />
+    <style>
+        /* Select2 Invalid State Styling */
+        .select2-container.is-invalid .select2-selection,
+        .select2-container.is-invalid .select2-selection--single,
+        .select2-container--default.is-invalid .select2-selection,
+        .select2-container--default.is-invalid .select2-selection--single,
+        span.select2-container.is-invalid+.select2-container .select2-selection {
+            border-color: #dc3545 !important;
+            padding-right: calc(1.5em + 0.75rem);
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+
+        .select2-container.is-invalid .select2-selection:focus,
+        .select2-container--default.is-invalid .select2-selection:focus {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+        }
+
+        /* Modern POS Layout */
+        .pos-modern-container {
+            display: flex;
+            gap: 15px;
+            height: calc(100vh - 200px);
+            padding-bottom: 20px;
+        }
+
+        /* Left Panel - Cart & Checkout */
+        .pos-left-cart {
+            flex: 0 0 50%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            padding-right: 8px;
+            max-height: calc(100vh - 200px);
+        }
+
+        /* Scrollbar styling for left panel */
+        .pos-left-cart::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .pos-left-cart::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .pos-left-cart::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 3px;
+        }
+
+        .pos-left-cart::-webkit-scrollbar-thumb:hover {
+            background: #5568d3;
+        }
+
+        /* Right Panel - Products */
+        .pos-right-products {
+            flex: 0 0 50%;
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+            border-radius: 8px;
+            overflow: hidden;
+            max-height: calc(100vh - 200px);
+        }
+
+        /* Modern Cards */
+        .pos-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .pos-card-header {
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .pos-card-body {
+            padding: 14px 16px;
+        }
+
+        .pos-card:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Product Filters */
+        .pos-filters {
+            padding: 18px 20px;
+            background: white;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        /* Product Grid */
+        .pos-products-grid {
+            flex: 1;
+            padding: 16px;
+            padding-bottom: 24px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            max-height: calc(100vh - 280px);
+        }
+
+        /* Scrollbar styling for products grid */
+        .pos-products-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .pos-products-grid::-webkit-scrollbar-track {
+            background: #e9ecef;
+            border-radius: 3px;
+        }
+
+        .pos-products-grid::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 3px;
+        }
+
+        .pos-products-grid::-webkit-scrollbar-thumb:hover {
+            background: #5568d3;
+        }
+
+        .pos-products-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            padding-bottom: 8px;
+        }
+
+        /* Product Card */
+        .pos-product-item {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .pos-product-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .pos-product-image-wrapper {
+            position: relative;
+            padding-top: 100%;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .pos-product-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .pos-qty-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #dc3545;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(220, 53, 69, 0.4);
+        }
+
+        .pos-product-info {
+            padding: 12px;
+            text-align: center;
+        }
+
+        .pos-product-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 36px;
+        }
+
+        .pos-product-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        /* Cart Styles */
+        .pos-customer-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .pos-customer-select {
+            flex: 1;
+        }
+
+        .pos-customer-select select {
+            width: 100%;
+        }
+
+        .pos-due-badge {
+            font-size: 12px;
+            color: #dc3545;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .pos-action-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .pos-action-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 6px;
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pos-action-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .pos-action-btn.btn-primary {
+            background: #667eea;
+        }
+
+        .pos-action-btn.btn-info {
+            background: #17a2b8;
+        }
+
+        .pos-action-btn.btn-secondary {
+            background: #6c757d;
+        }
+
+        /* Cart Table */
+        .pos-cart-wrapper {
+            max-height: 280px;
+            overflow-y: auto;
+            margin-bottom: 0;
+        }
+
+        .pos-cart-wrapper::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .pos-cart-wrapper::-webkit-scrollbar-track {
+            background: #f8f9fa;
+        }
+
+        .pos-cart-wrapper::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 3px;
+        }
+
+        .pos-cart-table {
+            width: 100%;
+            font-size: 12px;
+        }
+
+        .pos-cart-table th {
+            background: #f8f9fa;
+            padding: 8px 4px;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .pos-cart-table td {
+            padding: 8px 4px;
+            vertical-align: middle;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        /* Totals Section */
+        .pos-totals {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .pos-totals table {
+            width: 100%;
+            margin: 0;
+        }
+
+        .pos-totals td {
+            padding: 6px 0;
+            font-size: 13px;
+        }
+
+        .pos-totals tr:last-child td {
+            font-size: 16px;
+            font-weight: 700;
+            color: #667eea;
+            padding-top: 12px;
+            border-top: 2px solid #dee2e6;
+        }
+
+        /* Coupon Input */
+        .pos-coupon-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .pos-coupon-input {
+            flex: 1;
+            height: 38px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 0 12px;
+        }
+
+        .pos-coupon-btn {
+            height: 38px;
+            padding: 0 20px;
+            border-radius: 6px;
+            border: none;
+            background: #28a745;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pos-coupon-btn:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        /* Action Buttons */
+        .pos-action-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .pos-main-btn {
+            height: 50px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .pos-main-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .pos-btn-hold {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .pos-btn-multiple {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .pos-btn-cash {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .pos-btn-payall {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Delivery & Address Sections */
+        .pos-delivery-section {
+            padding: 0;
+            background: transparent;
+        }
+
+        .pos-delivery-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        /* Modern Delivery Method Cards */
+        .delivery-method-card {
+            position: relative;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .delivery-method-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .delivery-method-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .delivery-method-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .delivery-method-card.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+        }
+
+        .delivery-method-card.active::before {
+            transform: scaleY(1);
+        }
+
+        .delivery-method-card input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .delivery-icon-wrapper {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: linear-gradient(135deg, #f6f8fb 0%, #e9ecef 100%);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .delivery-method-card.active .delivery-icon-wrapper {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .delivery-icon-wrapper i {
+            color: #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .delivery-method-card.active .delivery-icon-wrapper i {
+            color: white;
+        }
+
+        .delivery-content {
+            flex: 1;
+        }
+
+        .delivery-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 4px;
+            transition: color 0.3s ease;
+        }
+
+        .delivery-method-card.active .delivery-title {
+            color: #667eea;
+        }
+
+        .delivery-description {
+            font-size: 12px;
+            color: #718096;
+            margin: 0;
+        }
+
+        .delivery-check {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .delivery-method-card.active .delivery-check {
+            background: #667eea;
+            border-color: #667eea;
+        }
+
+        .delivery-check i {
+            font-size: 12px;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .delivery-method-card.active .delivery-check i {
+            opacity: 1;
+        }
+
+        .pos-section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pos-section-title i {
+            color: #667eea;
+        }
+
+        /* Order Note Textarea Enhancement */
+        textarea.form-control:focus {
+            border-color: #667eea !important;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.1) !important;
+        }
+
+        /* Confirm Order Button Enhancement */
+        #confirmOrderBtn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+        }
+
+        #confirmOrderBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        #confirmOrderBtn:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .pos-products-row {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .pos-modern-container {
+                flex-direction: column;
+                height: auto;
+                max-height: none;
+            }
+
+            .pos-left-cart {
+                flex: none;
+                max-height: none;
+            }
+
+            .pos-right-products {
+                max-height: 600px;
+            }
+
+            .pos-products-row {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .pos-action-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .pos-products-row {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+        }
+    </style>
 @endsection
 
 @section('content')
-    <div class="row">
-
-        <div class="col-lg-12 col-xl-7 col-md-7 col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="mb-4">
-                        @include('pos.product_search_form')
-                    </div>
-                    <div class="pos-item-card-group" style="max-height: 1020px; overflow-y: scroll; padding-right: 12px;">
-                        <div class="live_search row gap-2" style="gap: 10px;">
-                            {{-- Live search results will be rendered here --}}
-                            @include('pos.live_search_products')
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-12 col-xl-5 col-md-5 col-12">
-            <form action="{{ url('place/order') }}" method="POST" enctype="multipart/form-data">
+    <div class="pos-modern-container ">
+        <!-- Left Panel: Cart & Checkout -->
+        <div class="pos-left-cart ">
+            <form action="{{ route('PosPlaceOrder') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-lg-8 col-12">
-                                <select class="form-control w-100" name="customer_id" onchange="getSavedAddress(this.value)"
+
+                <!-- Customer Selection Card -->
+                <div class="pos-card">
+                    <div class="pos-card-body">
+                        <div class="pos-customer-row">
+                            <div class="pos-customer-select">
+                                <select class="form-control" name="customer_id" onchange="getSavedAddress(this.value)"
                                     data-toggle="select2">
-                                    <option value="">Walk in Customer</option>
+                                    <option value="">🚶 Walk-in Customer</option>
                                     @foreach ($customers as $customer)
                                         <option value="{{ $customer->id }}">{{ $customer->name }} (@if ($customer->email)
                                                 {{ $customer->email }}@else{{ $customer->phone }}
                                             @endif)</option>
                                     @endforeach
                                 </select>
+                                {{-- <div class="pos-due-badge">Previous Due: -0.00</div> --}}
                             </div>
-                            <div class="col-lg-4 col-12">
-                                <div class="card-body-inner text-right">
-                                    <!-- Button trigger modal -->
-                                    <a href="{{ route('ViewAllInvoices') }}" class="btn btn-primary mr-1 text-right">
-                                        <i class="fa fa-print"></i>
-                                    </a>
-
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary mr-1 text-right" data-toggle="modal"
-                                        data-target="#exampleModal">
-                                        <i class="fa fa-user"></i>
-                                    </button>
-
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary text-right" data-toggle="modal"
-                                        data-target="#exampleModal2">
-                                        <i class="fa fa-truck"></i>
-                                    </button>
-
-                                </div>
+                            <div class="pos-action-btns">
+                                {{-- <a href="{{ route('ViewAllInvoices') }}" class="pos-action-btn btn-primary"
+                                    title="Invoices">
+                                    <i class="fa fa-print"></i>
+                                </a> --}}
+                                {{-- <button type="button" class="pos-action-btn btn-info" data-toggle="modal"
+                                    data-target="#exampleModal" title="New Customer">
+                                    <i class="fa fa-user"></i>
+                                </button>
+                                <button type="button" class="pos-action-btn btn-secondary" data-toggle="modal"
+                                    data-target="#exampleModal2" title="New Address">
+                                    <i class="fa fa-truck"></i>
+                                </button> --}}
                             </div>
                         </div>
                     </div>
-                    <!-- end card body-->
                 </div>
 
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive pos-data-table">
-                            <table class="table table-bordered table-sm mb-0">
+                <!-- Cart Items Card -->
+                <div class="pos-card">
+                    <div class="pos-card-body" style="padding: 0;">
+                        <div class="pos-cart-wrapper">
+                            <table class="pos-cart-table">
                                 <thead>
                                     <tr>
-                                        <th class="text-center">SL</th>
-                                        <th class="text-center">Image</th>
-                                        <th class="text-center">Product</th>
-                                        <th class="text-center">Price</th>
-                                        <th class="text-center">QTY</th>
-                                        <th class="text-center">Discount</th>
-                                        <th class="text-center">Subtotal</th>
-                                        <th class="text-center">Remove</th>
+                                        <th style="width: 6%;">SL</th>
+                                        <th style="width: 12%;">Image</th>
+                                        <th style="width: 25%;">Product</th>
+                                        <th style="width: 12%;">Price</th>
+                                        <th style="width: 12%;">QTY</th>
+                                        <th style="width: 13%;">Disc</th>
+                                        <th style="width: 14%;">Subtotal</th>
+                                        <th style="width: 6%;">✕</th>
                                     </tr>
                                 </thead>
                                 <tbody class="cart_items">
@@ -95,115 +697,152 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
 
-                        <div class="table-responsive pt-4">
-                            <table class="table mb-0">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Sub Total</th>
-                                        {{-- <th class="text-center">Total Tax</th> --}}
-                                        <th class="text-center">Shipping Charge</th>
-                                        <th class="text-center">Discount</th>
-                                        <th class="text-center">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="cart_calculation">
-                                    @include('pos.cart_calculation')
-                                </tbody>
+                <!-- Totals & Coupon Card -->
+                <div class="pos-card">
+                    <div class="pos-card-body">
+                        {{-- <div class="custom-control custom-checkbox mb-2">
+                            <input type="checkbox" class="custom-control-input" id="sendMessage">
+                            <label class="custom-control-label" for="sendMessage">Send Message to Customer</label>
+                            <a href="#" class="float-right text-primary" style="font-size: 13px;"><i
+                                    class="fa fa-file-alt mr-1"></i>T&C</a>
+                        </div> --}}
+
+                        <div class="pos-totals mt-3">
+                            <table class="cart_calculation">
+                                @include('pos.cart_calculation')
                             </table>
                         </div>
 
-                        <div class="row mt-4">
-                            <div class="col-lg-12">
-                                <input type="text" id="coupon_code" placeholder="Coupon Code"
-                                    value="{{ session('coupon') }}" class="form-control d-inline-block w-25"
-                                    onkeyup="autoRemoveCouponIfEmpty(this)" />
-                                <button type="button" class="btn btn-success rounded" onclick="applyCoupon()"
-                                    style="margin-top: -3px; line-height: 22px;">Apply Coupon</button>
-                            </div>
-                        </div>
+                        {{-- <div class="pos-coupon-row">
+                            <input type="text" id="coupon_code" value="{{ session('coupon') }}" class="pos-coupon-input"
+                                placeholder="🎟️ Enter Coupon Code" onkeyup="autoRemoveCouponIfEmpty(this)" />
+                            <button type="button" class="pos-coupon-btn" onclick="applyCoupon()">Apply</button>
+                        </div> --}}
+
+                        {{-- <div class="pos-action-buttons">
+                            <button type="button" class="pos-main-btn pos-btn-hold">
+                                <i class="fa fa-pause-circle"></i> Hold
+                            </button>
+                            <button type="button" class="pos-main-btn pos-btn-multiple">
+                                <i class="fa fa-copy"></i> Multiple
+                            </button>
+                            <button type="button" class="pos-main-btn pos-btn-cash">
+                                <i class="fa fa-money-bill-wave"></i> Cash
+                            </button>
+                            <button type="button" class="pos-main-btn pos-btn-payall">
+                                <i class="fa fa-credit-card"></i> Pay All
+                            </button>
+                        </div> --}}
                     </div>
-                    <!-- end card body-->
                 </div>
 
-                <div class="card">
-                    <div class="card-body">
+                <!-- Delivery & Address Card -->
+                <div class="pos-card">
+                    <div class="pos-card-body">
+                        <div class="pos-delivery-section">
+                            <div class="pos-section-title">
+                                <i class="fas fa-shipping-fast"></i>
+                                Delivery Method
+                            </div>
+                            <div class="pos-delivery-options">
+                                <!-- Home Delivery Card -->
+                                <label class="delivery-method-card" for="home_delivery" id="home_delivery_card">
+                                    <input type="radio" id="home_delivery" name="delivery_method"
+                                        onchange="changeOfDeliveryMetod(1)" value="1"
+                                        @if (old('delivery_method') == '1') checked @endif />
+                                    <div class="delivery-icon-wrapper">
+                                        <i class="fas fa-home"></i>
+                                    </div>
+                                    <div class="delivery-content">
+                                        <div class="delivery-title">Home Delivery</div>
+                                        <p class="delivery-description">Deliver to customer address</p>
+                                    </div>
+                                    <div class="delivery-check">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                </label>
 
-                        <div class="row border-bottom pb-3">
-                            <div class="px-3 mb-2">
-                                <h4 class="mb-3">Delivery Method</h4>
-                                <div class="mt-3">
-                                    <div class="custom-control custom-radio mb-2">
-                                        <input type="radio" id="home_delivery" name="delivery_method"
-                                            onchange="changeOfDeliveryMetod(1)" value="1" class="custom-control-input"
-                                            style="cursor: pointer" />
-                                        <label class="custom-control-label" for="home_delivery" style="cursor: pointer">
-                                            Home Delivery
-                                        </label>
+                                <!-- Store Pickup Card -->
+                                <label class="delivery-method-card" for="store_pickup" id="store_pickup_card">
+                                    <input type="radio" id="store_pickup" name="delivery_method"
+                                        onchange="changeOfDeliveryMetod(2)" value="2"
+                                        @if (old('delivery_method') == '2' || is_null(old('delivery_method'))) checked @endif />
+                                    <div class="delivery-icon-wrapper">
+                                        <i class="fas fa-store"></i>
                                     </div>
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" id="store_pickup" name="delivery_method"
-                                            onchange="changeOfDeliveryMetod(2)" value="2" class="custom-control-input"
-                                            style="cursor: pointer" />
-                                        <label class="custom-control-label" for="store_pickup" style="cursor: pointer">
-                                            Store Pickup
-                                        </label>
+                                    <div class="delivery-content">
+                                        <div class="delivery-title">Store Pickup</div>
+                                        <p class="delivery-description">Customer picks up from store</p>
                                     </div>
+                                    <div class="delivery-check">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="saved_address mt-3">
+                            {{-- render saved address here based on customer selection --}}
+                        </div>
+
+                        <div class="shipping-address-table mt-3">
+                            <div class="shipping-section">
+                                <div class="section-title">
+                                    <i class="fa fa-truck mr-1"></i>
+                                    <span id="shipping-tab-text">Shipping</span>
+                                </div>
+                                <div class="pt-3">
+                                    @include('pos.shipping_form')
+                                </div>
+                            </div>
+
+                            <div class="billing-section mt-3">
+                                <div class="section-title">
+                                    <i class="fa fa-file-invoice mr-1"></i>
+                                    Billing
+                                </div>
+                                <div class="pt-3">
+                                    @include('pos.billing_form')
                                 </div>
                             </div>
                         </div>
 
-                        <div class="row mt-3">
-                            <div class="col-lg-12 saved_address">
-                                {{-- render saved address here based on customer selction --}}
+                        <div class="mt-3">
+                            <div class="pos-section-title">
+                                <i class="fas fa-sticky-note"></i>
+                                Order Note
                             </div>
+                            <textarea class="form-control" name="special_note" rows="2"
+                                placeholder="Add special instructions or notes for this order..."
+                                style="border-radius: 8px; border: 2px solid #e2e8f0; transition: border-color 0.3s;"></textarea>
                         </div>
 
-                        <div class="shipping-address-table">
-                            <div class="card-body">
-                                <ul class="nav nav-tabs nav-justified mb-3">
-                                    <li class="nav-item">
-                                        <a href="#home1" data-toggle="tab" aria-expanded="true"
-                                            class="nav-link active">
-                                            <i class="fa fa-truck d-lg-none d-block"></i>
-                                            <span class="d-none d-lg-block">Shipping Address</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#profile1" data-toggle="tab" aria-expanded="false" class="nav-link">
-                                            <i class="fa fa-truck d-lg-none d-block"></i>
-                                            <span class="d-none d-lg-block">Billing Address</span>
-                                        </a>
-                                    </li>
-                                </ul>
-
-                                <div class="tab-content">
-                                    <div class="tab-pane show active" id="home1">
-                                        @include('pos.shipping_form')
-                                    </div>
-                                    <div class="tab-pane" id="profile1">
-                                        @include('pos.billing_form')
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-4">
-                            <h4 class="mb-3">Order Note</h4>
-                            <div class="form-group">
-                                <textarea class="form-control" name="special_note" rows="3" placeholder="Enter Note"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-success mr-1 text-right" id="confirmOrderBtn">
-                                Confirm Order
-                            </button>
-                        </div>
-
+                        <button type="submit" class="btn btn-success btn-block mt-3"
+                            style="height: 45px; font-weight: 600;" id="confirmOrderBtn">
+                            <i class="fa fa-check-circle mr-2"></i>Confirm Order
+                        </button>
                     </div>
                 </div>
             </form>
+        </div>
+
+        <!-- Right Panel: Products -->
+        <div class="pos-right-products">
+            <!-- Product Filters -->
+            <div class="pos-filters">
+                @include('pos.product_search_form')
+            </div>
+
+            <!-- Products Grid -->
+            <div class="pos-products-grid">
+                <div class="pos-products-row live_search">
+                    {{-- Live search results will be rendered here --}}
+                    @include('pos.live_search_products')
+                </div>
+            </div>
         </div>
     </div>
 
@@ -325,6 +964,16 @@
     <script>
         $('[data-toggle="select2"]').select2();
 
+        // Apply invalid styling to Select2 elements after initialization
+        $('select.is-invalid[data-toggle="select2"]').each(function() {
+            var $select = $(this);
+            var $container = $select.next('.select2-container');
+            if ($container.length) {
+                $container.addClass('is-invalid');
+                $container.find('.select2-selection').addClass('is-invalid');
+            }
+        });
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -334,9 +983,34 @@
         // Global variable for dynamic coupon price tracking
         var couponPrice = {{ session('pos_discount', 0) }};
 
+        // Handle delivery method card selection
+        $(document).ready(function() {
+            // Add click handler for delivery method cards
+            $('.delivery-method-card').on('click', function() {
+                $('.delivery-method-card').removeClass('active');
+                $(this).addClass('active');
+                // Check the radio and trigger change to run existing onchange logic
+                $(this).find('input[type="radio"]').prop('checked', true).trigger('change');
+            });
 
+            // Handle initial state if a radio is checked: apply active class and trigger change
+            var $checked = $('input[name="delivery_method"]:checked');
+            if ($checked.length) {
+                $checked.closest('.delivery-method-card').addClass('active');
+                // trigger change to run existing logic (hide/show fields)
+                $checked.trigger('change');
+            }
+        });
 
         function changeOfDeliveryMetod(value) {
+
+            // Update card visual states
+            $('.delivery-method-card').removeClass('active');
+            if (value == 1) {
+                $('#home_delivery_card').addClass('active');
+            } else if (value == 2) {
+                $('#store_pickup_card').addClass('active');
+            }
 
             var formData = new FormData();
             formData.append("delivery_method", value);
@@ -347,12 +1021,11 @@
                 // Hide saved address section
                 $('.saved_address').hide();
 
-                // Hide billing address tab completely
-                $('.shipping-address-table .nav-item:last-child').hide();
-                $('.shipping-address-table #profile1').hide();
+                // Hide billing section entirely for pickup (billing not required)
+                $('.billing-section').hide();
 
-                // Update shipping tab label
-                $('.shipping-address-table .nav-link.active span').text('Customer Information');
+                // Update shipping label to "Customer Details"
+                $('#shipping-tab-text').text('Customer Details');
 
                 // Hide specific shipping fields - keep only name, phone, email, customer type, and outlet
                 $('#shipping_address').closest('tr').hide();
@@ -360,17 +1033,18 @@
                 $('#shipping_thana_id').closest('tr').hide();
                 $('#shipping_postal_code').closest('tr').hide();
                 $('#reference_code').closest('tr').hide();
+                // Hide outlet selection for store pickup (not needed)
+                $('#outlet_id').closest('tr').hide();
 
             } else { // Home Delivery (value == 1)
                 // Show saved address section
                 $('.saved_address').show();
 
-                // Show billing address tab
-                $('.shipping-address-table .nav-item:last-child').show();
-                $('.shipping-address-table #profile1').show();
+                // Show billing section
+                $('.billing-section').show();
 
-                // Restore shipping tab label
-                $('.shipping-address-table .nav-link.active span').text('Shipping Address');
+                // Restore shipping label
+                $('#shipping-tab-text').text('Shipping');
 
                 // Show all shipping fields
                 $('#shipping_address').closest('tr').show();
@@ -378,11 +1052,13 @@
                 $('#shipping_thana_id').closest('tr').show();
                 $('#shipping_postal_code').closest('tr').show();
                 $('#reference_code').closest('tr').show();
+                // Show outlet selection for home delivery
+                $('#outlet_id').closest('tr').show();
             }
 
             $.ajax({
                 data: formData,
-                url: "{{ url('change/delivery/method') }}",
+                url: "{{ route('ChangeDeliveryMethod') }}",
                 type: "POST",
                 cache: false,
                 contentType: false,
@@ -493,6 +1169,8 @@
                     return false;
                 }
 
+                $("#billing_name").val(shppingName);
+                $("#billing_phone").val(shppingPhone);
                 $("#billing_address").val(shppingAdress);
                 $("#billing_district_id").val(shppingDistrict).change();
                 $("#billing_postal_code").val(shppingPostalCode);
@@ -501,7 +1179,7 @@
                 $("#billing_thana_id").html('');
 
                 $.ajax({
-                    url: "{{ url('/district/wise/thana') }}",
+                    url: "{{ route('DistrictWiseThana') }}",
                     type: "POST",
                     data: {
                         district_id: district_id,
@@ -532,8 +1210,15 @@
 
         }
 
+        // If the checkbox was checked from previous submission, apply copy on load
+        $(document).ready(function() {
+            if ($('#flexCheckChecked').prop('checked')) {
+                sameShippingBilling();
+            }
+        });
+
         function getSavedAddress(user_id) {
-            $.get("{{ url('get/saved/address') }}" + '/' + user_id, function(data) {
+            $.get("{{ route('GetSavedAddress', '') }}" + '/' + user_id, function(data) {
                 $('.saved_address').html(data.saved_address);
                 $('#shipping_name').val(data.user_info.name);
                 $('#shipping_phone').val(data.user_info.phone);
@@ -557,7 +1242,7 @@
 
             $.ajax({
                 data: formData,
-                url: "{{ url('product/live/search') }}",
+                url: "{{ route('ProductLiveSearch') }}",
                 type: "POST",
                 cache: false,
                 contentType: false,
@@ -580,7 +1265,7 @@
 
             $.ajax({
                 data: formData,
-                url: "{{ url('get/pos/product/variants') }}",
+                url: "{{ route('GetProductVariantsPos') }}",
                 type: "POST",
                 cache: false,
                 contentType: false,
@@ -624,7 +1309,7 @@
 
             $.ajax({
                 data: formData,
-                url: "{{ url('check/pos/product/variant') }}",
+                url: "{{ route('CheckProductVariant') }}",
                 type: "POST",
                 cache: false,
                 contentType: false,
@@ -664,6 +1349,7 @@
                 toastr.error('Please select a color.');
                 return;
             }
+
             if (variant_size_id === '' || variant_size_id === null) {
                 toastr.options.positionClass = 'toast-top-right';
                 toastr.options.timeOut = 1500;
@@ -693,6 +1379,14 @@
         function addToCart(product_id, color_id, size_id, purchase_product_warehouse_id, purchase_product_warehouse_room_id,
             purchase_product_warehouse_room_cartoon_id) {
 
+            // Ensure all parameters have default values (0) if undefined
+            product_id = product_id || 0;
+            color_id = color_id || 0;
+            size_id = size_id || 0;
+            purchase_product_warehouse_id = purchase_product_warehouse_id || 0;
+            purchase_product_warehouse_room_id = purchase_product_warehouse_room_id || 0;
+            purchase_product_warehouse_room_cartoon_id = purchase_product_warehouse_room_cartoon_id || 0;
+
             var formData = new FormData();
             formData.append("product_id", product_id);
             formData.append("color_id", color_id);
@@ -704,17 +1398,17 @@
 
             $.ajax({
                 data: formData,
-                url: "{{ url('add/to/cart') }}",
+                url: "{{ url('admin/add/to/cart') }}",
                 type: "POST",
                 cache: false,
                 contentType: false,
                 processData: false,
                 success: function(data) {
-                    // toastr.success("Item added in Cart");
+                    toastr.options.positionClass = 'toast-top-right';
+                    toastr.options.timeOut = 1500;
+                    toastr.success('Item added to cart');
                     $('.cart_items').html(data.rendered_cart);
                     $('.cart_calculation').html(data.cart_calculation);
-                    // Preserve coupon price when items are added to cart
-                    // The global couponPrice variable should remain unchanged unless coupon is specifically removed
                 },
                 error: function(data) {
                     toastr.options.positionClass = 'toast-bottom-right';
@@ -733,7 +1427,7 @@
             if (couponCode === '') {
                 // Remove coupon from cart if input is empty
                 $.ajax({
-                    url: "{{ url('remove/coupon') }}",
+                    url: "{{ route('RemoveCoupon') }}",
                     type: "POST",
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -757,7 +1451,7 @@
             formData.append("coupon_code", couponCode);
             $.ajax({
                 data: formData,
-                url: "{{ url('apply/coupon') }}",
+                url: "{{ route('ApplyCoupon') }}",
                 type: "POST",
                 cache: false,
                 contentType: false,
@@ -796,7 +1490,7 @@
                 var district_id = this.value;
                 $("#shipping_thana_id").html('');
                 $.ajax({
-                    url: "{{ url('/district/wise/thana') }}",
+                    url: "{{ route('DistrictWiseThana') }}",
                     type: "POST",
                     data: {
                         district_id: district_id,
@@ -829,7 +1523,7 @@
                 var district_id = this.value;
                 $("#billing_thana_id").html('');
                 $.ajax({
-                    url: "{{ url('/district/wise/thana') }}",
+                    url: "{{ route('DistrictWiseThana') }}",
                     type: "POST",
                     data: {
                         district_id: district_id,
@@ -852,7 +1546,7 @@
                 var district_id = this.value;
                 $("#customer_address_thana_id").html('');
                 $.ajax({
-                    url: "{{ url('/district/wise/thana/by/name') }}",
+                    url: "{{ route('DistrictWiseThanaByName') }}",
                     type: "POST",
                     data: {
                         district_id: district_id,
@@ -929,7 +1623,7 @@
 
 
         document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form[action="{{ url('place/order') }}"]');
+            const form = document.querySelector('form[action="{{ route('PosPlaceOrder') }}"]');
             const confirmBtn = document.getElementById('confirmOrderBtn');
             if (form && confirmBtn) {
                 form.addEventListener('submit', function(e) {
@@ -1016,7 +1710,7 @@
             var couponCode = input.value.trim();
             if (couponCode === '') {
                 $.ajax({
-                    url: "{{ url('remove/coupon') }}",
+                    url: "{{ route('RemoveCoupon') }}",
                     type: "POST",
                     data: {
                         _token: '{{ csrf_token() }}'
@@ -1066,7 +1760,7 @@
                 toastr.success('Order placed successfully! Invoice opened in new tab.', 'Success');
 
                 // Clear form
-                const form = document.querySelector('form[action="{{ url('place/order') }}"]');
+                const form = document.querySelector('form[action="{{ route('PosPlaceOrder') }}"]');
                 if (form) {
                     form.reset();
                     // Also reset Select2 dropdowns

@@ -4,16 +4,18 @@
         <tr>
             <th class="text-center">
                 {{ $serial++ }}
-                <input type="hidden" name="product_id[]" value="{{ $details['product_id'] }}">
-                <input type="hidden" name="color_id[]" value="{{ $details['color_id'] }}">
-                <input type="hidden" name="size_id[]" value="{{ $details['size_id'] }}">
-                <input type="hidden" name="purchase_product_warehouse_id[]"
+                <input type="hidden" name="products[{{ $loop->index }}][product_id]"
+                    value="{{ $details['product_id'] }}">
+                <input type="hidden" name="products[{{ $loop->index }}][color_id]" value="{{ $details['color_id'] }}">
+                <input type="hidden" name="products[{{ $loop->index }}][size_id]" value="{{ $details['size_id'] }}">
+                <input type="hidden" name="products[{{ $loop->index }}][purchase_product_warehouse_id]"
                     value="{{ $details['purchase_product_warehouse_id'] }}">
-                <input type="hidden" name="purchase_product_warehouse_room_id[]"
+                <input type="hidden" name="products[{{ $loop->index }}][purchase_product_warehouse_room_id]"
                     value="{{ $details['purchase_product_warehouse_room_id'] }}">
-                <input type="hidden" name="purchase_product_warehouse_room_cartoon_id[]"
+                <input type="hidden" name="products[{{ $loop->index }}][purchase_product_warehouse_room_cartoon_id]"
                     value="{{ $details['purchase_product_warehouse_room_cartoon_id'] }}">
-                <input type="hidden" name="price[]" value="{{ $details['price'] }}">
+                <input type="hidden" name="products[{{ $loop->index }}][price]" class="price-input"
+                    value="{{ $details['price'] }}">
             </th>
             <td class="text-center">
                 <img src="{{ url($details['image']) }}" style="width: 30px; height: 30px">
@@ -35,7 +37,8 @@
                     data-cart-index="{{ $cartIndex }}" data-original-value="{{ $details['quantity'] }}"
                     onblur="updateCartQtyOnBlur(this, '{{ $cartIndex }}')"
                     onkeydown="handleQtyKeydown(event, this, '{{ $cartIndex }}')" oninput="handleQtyInput(this)"
-                    value="{{ $details['quantity'] }}" name="quantity[]" onwheel="this.blur()" />
+                    value="{{ $details['quantity'] }}" name="products[{{ $loop->index }}][quantity]"
+                    onwheel="this.blur()" />
                 <style>
                     /* Hide number input arrows for Chrome, Safari, Edge, Opera */
                     input[type=number]::-webkit-inner-spin-button,
@@ -54,15 +57,14 @@
             <td class="text-center">
                 <input type="number" class="text-center discount-input"
                     style="width: 60px; -moz-appearance: textfield; appearance: textfield;" min="0"
-                    data-cart-index="{{ $cartIndex }}" data-original-value="{{ $details['discounted_price'] }}"
+                    data-cart-index="{{ $cartIndex }}" data-original-value="{{ $details['discount_price'] ?? 0 }}"
                     onblur="updateCartDiscountOnBlur(this, '{{ $cartIndex }}')"
                     onkeydown="handleDiscountKeydown(event, this, '{{ $cartIndex }}')"
-                    oninput="handleDiscountInput(this)" value="{{ $details['discounted_price'] }}"
-                    name="discounted_price[]" required onwheel="this.blur()" />
+                    oninput="handleDiscountInput(this)" value="{{ $details['discount_price'] ?? 0 }}"
+                    name="products[{{ $loop->index }}][discount_price]" required onwheel="this.blur()" />
             </td>
-
             <td class="text-center subtotal-cell">
-                ৳{{ number_format($details['price'] * $details['quantity'] - (isset($details['discounted_price']) ? $details['discounted_price'] : 0), 2) }}
+                ৳{{ number_format($details['price'] * $details['quantity'] - (isset($details['discount_price']) ? $details['discount_price'] : 0), 2) }}
             </td>
             <td class="text-center">
                 <button type="button" onclick="removeCartItem('{{ $cartIndex }}')"
@@ -77,8 +79,6 @@
         <td colspan="8" class="text-center">No item is Added</td>
     </tr>
 @endif
-
-
 <script>
     // Improved user-friendly discount update
     function handleDiscountInput(inputElem) {
@@ -89,8 +89,10 @@
         // Real-time validation
         let discount = parseFloat(inputElem.value) || 0;
         var row = inputElem.closest('tr');
-        var price = parseFloat(row.querySelector('input[name="price[]"]').value) || 0;
-        var qty = parseFloat(row.querySelector('input[name="quantity[]"]').value) || 1;
+        var price = parseFloat((row.querySelector('.price-input') && row.querySelector('.price-input').value || '')
+            .toString().replace(/[^0-9.-]+/g, '')) || 0;
+        var qty = parseFloat((row.querySelector('.qty-input') && row.querySelector('.qty-input').value || '').toString()
+            .replace(/[^0-9.-]+/g, '')) || 1;
         var subtotal = price * qty;
 
         // Validate input as user types
@@ -128,8 +130,10 @@
         let discount = parseFloat(inputElem.value) || 0;
         let originalValue = parseFloat(inputElem.getAttribute('data-original-value')) || 0;
         var row = inputElem.closest('tr');
-        var price = parseFloat(row.querySelector('input[name="price[]"]').value) || 0;
-        var qty = parseFloat(row.querySelector('input[name="quantity[]"]').value) || 1;
+        var price = parseFloat((row.querySelector('.price-input') && row.querySelector('.price-input').value || '')
+            .toString().replace(/[^0-9.-]+/g, '')) || 0;
+        var qty = parseFloat((row.querySelector('.qty-input') && row.querySelector('.qty-input').value || '').toString()
+            .replace(/[^0-9.-]+/g, '')) || 1;
         var subtotal = price * qty;
 
         // If empty, set to 0
@@ -182,7 +186,7 @@
         subtotalCell.innerHTML = '৳' + newSubtotal.toFixed(2);
 
         // Update the cart item discount in backend
-        $.get("{{ url('update/cart/discount') }}/" + cartIndex + "/" + discount, function(data) {
+        $.get("{{ url('admin/update/cart/discount') }}/" + cartIndex + "/" + discount, function(data) {
             // Only update the totals section, not the cart rows
             $('.cart_calculation').html(data.cart_calculation);
 
@@ -297,7 +301,7 @@
         inputElem.disabled = true;
 
         // Update cart
-        $.get("{{ url('update/cart/item') }}" + '/' + cartIndex + '/' + value, function(data) {
+        $.get("{{ url('admin/update/cart/item') }}" + '/' + cartIndex + '/' + value, function(data) {
             $('.cart_items').html(data.rendered_cart);
             $('.cart_calculation').html(data.cart_calculation);
 
@@ -339,8 +343,10 @@
 
     // Function to remove cart item
     function removeCartItem(cartIndex) {
-        $.get("{{ url('remove/cart/item') }}" + '/' + cartIndex, function(data) {
-            // toastr.error("Item Removed");
+        $.get("{{ url('admin/remove/cart/item') }}" + '/' + cartIndex, function(data) {
+            toastr.options.positionClass = 'toast-top-right';
+            toastr.options.timeOut = 1500;
+            toastr.success("Item removed from cart");
             $('.cart_items').html(data.rendered_cart);
             $('.cart_calculation').html(data.cart_calculation);
 

@@ -2,14 +2,14 @@
 
 namespace App\Modules\ECOMMERCE\Managements\PromoCodes\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Brian2694\Toastr\Facades\Toastr;
-use Illuminate\Support\Str;
-use DataTables;
 
-use App\Modules\ECOMMERCE\Managements\PromoCodes\Database\Models\PromoCode;
-
+use App\Modules\ECOMMERCE\Managements\PromoCodes\Actions\CreatePromoCode;
+use App\Modules\ECOMMERCE\Managements\PromoCodes\Actions\ViewAllPromoCodes;
+use App\Modules\ECOMMERCE\Managements\PromoCodes\Actions\GetPromoCodeForEdit;
+use App\Modules\ECOMMERCE\Managements\PromoCodes\Actions\UpdatePromoCode;
+use App\Modules\ECOMMERCE\Managements\PromoCodes\Actions\DeletePromoCode;
 
 use App\Http\Controllers\Controller;
 
@@ -19,6 +19,7 @@ class PromoCodeController extends Controller
     {
         $this->loadModuleViewPath('ECOMMERCE/Managements/PromoCodes');
     }
+
     public function addPromoCode()
     {
         return view('create');
@@ -26,95 +27,23 @@ class PromoCodeController extends Controller
 
     public function savePromoCode(Request $request)
     {
+        $result = CreatePromoCode::execute($request);
 
-        $request->validate([
-            'title' => 'required|max:255',
-            'type' => 'required',
-            'value' => 'required',
-            'code' => 'required',
-            'effective_date' => 'required',
-            'expire_date' => 'required',
-        ]);
-
-        if ($request->type == 2 && $request->value > 100) {
-            Toastr::error('Percentage Cannot be Greater than 100', 'Success');
-            return back();
+        if ($result['status'] === 'success') {
+            Toastr::success($result['message'], 'Success');
+        } else {
+            Toastr::error($result['message'], 'Error');
         }
 
-        if (strtotime(str_replace("/", "-", $request->effective_date)) > strtotime(str_replace("/", "-", $request->expire_date))) {
-            Toastr::error('Effective Date Cannot be greater than Expiry Date', 'Success');
-            return back();
-        }
-
-        $icon = null;
-        if ($request->hasFile('icon')) {
-            $get_image = $request->file('icon');
-            $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('promoImages/');
-            $get_image->move($location, $image_name);
-            $icon = "promoImages/" . $image_name;
-        }
-
-        PromoCode::insert([
-            'icon' => $icon,
-            'title' => $request->title,
-            'description' => $request->description,
-            'type' => $request->type,
-            'value' => $request->value,
-            'minimum_order_amount' => $request->minimum_order_amount,
-            'code' => $request->code,
-            'effective_date' => date("Y-m-d", strtotime(str_replace("/", "-", $request->effective_date))),
-            'expire_date' => date("Y-m-d", strtotime(str_replace("/", "-", $request->expire_date))),
-            'slug' => str::random(5) . time(),
-            'status' => 1,
-            'created_at' => Carbon::now()
-        ]);
-
-        Toastr::success('Promo Code Generated', 'Success');
         return back();
     }
 
     public function viewAllPromoCodes(Request $request)
     {
+        $result = ViewAllPromoCodes::execute($request);
+
         if ($request->ajax()) {
-
-            $data = PromoCode::orderBy('id', 'desc')->get();
-
-            return Datatables::of($data)
-                ->editColumn('created_at', function ($data) {
-                    return date("Y-m-d h:i:s a", strtotime($data->created_at));
-                })
-                ->editColumn('type', function ($data) {
-                    if ($data->type == 1) {
-                        return "Amount (৳)";
-                    } else {
-                        return "Percentage (%)";
-                    }
-                })
-                ->editColumn('status', function ($data) {
-                    if ($data->status == 1) {
-                        return '<span class="alert alert-success p-0 pl-2 pr-2">Active</span>';
-                    } else {
-                        return '<span class="alert alert-danger p-0 pl-2 pr-2">Inactive</span>';
-                    }
-                })
-                ->addIndexColumn()
-                ->addColumn('action', function ($data) {
-                    $btn = ' <a href="' . url('edit/promo/code') . '/' . $data->slug . '" class="mb-1 btn-sm btn-warning rounded"><i class="fas fa-edit"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->slug . '" data-original-title="Delete" class="btn-sm btn-danger rounded deleteBtn"><i class="fas fa-trash-alt"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action', 'status'])
-                ->make(true);
-        }
-
-        $data = PromoCode::orderBy('id', 'desc')->get();
-        $today = strtotime(date("Y-m-d"));
-        foreach ($data as $item) {
-            if (strtotime($item->expire_date) < $today) {
-                $item->status = 0;
-                $item->save();
-            }
+            return $result;
         }
 
         return view('view');
@@ -122,78 +51,26 @@ class PromoCodeController extends Controller
 
     public function editPromoCode($slug)
     {
-        $data = PromoCode::where('slug', $slug)->first();
-        return view('update', compact('data'));
+        $result = GetPromoCodeForEdit::execute(request(), $slug);
+        return view('update')->with('data', $result['data']);
     }
 
     public function updatePromoCode(Request $request)
     {
+        $result = UpdatePromoCode::execute($request);
 
-        // dd($request->all());
-        $request->validate([
-            'title' => 'required|max:255',
-            'type' => 'required',
-            'value' => 'required',
-            'code' => 'required',
-            'effective_date' => 'required',
-            'expire_date' => 'required',
-            'status' => 'required'
-        ]);
-
-        if ($request->type == 2 && $request->value > 100) {
-            Toastr::error('Percentage Cannot be Greater than 100', 'Success');
+        if ($result['status'] === 'success') {
+            Toastr::success($result['message'], 'Success');
+            return redirect('/view/all/promo/codes');
+        } else {
+            Toastr::error($result['message'], 'Error');
             return back();
         }
-
-        if (strtotime(str_replace("/", "-", $request->effective_date)) > strtotime(str_replace("/", "-", $request->expire_date))) {
-            Toastr::error('Effective Date Cannot be greater than Expiry Date', 'Success');
-            return back();
-        }
-
-        $expireDateTimestamp = strtotime(str_replace("/", "-", $request->expire_date));
-        if ($expireDateTimestamp && $expireDateTimestamp < now()->timestamp) {
-            Toastr::error('The date is expired. You can’t change the status.', 'Failed');
-            return back();
-        }
-
-        $data = PromoCode::where('slug', $request->slug)->first();
-
-        $icon = $data->icon;
-        if ($request->hasFile('icon')) {
-            $get_image = $request->file('icon');
-            $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('promoImages/');
-            $get_image->move($location, $image_name);
-            $icon = "promoImages/" . $image_name;
-        }
-
-        PromoCode::where('slug', $request->slug)->update([
-            'icon' => $icon,
-            'title' => $request->title,
-            'description' => $request->description,
-            'type' => $request->type,
-            'value' => $request->value,
-            'minimum_order_amount' => $request->minimum_order_amount,
-            'code' => $request->code,
-            'effective_date' => date("Y-m-d", strtotime(str_replace("/", "-", $request->effective_date))),
-            'expire_date' => date("Y-m-d", strtotime(str_replace("/", "-", $request->expire_date))),
-            'status' => $request->status,
-        ]);
-
-        Toastr::success('Promo Code Updated', 'Success');
-        return redirect('/view/all/promo/codes');
     }
 
     public function removePromoCode($slug)
     {
-
-        $data = PromoCode::where('slug', $slug)->first();
-        if ($data->icon) {
-            if (file_exists(public_path($data->icon))) {
-                unlink(public_path($data->icon));
-            }
-        }
-        PromoCode::where('slug', $slug)->delete();
-        return response()->json(['success' => 'Category deleted successfully.']);
+        $result = DeletePromoCode::execute(request(), $slug);
+        return response()->json(['success' => $result['message']]);
     }
 }

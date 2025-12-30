@@ -70,8 +70,8 @@
                         <h4 class="mb-sm-0 font-size-18">Order Logs - Activity Timeline</h4>
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="{{ url('/admin/dashboard') }}">Dashboard</a></li>
-                                <li class="breadcrumb-item"><a href="{{ url('/view/orders') }}">Orders</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('ViewAllOrders') }}">Orders</a></li>
                                 <li class="breadcrumb-item active">Order Logs</li>
                             </ol>
                         </div>

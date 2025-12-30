@@ -10,7 +10,7 @@ use App\Modules\ECOMMERCE\Managements\EmailService\Controllers\SystemController;
 
 
 //Dashboard routes
-Route::get('/admin/dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
+Route::get('/dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
 Route::get('/crm-home', [HomeController::class, 'crm_index'])->name('crm.home');
 Route::get('/accounts-home', [HomeController::class, 'accounts_index'])->name('accounts.home');
 Route::get('/inventory-home', [HomeController::class, 'inventory_dashboard'])->name('inventory.home');
@@ -54,29 +54,7 @@ Route::post('/update/product-size-value', [ProductSizeValueController::class, 'u
 require __DIR__ . '/../Managements/Orders/Routes/Web.php';
 // payment history routes
 require __DIR__ . '/../Managements/PaymentHistory/Routes/Web.php';
-// pos routes
-Route::get('/create/new/order', [PosController::class, 'createNewOrder'])->name('CreateNewOrder');
-Route::post('/product/live/search', [PosController::class, 'productLiveSearch'])->name('ProductLiveSearch');
-Route::post('/get/pos/product/variants', [PosController::class, 'getProductVariantsPos'])->name('GetProductVariantsPos');
-Route::post('/check/pos/product/variant', [PosController::class, 'checkProductVariant'])->name('CheckProductVariant');
-Route::post('/add/to/cart', [PosController::class, 'addToCart'])->name('AddToCart');
-Route::get('/remove/cart/item/{index}', [PosController::class, 'removeCartItem'])->name('RemoveCartItem');
-Route::get('/update/cart/item/{index}/{qty}', [PosController::class, 'updateCartItem'])->name('UpdateCartItem');
-Route::get('/update/cart/discount/{index}/{discount}', [PosController::class, 'updateCartItemDiscount'])->name('UpdateCartItemDiscount');
-Route::post('/save/new/customer', [PosController::class, 'saveNewCustomer'])->name('SaveNewCustomer');
-Route::get('/update/order/total/{shipping_charge}/{discount}', [PosController::class, 'updateOrderTotal'])->name('UpdateOrderTotal');
-Route::post('/apply/coupon', [PosController::class, 'applyCoupon'])->name('ApplyCoupon');
-Route::post('/remove/coupon', [PosController::class, 'removeCoupon'])->name('RemoveCoupon');
-Route::post('district/wise/thana', [PosController::class, 'districtWiseThana'])->name('DistrictWiseThana');
-Route::post('district/wise/thana/by/name', [PosController::class, 'districtWiseThanaByName'])->name('DistrictWiseThanaByName');
-Route::post('save/pos/customer/address', [PosController::class, 'saveCustomerAddress'])->name('SaveCustomerAddress');
-Route::get('get/saved/address/{user_id}', [PosController::class, 'getSavedAddress'])->name('GetSavedAddress');
-Route::post('change/delivery/method', [PosController::class, 'changeDeliveryMethod'])->name('ChangeDeliveryMethod');
-Route::post('place/order', [PosController::class, 'placeOrder'])->name('PlaceOrder');
-// Route::get('/edit/place/order/{slug}', [PosController::class, 'editPlaceOrder'])->name('EditPlaceOrder');
-// Route::post('/update/place/order', [PosController::class, 'updatePlaceOrder'])->name('UpdatePlaceOrder');
-
-// POS Invoice Print Route
+// POS   Route
 require __DIR__ . '/../Managements/POS/Routes/Web.php';
 // promo codes
 require __DIR__ . '/../Managements/PromoCodes/Routes/Web.php';
@@ -113,19 +91,3 @@ require __DIR__ . '/../Managements/WebSiteContentManagement/Videos/Routes/Web.ph
 
 // faq routes
 require __DIR__ . '/../Managements/WebSiteContentManagement/FAQ/Routes/Web.php';
-
-
-// // Product Color Management
-// Route::get('/add/new/product-color', [ProductColorController::class, 'addNewProductColor'])->name('AddNewProductColor');
-// Route::post('/save/new/product-color', [ProductColorController::class, 'saveNewProductColor'])->name('SaveNewProductColor');
-// Route::get('/view/all/product-color', [ProductColorController::class, 'viewAllProductColor'])->name('ViewAllProductColor');
-// Route::get('/delete/product-color/{slug}', [ProductColorController::class, 'deleteProductColor'])->name('DeleteProductColor');
-// Route::get('/edit/product-color/{slug}', [ProductColorController::class, 'editProductColor'])->name('EditProductColor');
-// Route::post('/update/product-color', [ProductColorController::class, 'updateProductColor'])->name('UpdateProductColor');
-// // Product Size Management
-// Route::get('/add/new/product-size', [ProductSizeController::class, 'addNewProductSize'])->name('AddNewProductSize');
-// Route::post('/save/new/product-size', [ProductSizeController::class, 'saveNewProductSize'])->name('SaveNewProductSize');
-// Route::get('/view/all/product-size', [ProductSizeController::class, 'viewAllProductSize'])->name('ViewAllProductSize');
-// Route::get('/delete/product-size/{slug}', [ProductSizeController::class, 'deleteProductSize'])->name('DeleteProductSize');
-// Route::get('/edit/product-size/{slug}', [ProductSizeController::class, 'editProductSize'])->name('EditProductSize');
-// Route::post('/update/product-size', [ProductSizeController::class, 'updateProductSize'])->name('UpdateProductSize');

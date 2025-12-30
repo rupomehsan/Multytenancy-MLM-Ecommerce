@@ -27,7 +27,7 @@
                                 hit the generate button.
                             </span>
 
-                            <form action="{{ url('save/generated/demo/products') }}" method="POST" class="mt-4">
+                            <form action="{{ route('SaveGeneratedDemoProducts') }}" method="POST" class="mt-4">
                                 @csrf
 
                                 <div class="row">

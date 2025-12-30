@@ -2,20 +2,17 @@
 
 namespace App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Controllers;
 
-
 use Illuminate\Http\Request;
 use Brian2694\Toastr\Facades\Toastr;
-use Sohibd\Laravelslug\Generate;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
-use Image;
-use Yajra\DataTables\DataTables;
-
-use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\Product;
-use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Database\Models\Subcategory;
-use App\Modules\ECOMMERCE\Managements\ProductManagements\Categories\Database\Models\Category;
 use App\Http\Controllers\Controller;
+
+use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Actions\GetSubcategoryFormData;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Actions\ViewAllSubcategories;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Actions\CreateSubcategory;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Actions\GetSubcategoryForEdit;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Actions\UpdateSubcategory;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Actions\ToggleSubcategoryFeature;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Actions\DeleteSubcategory;
 
 class SubcategoryController extends Controller
 {
@@ -23,210 +20,80 @@ class SubcategoryController extends Controller
     {
         $this->loadModuleViewPath('ECOMMERCE/Managements/ProductManagements/SubCategories');
     }
+
     public function addNewSubcategory()
     {
-        $category =  Category::getDropDownList('name');
-        return view('create', compact('category'));
+        $result = GetSubcategoryFormData::execute(request());
+        return view($result['view'], ['category' => $result['category']]);
     }
 
     public function saveNewSubcategory(Request $request)
     {
+        $result = CreateSubcategory::execute($request);
 
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'category_id' => 'required',
-        ]);
-
-        // Ensure uploads directory exists
-        $uploadsDir = public_path('uploads/');
-        if (!file_exists($uploadsDir)) {
-            mkdir($uploadsDir, 0777, true);
-        }
-        $subcategoryImagesDir = public_path('uploads/subcategory_images/');
-        if (!file_exists($subcategoryImagesDir)) {
-            mkdir($subcategoryImagesDir, 0777, true);
+        if ($result['status'] === 'error') {
+            if (isset($result['errors'])) {
+                return back()->withErrors($result['errors'])->withInput();
+            }
+            Toastr::error($result['message'], 'Error');
+            return back();
         }
 
-        $icon = null;
-        if ($request->hasFile('icon')) {
-            $get_image = $request->file('icon');
-            $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('uploads/subcategory_images/');
-            // Image::make($get_image)->save($location . $image_name);
-            $get_image->move($location, $image_name);
-            $icon = "uploads/subcategory_images/" . $image_name;
-        }
-
-        $image = null;
-        if ($request->hasFile('image')) {
-            $get_image = $request->file('image');
-            $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('uploads/subcategory_images/');
-            // Image::make($get_image)->save($location . $image_name);
-            $get_image->move($location, $image_name);
-            $image = "uploads/subcategory_images/" . $image_name;
-        }
-
-        Subcategory::insert([
-            'category_id' => $request->category_id,
-            'name' => $request->name,
-            'icon' => $icon,
-            'image' => $image,
-            'slug' => Generate::Slug($request->name),
-            'status' => 1,
-            'created_at' => Carbon::now()
-        ]);
-
-        Toastr::success('Subcategory has been Added', 'Success');
+        Toastr::success($result['message'], 'Success');
         return back();
     }
 
     public function viewAllSubcategory(Request $request)
     {
+        $result = ViewAllSubcategories::execute($request);
+
         if ($request->ajax()) {
-
-            $data = DB::table('subcategories')
-                ->leftJoin('categories', 'subcategories.category_id', '=', 'categories.id')
-                ->select('subcategories.*', 'categories.name as category_name')
-                ->orderBy('subcategories.id', 'desc')
-                ->get();
-
-            return Datatables::of($data)
-                ->editColumn('status', function ($data) {
-                    if ($data->status == 1) {
-                        return '<span style="color:green; font-weight: 600">Active</span>';
-                    } else {
-                        return '<span style="color:#DF3554; font-weight: 600">Inactive</span>';
-                    }
-                })
-                ->editColumn('featured', function ($data) {
-                    if ($data->featured == 0) {
-                        return '<button class="btn btn-sm btn-danger rounded">Not Featured</button>';
-                    } else {
-                        return '<button class="btn btn-sm btn-success rounded">Featured</button>';
-                    }
-                })
-                ->addIndexColumn()
-                ->addColumn('action', function ($data) {
-
-                    $btn = ' <a href="' . url('edit/subcategory') . '/' . $data->slug . '" class="mb-1 btn-sm btn-warning rounded d-inline-block"><i class="fas fa-edit"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->slug . '" data-original-title="Delete" class="btn-sm btn-danger rounded d-inline-block deleteBtn"><i class="fas fa-trash-alt"></i></a>';
-
-                    if ($data->featured == 0) {
-                        $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->id . '" title="Featured" data-original-title="Featured" class="btn-sm btn-success rounded d-inline-block featureBtn"><i class="feather-chevrons-up"></i></a>';
-                    } else {
-                        $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->id . '" title="Featured" data-original-title="Featured" class="btn-sm btn-danger rounded d-inline-block featureBtn"><i class="feather-chevrons-down"></i></a>';
-                    }
-
-                    return $btn;
-                })
-                ->rawColumns(['action', 'icon', 'featured', 'status'])
-                ->make(true);
+            return $result;
         }
-        return view('view');
+
+        return view($result['view']);
     }
 
     public function deleteSubcategory($slug)
     {
-        $data = Subcategory::where('slug', $slug)->first();
-        if ($data->icon) {
-            if (file_exists(public_path($data->icon))) {
-                unlink(public_path($data->icon));
-            }
-        }
-        $data->delete();
-        return response()->json(['success' => 'Subcategory deleted successfully.']);
+        $result = DeleteSubcategory::execute(request(), $slug);
+        return response()->json(['success' => $result['message']]);
     }
 
     public function editSubcategory($slug)
     {
-        $subcategory = Subcategory::where('slug', $slug)->first();
-        $category =  Category::getDropDownList('name', $subcategory->category_id);
-        return view('update', compact('subcategory', 'category'));
+        $result = GetSubcategoryForEdit::execute(request(), $slug);
+
+        if ($result['status'] === 'error') {
+            Toastr::error($result['message'], 'Error');
+            return redirect('/view/all/subcategory');
+        }
+
+        return view($result['view'], [
+            'subcategory' => $result['subcategory'],
+            'category' => $result['category']
+        ]);
     }
 
     public function updateSubcategory(Request $request)
     {
+        $result = UpdateSubcategory::execute($request);
 
-        $request->validate([
-            'name' => 'required|max:255',
-            'category_id' => 'required',
-            'status' => 'required',
-        ]);
-
-        $duplicateSubCategoryExists = Subcategory::where('id', '!=', $request->id)->where('category_id', $request->category_id)->where('name', $request->name)->first();
-        $duplicateSubCategorySlugExists = Subcategory::where('id', '!=', $request->id)->where('category_id', $request->category_id)->where('slug', $request->slug)->first();
-        if ($duplicateSubCategoryExists || $duplicateSubCategorySlugExists) {
-            Toastr::warning('Duplicate SubCategory Exists', 'Success');
+        if ($result['status'] === 'error') {
+            if (isset($result['errors'])) {
+                return back()->withErrors($result['errors'])->withInput();
+            }
+            Toastr::warning($result['message'], 'Error');
             return back();
         }
 
-        $data = Subcategory::where('id', $request->id)->first();
-
-        // Ensure uploads directory exists
-        $uploadsDir = public_path('uploads/');
-        if (!file_exists($uploadsDir)) {
-            mkdir($uploadsDir, 0777, true);
-        }
-        $subcategoryImagesDir = public_path('uploads/subcategory_images/');
-        if (!file_exists($subcategoryImagesDir)) {
-            mkdir($subcategoryImagesDir, 0777, true);
-        }
-
-        $icon = $data->icon;
-        if ($request->hasFile('icon')) {
-
-            if ($icon != '' && file_exists(public_path($icon))) {
-                unlink(public_path($icon));
-            }
-
-            $get_image = $request->file('icon');
-            $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('uploads/subcategory_images/');
-            // Image::make($get_image)->save($location . $image_name, 80);
-            $get_image->move($location, $image_name);
-            $icon = "uploads/subcategory_images/" . $image_name;
-        }
-
-        $image = $data->image;
-        if ($request->hasFile('image')) {
-
-            if ($image != '' && file_exists(public_path($image))) {
-                unlink(public_path($image));
-            }
-
-            $get_image = $request->file('image');
-            $image_name = str::random(5) . time() . '.' . $get_image->getClientOriginalExtension();
-            $location = public_path('uploads/subcategory_images/');
-            // Image::make($get_image)->save($location . $image_name, 80);
-            $get_image->move($location, $image_name);
-            $image = "uploads/subcategory_images/" . $image_name;
-        }
-
-        Subcategory::where('id', $request->id)->update([
-            'category_id' => $request->category_id,
-            'name' => $request->name,
-            'icon' => $icon,
-            'image' => $image,
-            'slug' => Generate::Slug($request->slug),
-            'status' => $request->status,
-            'updated_at' => Carbon::now()
-        ]);
-
-        Toastr::success('Subcategory has been Added', 'Success');
+        Toastr::success($result['message'], 'Success');
         return redirect('/view/all/subcategory');
     }
 
     public function featureSubcategory($id)
     {
-        $data = Subcategory::where('id', $id)->first();
-        if ($data->featured == 0) {
-            $data->featured = 1;
-            $data->save();
-        } else {
-            $data->featured = 0;
-            $data->save();
-        }
-        return response()->json(['success' => 'Satatus Changed successfully.']);
+        $result = ToggleSubcategoryFeature::execute(request(), $id);
+        return response()->json(['success' => $result['message']]);
     }
 }

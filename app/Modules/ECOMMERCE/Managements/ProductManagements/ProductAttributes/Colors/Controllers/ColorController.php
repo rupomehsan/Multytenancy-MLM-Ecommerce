@@ -2,18 +2,17 @@
 
 namespace App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Colors\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use DataTables;
-
-use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Colors\Database\Models\Color;
-
-
 use App\Http\Controllers\Controller;
+
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Colors\Actions\ViewAllColors;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Colors\Actions\CreateColor;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Colors\Actions\GetColorInfo;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Colors\Actions\UpdateColor;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ProductAttributes\Colors\Actions\DeleteColor;
 
 class ColorController extends Controller
 {
-
     public function __construct()
     {
         $this->loadModuleViewPath('ECOMMERCE/Managements/ProductManagements/ProductAttributes/Colors');
@@ -21,67 +20,41 @@ class ColorController extends Controller
 
     public function viewAllColors(Request $request)
     {
+        $result = ViewAllColors::execute($request);
+
         if ($request->ajax()) {
-
-            $data = Color::orderBy('id', 'desc')->select('colors.*', 'colors.code as color')->get();
-
-            return Datatables::of($data)
-                ->editColumn('color', function ($data) {
-                    return "<span style='background-color: " . $data->color . ";color: " . $data->color . "; height:20px; width: 50px; display: inline-block; border-radius: 4px; cursor: pointer; box-shadow: 1px 1px 3px gray;'>Color</span>";
-                })
-                ->addIndexColumn()
-                ->addColumn('action', function ($data) {
-                    $btn = ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->id . '" title="Featured" data-original-title="Featured" class="btn-sm btn-warning rounded editBtn"><i class="fas fa-edit"></i></a>';
-                    // $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="'.$data->id.'" title="Featured" data-original-title="Featured" class="btn-sm btn-danger rounded deleteBtn"><i class="fas fa-trash-alt"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action', 'color'])
-                ->make(true);
+            return $result;
         }
-        return view('color');
+
+        return view($result['view']);
     }
 
     public function addNewColor(Request $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:colors'],
-            'code' => ['required', 'string', 'max:255', 'unique:colors'],
-        ]);
-
-        Color::insert([
-            'name' => $request->name,
-            'code' => $request->code,
-            'created_at' => Carbon::now()
-        ]);
-
-        return response()->json(['success' => 'Created successfully.']);
+        $result = CreateColor::execute($request);
+        return response()->json([$result['status'] => $result['message']]);
     }
 
     public function deleteColor($id)
     {
-        Color::where('id', $id)->delete();
-        return response()->json(['success' => 'Delete Successfully.']);
+        $result = DeleteColor::execute(request(), $id);
+        return response()->json([$result['status'] => $result['message']]);
     }
 
     public function getColorInfo($id)
     {
-        $data = Color::where('id', $id)->first();
-        return response()->json($data);
+        $result = GetColorInfo::execute(request(), $id);
+
+        if ($result['status'] === 'error') {
+            return response()->json(['error' => $result['message']]);
+        }
+
+        return response()->json($result['data']);
     }
 
     public function updateColor(Request $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'code' => ['required', 'string', 'max:255'],
-        ]);
-
-        Color::where('id', $request->color_id)->update([
-            'name' => $request->name,
-            'code' => $request->code,
-            'updated_at' => Carbon::now()
-        ]);
-
-        return response()->json(['success' => 'Updated Successfully.']);
+        $result = UpdateColor::execute($request);
+        return response()->json([$result['status'] => $result['message']]);
     }
 }

@@ -94,7 +94,7 @@
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('/view/all/banners') }}",
+            ajax: "{{ route('ViewAllBanners') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'

@@ -48,7 +48,7 @@
                             </div>
                             <div class="col-lg-6 text-right">
                                 <div class="form-group">
-                                    <a href="{{ url('/home') }}" style="width: 130px;"
+                                    <a href="{{ route('admin.dashboard') }}" style="width: 130px;"
                                         class="btn btn-danger d-inline-block text-white m-2" type="submit"><i
                                             class="mdi mdi-cancel"></i> Cancel</a>
                                     <button class="btn btn-primary m-2" type="submit" style="width: 140px;"><i

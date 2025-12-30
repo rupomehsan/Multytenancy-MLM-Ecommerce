@@ -78,7 +78,7 @@
                                 <option value="system_user">System User</option>
                                 <option value="delivery_man">Delivery Man</option>
                             </select>
-                            <a href="{{ url('add/new/system/user') }}" class="btn btn-success btn-sm" id="addNewFlag"
+                            <a href="{{ route('AddNewSystemUsers') }}" class="btn btn-success btn-sm" id="addNewFlag"
                                 style="margin-left: 5px"><i class="feather-plus"></i> Add New User</a>
                         </label>
                         <table class="table table-bordered mb-0 data-table">
@@ -130,7 +130,7 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: "{{ url('view/system/users') }}",
+                url: "{{ route('ViewAllSystemUsers') }}",
                 data: function(d) {
                     d.user_type = $('#userTypeFilter').val(); // send selected user type
                 }
@@ -214,7 +214,7 @@
                 }
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/system/user') }}" + '/' + id,
+                    url: "{{ route('DeleteSystemUser', '') }}" + '/' + id,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("User has been Deleted", "Deleted Successfully");
@@ -231,7 +231,7 @@
             if (confirm("Are You sure want to Make this SuperAdmin !")) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('make/user/superadmin') }}" + '/' + id,
+                    url: "{{ route('MakeSuperAdmin', '') }}" + '/' + id,
                     success: function(data) {
                         toastr.success("User is SuperAdmin Now", "Successfull");
                         location.reload(true);

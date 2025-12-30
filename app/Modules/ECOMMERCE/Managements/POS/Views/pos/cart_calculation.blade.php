@@ -1,54 +1,100 @@
 <tr>
-    <td class="text-center">
+    <td style="padding: 6px 0;">
+        <span style="color: #6c757d; font-weight: 500;">Quantity:</span>
+    </td>
+    <td style="padding: 6px 0; text-align: right;">
+        <strong>
+            @php
+                $totalQty = 0;
+                if (session('cart') && count(session('cart')) > 0) {
+                    foreach (session('cart') as $cartIndex => $details) {
+                        $totalQty += $details['quantity'];
+                    }
+                }
+            @endphp
+            {{ $totalQty }}
+        </strong>
+    </td>
+</tr>
+<tr>
+    <td style="padding: 6px 0;">
+        <span style="color: #6c757d; font-weight: 500;">Total Amount:</span>
+    </td>
+    <td style="padding: 6px 0; text-align: right;">
         @php
-            $total = 0;
+            // Compute gross subtotal and total item-level discounts separately
+            $subtotalGross = 0;
+            $itemDiscountTotal = 0;
             if (session('cart') && count(session('cart')) > 0) {
                 foreach (session('cart') as $cartIndex => $details) {
-                    $total = $total + $details['price'] * $details['quantity'];
-                    if (isset($details['discounted_price'])) {
-                        $total = $total - $details['discounted_price'];
+                    $subtotalGross += $details['price'] * $details['quantity'];
+                    if (!empty($details['discount_price'])) {
+                        $itemDiscountTotal += $details['discount_price'];
                     }
                 }
             }
         @endphp
-        ৳ {{ number_format($total, 2) }}
-        <input type="hidden" name="subtotal" id="subtotal" value="{{ $total }}">
+        <strong>৳ {{ number_format($subtotalGross, 2) }}</strong>
+        <input type="hidden" name="subtotal_gross" id="subtotal_gross" value="{{ $subtotalGross }}">
+        <input type="hidden" name="item_discount_total" id="item_discount_total" value="{{ $itemDiscountTotal }}">
     </td>
-    {{-- <td class="text-center">৳ 0</td> --}}
-    <td class="text-center">
+</tr>
+<tr>
+    <td style="padding: 6px 0;">
+        <span style="color: #6c757d; font-weight: 500;">Item Discounts:</span>
+    </td>
+    <td style="padding: 6px 0; text-align: right;">
+        <strong>৳ {{ number_format($itemDiscountTotal, 2) }}</strong>
+    </td>
+</tr>
+<tr>
+    <td style="padding: 6px 0;">
+        <span style="color: #6c757d; font-weight: 500;">Shipping:</span>
+    </td>
+    <td style="padding: 6px 0; text-align: right;">
         @php
-            if (session('shipping_charge')) {
-                $total = $total + session('shipping_charge');
-            }
+            // Shipping charge to apply (do not mutate subtotal variables here)
+            $shippingCharge = session('shipping_charge', 0);
         @endphp
-        ৳ <input type="number" class="text-center shipping-charge-input" style="width: 60px; -moz-appearance: textfield; appearance: textfield;"
-            data-original-value="{{ session('shipping_charge', 0) }}"
-            onblur="updateShippingChargeOnBlur(this)"
-            onkeydown="handleShippingKeydown(event, this)"
-            oninput="handleShippingInput(this)"
-            @if (session('shipping_charge')) value="{{ session('shipping_charge') }}" @else value="0" @endif
-            min="0" id="shipping_charge" name="shipping_charge" 
-            onwheel="this.blur()" />
+        <strong>৳ <input type="number" class="text-center shipping-charge-input"
+                style="width: 60px; border: 1px solid #dee2e6; border-radius: 4px; padding: 2px 4px; font-weight: 600;"
+                data-original-value="{{ $shippingCharge }}" onblur="updateShippingChargeOnBlur(this)"
+                onkeydown="handleShippingKeydown(event, this)" oninput="handleShippingInput(this)"
+                value="{{ $shippingCharge }}" min="0" id="shipping_charge" name="shipping_charge"
+                onwheel="this.blur()" /></strong>
     </td>
-    <td class="text-center">
+</tr>
+<tr>
+    <td style="padding: 6px 0;">
+        <span style="color: #6c757d; font-weight: 500;">Discount:</span>
+    </td>
+    <td style="padding: 6px 0; text-align: right;">
         @php
-            if (session('pos_discount')) {
-                $total -= session('pos_discount');
-            }
-            if (session('discount')) {
-                $total -= session('discount');
-            }
+            // Order-level discounts (pos_discount + discount)
+            $posDiscount = session('pos_discount', 0);
+            $orderDiscount = session('discount', 0);
+            // Compute grand total = gross + shipping - (item discounts + order discounts)
+            $grandTotal = $subtotalGross + $shippingCharge - ($itemDiscountTotal + $posDiscount + $orderDiscount);
+            $grandTotal = max(0, $grandTotal);
         @endphp
-        ৳ <input type="number" class="text-center order-discount-input" style="width: 60px; -moz-appearance: textfield; appearance: textfield;"
-            data-original-value="{{ session('discount', 0) }}"
-            onblur="updateOrderDiscountOnBlur(this)"
-            onkeydown="handleOrderDiscountKeydown(event, this)"
-            oninput="handleOrderDiscountInput(this)"
-            @if (session('discount')) value="{{ session('discount') }}" @else value="0" @endif min="0"
-            id="discount" name="discount" 
-            onwheel="this.blur()" />
+        <strong>৳ <input type="number" class="text-center order-discount-input"
+                style="width: 60px; border: 1px solid #dee2e6; border-radius: 4px; padding: 2px 4px; font-weight: 600;"
+                data-original-value="{{ $orderDiscount }}" onblur="updateOrderDiscountOnBlur(this)"
+                onkeydown="handleOrderDiscountKeydown(event, this)" oninput="handleOrderDiscountInput(this)"
+                value="{{ $orderDiscount }}" min="0" id="discount" name="discount"
+                onwheel="this.blur()" /></strong>
+        <input type="hidden" id="pos_discount" value="{{ $posDiscount }}">
     </td>
-    <th class="text-center" id="total_cart_calculation">৳ {{ number_format($total, 2) }}</th>
+</tr>
+<tr>
+    <td style="padding: 12px 0 6px 0; border-top: 2px solid #dee2e6;">
+        <span style="color: #2d3748; font-weight: 700; font-size: 15px;">Grand Total:</span>
+    </td>
+    <td style="padding: 12px 0 6px 0; text-align: right; border-top: 2px solid #dee2e6;">
+        <strong id="total_cart_calculation" style="color: #667eea; font-size: 18px; font-weight: 700;">৳
+            {{ number_format($grandTotal, 2) }}</strong>
+        <input type="hidden" name="total" id="total" value="{{ $grandTotal }}">
+    </td>
 </tr>
 
 <script>
@@ -80,7 +126,7 @@
     function handleShippingInput(inputElem) {
         inputElem.classList.add('pending-update');
         inputElem.classList.remove('updating');
-        
+
         let value = parseFloat(inputElem.value);
         if (inputElem.value !== '' && (isNaN(value) || value < 0)) {
             inputElem.style.borderColor = '#dc3545';
@@ -90,14 +136,14 @@
             inputElem.style.backgroundColor = '';
         }
     }
-    
+
     function handleShippingKeydown(event, inputElem) {
         if (event.key === 'Enter') {
             event.preventDefault();
             inputElem.blur();
             return;
         }
-        
+
         if (event.key === 'Escape') {
             event.preventDefault();
             let originalValue = inputElem.getAttribute('data-original-value');
@@ -109,42 +155,42 @@
             return;
         }
     }
-    
+
     function updateShippingChargeOnBlur(inputElem) {
         let value = parseFloat(inputElem.value) || 0;
         let originalValue = parseFloat(inputElem.getAttribute('data-original-value')) || 0;
-        
+
         if (inputElem.value === '') {
             value = 0;
             inputElem.value = 0;
         }
-        
+
         if (isNaN(value) || value < 0) {
             inputElem.value = originalValue;
             inputElem.classList.remove('pending-update');
             inputElem.style.borderColor = '';
             inputElem.style.backgroundColor = '';
-            
+
             toastr.options.positionClass = 'toast-top-right';
             toastr.options.timeOut = 2000;
             toastr.warning('Shipping charge must be 0 or greater. Restored to previous value.');
             return;
         }
-        
+
         if (value === originalValue) {
             inputElem.classList.remove('pending-update');
             return;
         }
-        
+
         inputElem.classList.remove('pending-update');
         inputElem.classList.add('updating');
         inputElem.disabled = true;
-        
+
         updateOrderTotalAmount().then(() => {
             inputElem.setAttribute('data-original-value', value);
             inputElem.classList.remove('updating');
             inputElem.disabled = false;
-            
+
             toastr.options.positionClass = 'toast-top-right';
             toastr.options.timeOut = 1000;
             toastr.success('Shipping charge updated successfully!');
@@ -152,7 +198,7 @@
             inputElem.value = originalValue;
             inputElem.classList.remove('updating');
             inputElem.disabled = false;
-            
+
             toastr.options.positionClass = 'toast-top-right';
             toastr.options.timeOut = 2000;
             toastr.error('Failed to update shipping charge. Please try again.');
@@ -163,11 +209,13 @@
     function handleOrderDiscountInput(inputElem) {
         inputElem.classList.add('pending-update');
         inputElem.classList.remove('updating');
-        
+
         let discount = parseFloat(inputElem.value) || 0;
-        var subtotal = parseFloat($("#subtotal").val()) || 0;
-        
-        if (inputElem.value !== '' && (isNaN(discount) || discount < 0 || discount > subtotal)) {
+        var subtotalGross = parseFloat($("#subtotal_gross").val()) || 0;
+        var itemDiscountTotal = parseFloat($("#item_discount_total").val()) || 0;
+        var maxApplicable = Math.max(0, subtotalGross - itemDiscountTotal);
+
+        if (inputElem.value !== '' && (isNaN(discount) || discount < 0 || discount > maxApplicable)) {
             inputElem.style.borderColor = '#dc3545';
             inputElem.style.backgroundColor = '#f8d7da';
         } else {
@@ -175,14 +223,14 @@
             inputElem.style.backgroundColor = '';
         }
     }
-    
+
     function handleOrderDiscountKeydown(event, inputElem) {
         if (event.key === 'Enter') {
             event.preventDefault();
             inputElem.blur();
             return;
         }
-        
+
         if (event.key === 'Escape') {
             event.preventDefault();
             let originalValue = inputElem.getAttribute('data-original-value');
@@ -194,55 +242,57 @@
             return;
         }
     }
-    
+
     function updateOrderDiscountOnBlur(inputElem) {
         let discount = parseFloat(inputElem.value) || 0;
         let originalValue = parseFloat(inputElem.getAttribute('data-original-value')) || 0;
-        var subtotal = parseFloat($("#subtotal").val()) || 0;
-        
+        var subtotalGross = parseFloat($("#subtotal_gross").val()) || 0;
+        var itemDiscountTotal = parseFloat($("#item_discount_total").val()) || 0;
+        var maxApplicable = Math.max(0, subtotalGross - itemDiscountTotal);
+
         if (inputElem.value === '') {
             discount = 0;
             inputElem.value = 0;
         }
-        
+
         if (isNaN(discount) || discount < 0) {
             inputElem.value = originalValue;
             inputElem.classList.remove('pending-update');
             inputElem.style.borderColor = '';
             inputElem.style.backgroundColor = '';
-            
+
             toastr.options.positionClass = 'toast-top-right';
             toastr.options.timeOut = 2000;
             toastr.warning('Discount must be 0 or greater. Restored to previous value.');
             return;
         }
-        
-        if (discount > subtotal) {
+
+        if (discount > maxApplicable) {
             inputElem.value = originalValue;
             inputElem.classList.remove('pending-update');
             inputElem.style.borderColor = '';
             inputElem.style.backgroundColor = '';
-            
+
             toastr.options.positionClass = 'toast-top-right';
             toastr.options.timeOut = 2000;
-            toastr.error('Discount cannot be greater than subtotal (৳' + subtotal.toFixed(2) + ')!');
+            toastr.error('Discount cannot be greater than subtotal (৳' + maxApplicable.toFixed(2) + ')!');
             return;
         }
-        
+
         if (discount === originalValue) {
             inputElem.classList.remove('pending-update');
             return;
         }
-        
+
         inputElem.classList.remove('pending-update');
         inputElem.classList.add('updating');
         inputElem.disabled = true;
-        
+
         updateOrderTotalAmount().then(() => {
             inputElem.setAttribute('data-original-value', discount);
             inputElem.classList.remove('updating');
             inputElem.disabled = false;
-            
+
             toastr.options.positionClass = 'toast-top-right';
             toastr.options.timeOut = 1000;
             toastr.success('Order discount updated successfully!');
@@ -250,7 +300,7 @@
             inputElem.value = originalValue;
             inputElem.classList.remove('updating');
             inputElem.disabled = false;
-            
+
             toastr.options.positionClass = 'toast-top-right';
             toastr.options.timeOut = 2000;
             toastr.error('Failed to update order discount. Please try again.');
@@ -261,11 +311,21 @@
     function updateOrderTotalAmount() {
         return new Promise((resolve, reject) => {
             var shippingCharge = parseFloat($("#shipping_charge").val()) || 0;
+            // If delivery method is store pickup, do not apply shipping charge
+            var deliveryMethod = $("input[name='delivery_method']:checked").val();
+            var storePickupValue =
+                "{{ \App\Modules\ECOMMERCE\Managements\Orders\Database\Models\Order::DELIVERY_STORE_PICKUP }}";
+            if (typeof deliveryMethod !== 'undefined' && String(deliveryMethod) === String(storePickupValue)) {
+                shippingCharge = 0;
+            }
             var discount = parseFloat($("#discount").val()) || 0;
-            var currentPrice = parseFloat($("#subtotal").val()) || 0;
+            var subtotalGross = parseFloat($("#subtotal_gross").val()) || 0;
+            var itemDiscountTotal = parseFloat($("#item_discount_total").val()) || 0;
+            var posDiscount = parseFloat($("#pos_discount").val()) || 0;
 
-            // Validate discount against subtotal
-            if (discount > currentPrice) {
+            // Validate discount against subtotal (gross minus item discounts)
+            var maxApplicable = Math.max(0, subtotalGross - itemDiscountTotal);
+            if (discount > maxApplicable) {
                 toastr.options.positionClass = 'toast-top-right';
                 toastr.options.timeOut = 2000;
                 toastr.error("Discount cannot be greater than Order Amount");
@@ -277,22 +337,36 @@
             var globalCouponPrice = (typeof couponPrice !== 'undefined') ? couponPrice : 0;
 
             console.log(
-                'currentPrice:', currentPrice,
+                'subtotalGross:', subtotalGross,
+                'itemDiscountTotal:', itemDiscountTotal,
                 'shippingCharge:', shippingCharge,
                 'discount:', discount,
+                'posDiscount:', posDiscount,
                 'couponPrice:', globalCouponPrice
             );
 
-            $.get("{{ url('update/order/total') }}" + '/' + shippingCharge + '/' + discount)
+            var updateTotalUrl =
+                "{{ route('UpdateOrderTotal', ['shipping_charge' => 'SHIPPING_PLACEHOLDER', 'discount' => 'DISCOUNT_PLACEHOLDER']) }}";
+            updateTotalUrl = updateTotalUrl.replace('SHIPPING_PLACEHOLDER', encodeURIComponent(shippingCharge))
+                .replace('DISCOUNT_PLACEHOLDER', encodeURIComponent(discount));
+
+            $.get(updateTotalUrl)
                 .done(function(data) {
-                    var newPrice = (currentPrice + shippingCharge) - (discount + globalCouponPrice);
+                    // grand total = gross + shipping - (item discounts + order discounts + coupon)
+                    var newPrice = (subtotalGross + shippingCharge) - (itemDiscountTotal + discount +
+                        posDiscount + globalCouponPrice);
 
                     var totalPriceDiv = document.getElementById("total_cart_calculation");
                     totalPriceDiv.innerText = '৳ ' + newPrice.toLocaleString("en-BD", {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                     });
-                    
+                    // update hidden total input for form submission
+                    var totalInput = document.getElementById('total');
+                    if (totalInput) {
+                        totalInput.value = newPrice.toFixed(2);
+                    }
+
                     $("input[name='delivery_method']").prop("checked", false);
                     resolve(data);
                 })

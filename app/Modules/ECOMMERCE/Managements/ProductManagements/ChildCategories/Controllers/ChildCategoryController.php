@@ -2,20 +2,17 @@
 
 namespace App\Modules\ECOMMERCE\Managements\ProductManagements\ChildCategories\Controllers;
 
-
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Brian2694\Toastr\Facades\Toastr;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-use DataTables;
-
-
-use App\Modules\ECOMMERCE\Managements\ProductManagements\ChildCategories\Database\Models\ChildCategory;
-use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\Product;
-use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Database\Models\Subcategory;
-use App\Modules\ECOMMERCE\Managements\ProductManagements\Categories\Database\Models\Category;
 use App\Http\Controllers\Controller;
+
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ChildCategories\Actions\GetChildCategoryFormData;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ChildCategories\Actions\GetSubcategoriesByCategoryId;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ChildCategories\Actions\CreateChildCategory;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ChildCategories\Actions\ViewAllChildCategories;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ChildCategories\Actions\GetChildCategoryForEdit;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ChildCategories\Actions\UpdateChildCategory;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\ChildCategories\Actions\DeleteChildCategory;
 
 class ChildCategoryController extends Controller
 {
@@ -23,123 +20,81 @@ class ChildCategoryController extends Controller
     {
         $this->loadModuleViewPath('ECOMMERCE/Managements/ProductManagements/ChildCategories');
     }
+
     public function addNewChildcategory()
     {
-        $category =  Category::getDropDownList('name');
-        return view('create', compact('category'));
+        $result = GetChildCategoryFormData::execute(request());
+        return view($result['view'], ['category' => $result['category']]);
     }
 
     public function subcategoryCategoryWise(Request $request)
     {
-        $data = Subcategory::where("category_id", $request->category_id)->where('status', 1)->select('name', 'id')->get();
-        return response()->json($data);
+        $result = GetSubcategoriesByCategoryId::execute($request);
+        return response()->json($result['data']);
     }
 
     public function saveNewChildcategory(Request $request)
     {
+        $result = CreateChildCategory::execute($request);
 
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'category_id' => 'required',
-            'subcategory_id' => 'required',
-        ]);
+        if ($result['status'] === 'error') {
+            if (isset($result['errors'])) {
+                return back()->withErrors($result['errors'])->withInput();
+            }
+            Toastr::error($result['message'], 'Error');
+            return back();
+        }
 
-        $clean = preg_replace('/[^a-zA-Z0-9\s]/', '', strtolower($request->name)); //remove all non alpha numeric
-        $slug = preg_replace('!\s+!', '-', $clean);
-
-        ChildCategory::insert([
-            'category_id' => $request->category_id,
-            'subcategory_id' => $request->subcategory_id,
-            'name' => $request->name,
-            'slug' => $slug . "-" . time() . "-" . str::random(5),
-            'status' => 1,
-            'created_at' => Carbon::now()
-        ]);
-
-        Toastr::success('Child Category has been Added', 'Success');
+        Toastr::success($result['message'], 'Success');
         return back();
     }
 
     public function viewAllChildcategory(Request $request)
     {
+        $result = ViewAllChildCategories::execute($request);
+
         if ($request->ajax()) {
-
-            $data = DB::table('child_categories')
-                ->join('categories', 'child_categories.category_id', '=', 'categories.id')
-                ->join('subcategories', 'child_categories.subcategory_id', '=', 'subcategories.id')
-                ->select('child_categories.*', 'categories.name as category_name', 'subcategories.name as subcategory_name')
-                ->orderBy('child_categories.id', 'desc')
-                ->get();
-
-            return Datatables::of($data)
-                ->editColumn('status', function ($data) {
-                    if ($data->status == 1) {
-                        return 'Active';
-                    } else {
-                        return 'Inactive';
-                    }
-                })
-                ->addIndexColumn()
-                ->addColumn('action', function ($data) {
-                    $btn = ' <a href="' . url('edit/childcategory') . '/' . $data->slug . '" class="mb-1 btn-sm btn-warning rounded"><i class="fas fa-edit"></i></a>';
-                    $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->slug . '" data-original-title="Delete" class="btn-sm btn-danger rounded deleteBtn"><i class="fas fa-trash-alt"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+            return $result;
         }
-        return view('view');
+
+        return view($result['view']);
     }
 
     public function deleteChildcategory($slug)
     {
-        $data = ChildCategory::where('slug', $slug)->first();
-        $used = Product::where('childcategory_id', $data->id)->count();
-        if ($used > 0) {
-            return response()->json(['success' => 'Cannot be deleted', 'data' => 0]);
-        } else {
-            ChildCategory::where('slug', $slug)->delete();
-            return response()->json(['success' => 'Deleted successfully.', 'data' => 1]);
-        }
+        $result = DeleteChildCategory::execute(request(), $slug);
+        return response()->json(['success' => $result['message'], 'data' => $result['data']]);
     }
 
     public function editChildcategory($slug)
     {
-        $childcategory = ChildCategory::where('slug', $slug)->first();
-        $subcategories = Subcategory::where('category_id', $childcategory->category_id)->select('name', 'id')->orderBy('name', 'asc')->get();
-        $category =  Category::getDropDownList('name', $childcategory->category_id);
-        return view('update', compact('childcategory', 'subcategories', 'category'));
+        $result = GetChildCategoryForEdit::execute(request(), $slug);
+
+        if ($result['status'] === 'error') {
+            Toastr::error($result['message'], 'Error');
+            return redirect('/view/all/childcategory');
+        }
+
+        return view($result['view'], [
+            'childcategory' => $result['childcategory'],
+            'subcategories' => $result['subcategories'],
+            'category' => $result['category']
+        ]);
     }
 
     public function updateChildcategory(Request $request)
     {
+        $result = UpdateChildCategory::execute($request);
 
-        $request->validate([
-            'name' => 'required|max:255',
-            'category_id' => 'required',
-            'subcategory_id' => 'required',
-            'status' => 'required',
-        ]);
-
-        $duplicateChildCategoryExists = ChildCategory::where('name', $request->name)->where('id', '!=', $request->id)->first();
-        if ($duplicateChildCategoryExists) {
-            Toastr::warning('Duplicate Child Category Exists', 'Success');
+        if ($result['status'] === 'error') {
+            if (isset($result['errors'])) {
+                return back()->withErrors($result['errors'])->withInput();
+            }
+            Toastr::warning($result['message'], 'Error');
             return back();
         }
 
-        $clean = preg_replace('/[^a-zA-Z0-9\s]/', '', strtolower($request->name)); //remove all non alpha numeric
-        $slug = preg_replace('!\s+!', '-', $clean);
-
-        ChildCategory::where('slug', $request->slug)->update([
-            'category_id' => $request->category_id,
-            'subcategory_id' => $request->subcategory_id,
-            'name' => $request->name,
-            'slug' => $slug . "-" . time() . "-" . str::random(5),
-            'status' => $request->status,
-            'updated_at' => Carbon::now()
-        ]);
-
-        Toastr::success('Child Category has been Added', 'Success');
+        Toastr::success($result['message'], 'Success');
         return redirect('/view/all/childcategory');
     }
 }

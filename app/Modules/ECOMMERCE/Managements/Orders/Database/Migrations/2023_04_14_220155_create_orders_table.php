@@ -13,6 +13,7 @@ class CreateOrdersTable extends Migration
      */
     public function up()
     {
+
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('order_no')->unique();
@@ -21,12 +22,14 @@ class CreateOrdersTable extends Migration
             $table->dateTime('order_date');
             $table->date('estimated_dd')->nullable();
             $table->dateTime('delivery_date')->nullable();
-            $table->string('delivery_method')->comment('1=>Home Delivery; 2=>Store Pickup')->nullable();
-            $table->tinyInteger('payment_method')->nullable()->comment('1=>cash_on_delivery; 2=>bkash; 3=>nagad; 4=>Card');
+            $table->unsignedTinyInteger('delivery_method')
+                ->nullable()
+                ->comment('1=HOME_DELIVERY, 2=STORE_PICKUP, 3=POS_HANDOVER');
+            $table->tinyInteger('payment_method')->nullable()->comment('1=>cash_on_delivery; 2=>bkash; 3=>nagad; 4=>Card; 5=>bank_transfer; 6=>ssl_commerz; 7=>paypal; 8=>stripe;');
             $table->tinyInteger('payment_status')->nullable()->comment('0=>Unpaid; 1=>Payment Success; 2=>Payment Failed');
             $table->string('trx_id')->nullable()->comment("Created By GenericCommerceV1");
             $table->string('bank_tran_id')->nullable()->comment("KEEP THIS bank_tran_id FOR REFUNDING ISSUE");
-            $table->tinyInteger('order_status')->default(0)->comment('0=>pending/processing; 1=>approved; 2=>dispatch; 3=>intransit; 4=>delivered; 5=>cancelled; 6=>returned');
+            $table->tinyInteger('order_status')->default(0)->comment('1=>pending; 2=>approved; 3=>processiong; 4=>shipped; 5=>delivered; 6=>cancelled; 7=>returned');
             $table->double('sub_total')->default(0);
             $table->string('coupon_code')->nullable();
             $table->string('reference_code')->nullable();
@@ -38,14 +41,18 @@ class CreateOrdersTable extends Migration
             $table->double('total')->default(0);
             $table->double('round_off')->default(0);
             $table->double('coupon_price')->default(0);
+            $table->double('coupon_discount')->default(0);
             $table->string('invoice_no')->nullable();
             $table->timestamp('invoice_date')->nullable();
             $table->boolean('invoice_generated')->default(0);
-            $table->unsignedTinyInteger('order_from')->nullable()->comment('1=>web;2=>app;3=>pos');
+            $table->unsignedTinyInteger('order_from')->nullable()->comment('1=>web;2=>app;3=>pos;4=>social_media');
+            $table->unsignedTinyInteger('order_source')
+                ->comment('1=ECOMMERCE, 2=POS');
             $table->longText('order_note')->comment("Order Note By Customer")->nullable();
             $table->longText('order_remarks')->comment("Special Note By Admin")->nullable();
             $table->string('slug')->unique();
             $table->tinyInteger('complete_order')->default(0)->comment('0=>Incomplete Order (Address Missing); 1=>Complete Order (Address Given)');
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

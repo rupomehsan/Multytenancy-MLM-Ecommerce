@@ -23,7 +23,7 @@
                         </a>
                     </div>
 
-                    <form class="needs-validation" method="POST" action="{{ url('/update/customer-ecommerce') }}"
+                    <form class="needs-validation" method="POST" action="{{ route('UpdateCustomerEcommerce') }}"
                         enctype="multipart/form-data">
                         @csrf
 

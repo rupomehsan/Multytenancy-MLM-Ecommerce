@@ -130,7 +130,7 @@
                     payment_status: paymentStatus,
                     payment_method: paymentMethod
                 },
-                url: "{{ url('generate/sales/report') }}",
+                url: "{{ route('GenerateSalesReport') }}",
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {

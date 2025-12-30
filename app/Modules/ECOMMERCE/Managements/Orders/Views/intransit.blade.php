@@ -101,7 +101,7 @@
             stateSave: true,
             pageLength: 15,
             lengthMenu: [15, 25, 50, 100],
-            ajax: "{{ url('view/intransit/orders') }}",
+            ajax: "{{ route('ViewIntransitOrders') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'

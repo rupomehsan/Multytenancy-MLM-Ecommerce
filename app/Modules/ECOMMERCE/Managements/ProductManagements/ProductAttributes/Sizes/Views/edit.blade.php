@@ -23,7 +23,7 @@
                     </div>
 
                     <form class="needs-validation p-4 shadow rounded bg-white" method="POST"
-                        action="{{ url('/update/product-size') }}" novalidate>
+                        action="{{ route('UpdateProductSize') }}" novalidate>
                         @csrf
 
                         <h4 class="mb-4">Update Attribute</h4>

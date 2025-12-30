@@ -39,11 +39,11 @@
         }
 
         /* tfoot {
-                                        display: table-header-group !important;
-                                    }
-                                    tfoot th{
-                                        text-align: center;
-                                    } */
+                                                display: table-header-group !important;
+                                            }
+                                            tfoot th{
+                                                text-align: center;
+                                            } */
     </style>
 @endsection
 
@@ -105,7 +105,7 @@
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('/on/hold/support/tickets') }}",
+            ajax: "{{ route('ViewOnHoldSupportTickets') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'

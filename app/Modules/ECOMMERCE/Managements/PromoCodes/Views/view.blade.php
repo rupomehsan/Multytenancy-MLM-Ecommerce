@@ -46,7 +46,7 @@
                     <h4 class="card-title mb-3">Promo Codes</h4>
                     <div class="table-responsive">
                         <label id="customFilter">
-                            <a href="{{ url('/add/new/code') }}" class="btn btn-primary btn-sm"
+                            <a href="{{ route('AddPromoCode') }}" class="btn btn-primary btn-sm"
                                 style="margin-left: 5px"><b><i class="fas fa-plus"></i> Add New Promo Code</b></a>
                         </label>
                         <table class="table table-bordered mb-0 data-table">
@@ -95,7 +95,7 @@
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('/view/all/promo/codes') }}",
+            ajax: "{{ route('ViewAllPromoCodes') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'

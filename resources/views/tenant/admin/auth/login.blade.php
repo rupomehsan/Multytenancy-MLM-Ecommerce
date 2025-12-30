@@ -6,7 +6,7 @@
         <div class="col-lg-7">
             <div class="p-3 p-md-5 my-5 mx-auto">
                 <div class="text-center">
-                    <a href="{{ url('/login') }}" class="d-block mb-5">
+                    <a href="{{ route('admin.login') }}" class="d-block mb-5">
                         {{-- $generalInfo is provided globally by AppServiceProvider --}}
                         <h3>{{ $generalInfo->company_name ?? '' }}</h3>
                         <h3>Admin Panel</h3>
