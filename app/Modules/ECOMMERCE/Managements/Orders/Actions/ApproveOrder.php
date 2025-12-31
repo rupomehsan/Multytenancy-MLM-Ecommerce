@@ -15,11 +15,7 @@ class ApproveOrder
         $data->updated_at = Carbon::now();
         $data->save();
 
-        OrderProgress::insert([
-            'order_id' => $data->id,
-            'order_status' => Order::STATUS_APPROVED,
-            'created_at' => Carbon::now()
-        ]);
+
 
         return response()->json(['success' => 'Order Approved successfully.']);
     }

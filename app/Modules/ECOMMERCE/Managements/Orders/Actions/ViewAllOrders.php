@@ -103,7 +103,7 @@ class ViewAllOrders
                     ->addIndexColumn()
                     ->addColumn('action', function ($data) {
 
-                        $btn = ' <a href="' . url('admin/order/details') . '/' . $data->slug . '" title="Order Details" class="d-inline-block btn-sm btn-info rounded"><i class="fas fa-list-ul"></i></a>';
+                        $btn = ' <a href="' . route('adminOrderDetails', $data->slug) . '" title="Order Details" class="d-inline-block btn-sm btn-info rounded"><i class="fas fa-list-ul"></i></a>';
                         // $btn .= ' <a href="' . url('admin/edit/place/order') . '/' . $data->slug . '" title="Edit" class="d-inline-block btn-sm btn-info rounded"><i class="fas fa-pencil-alt"></i></a>';
 
                         if ($data->order_status == Order::STATUS_PENDING) {

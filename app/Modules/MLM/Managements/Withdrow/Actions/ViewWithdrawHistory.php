@@ -4,6 +4,7 @@ namespace App\Modules\MLM\Managements\Withdrow\Actions;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables;
 
 /**
@@ -31,96 +32,99 @@ class ViewWithdrawHistory
      */
     public static function execute(Request $request)
     {
-        // Main query with optimized joins - exclude pending requests
-        $query = DB::table('mlm_withdrawal_requests as wr')
-            ->leftJoin('users as u', 'wr.user_id', '=', 'u.id')
-            ->leftJoin('users as admin', 'wr.processed_by', '=', 'admin.id')
+        // Query the withdrawal history audit table so admins can see every action
+        $query = DB::table('mlm_withdrawal_history as wh')
+            ->leftJoin('users as u', 'wh.user_id', '=', 'u.id')
+            ->leftJoin('users as admin', 'wh.performed_by', '=', 'admin.id')
             ->select(
-                'wr.id',
-                'wr.user_id',
-                'wr.amount',
-                'wr.payment_method',
-                'wr.payment_details',
-                'wr.status',
-                'wr.processed_at',
-                'wr.admin_notes',
-                'wr.created_at',
+                'wh.id',
+                'wh.withdrawal_request_id',
+                'wh.user_id',
+                'wh.action',
+                'wh.old_status',
+                'wh.new_status',
+                'wh.notes',
+                'wh.amount',
+                'wh.payment_method',
+                'wh.transaction_reference',
+                'wh.meta',
+                'wh.created_at',
                 // User details
                 'u.name as user_name',
                 'u.email as user_email',
                 // Admin details
                 'admin.name as admin_name'
             )
-            ->whereIn('wr.status', ['approved', 'rejected', 'completed'])
-            ->orderByDesc('wr.processed_at');
+            ->orderByDesc('wh.created_at');
 
-        return Datatables::of($query)
-            // User column
-            ->addColumn('user', function ($row) {
-                return '<div class="user-info">
+        try {
+            $historyCount = DB::table('mlm_withdrawal_history')->count();
+            Log::info('ViewWithdrawHistory - history count: ' . $historyCount);
+
+            return Datatables::of($query)
+                // User column
+                ->addColumn('user', function ($row) {
+                    return '<div class="user-info">
                             <div><strong>' . e($row->user_name) . '</strong></div>
                             <div class="text-muted small">' . e($row->user_email) . '</div>
                             <span class="badge badge-secondary">#' . $row->user_id . '</span>
                         </div>';
-            })
-            // Amount formatted
-            ->addColumn('amount_formatted', function ($row) {
-                return '<strong>' . number_format($row->amount, 2) . ' BDT</strong>';
-            })
-            // Payment method badge
-            ->addColumn('payment_method_badge', function ($row) {
-                $badgeClass = match (strtolower($row->payment_method)) {
-                    'bkash' => 'badge-primary',
-                    'nagad' => 'badge-warning',
-                    'bank', 'bank transfer' => 'badge-info',
-                    'rocket' => 'badge-success',
-                    default => 'badge-secondary',
-                };
-                return '<span class="badge ' . $badgeClass . '">' .
-                    e($row->payment_method) . '</span>';
-            })
-            // Payment details (account info)
-            ->addColumn('account_details', function ($row) {
-                return '<span class="text-muted">' . e($row->payment_details) . '</span>';
-            })
-            // Status badge
-            ->addColumn('status_badge', function ($row) {
-                $badgeClass = match ($row->status) {
-                    'completed' => 'badge-success',
-                    'approved' => 'badge-primary',
-                    'rejected' => 'badge-danger',
-                    default => 'badge-secondary',
-                };
+                })
+                // Amount formatted
+                ->addColumn('amount_formatted', function ($row) {
+                    return '<strong>' . number_format($row->amount, 2) . ' BDT</strong>';
+                })
+                // Payment method badge
+                ->addColumn('payment_method_badge', function ($row) {
+                    $method = $row->payment_method ?? 'N/A';
+                    $badgeClass = 'badge-secondary';
+                    $lower = strtolower($method);
+                    if (str_contains($lower, 'bkash')) $badgeClass = 'badge-primary';
+                    elseif (str_contains($lower, 'nagad')) $badgeClass = 'badge-warning';
+                    elseif (str_contains($lower, 'bank')) $badgeClass = 'badge-info';
+                    elseif (str_contains($lower, 'rocket')) $badgeClass = 'badge-success';
 
-                $statusLabel = match ($row->status) {
-                    'completed' => 'Completed',
-                    'approved' => 'Approved',
-                    'rejected' => 'Rejected',
-                    default => ucfirst($row->status),
-                };
+                    return '<span class="badge ' . $badgeClass . '">' . e($method) . '</span>';
+                })
+                // Account details: show transaction reference and notes
+                ->addColumn('account_details', function ($row) {
+                    $parts = [];
+                    if (!empty($row->transaction_reference)) {
+                        $parts[] = '<strong>Ref:</strong> ' . e($row->transaction_reference);
+                    }
+                    if (!empty($row->notes)) {
+                        $parts[] = '<div class="text-muted">' . e($row->notes) . '</div>';
+                    }
+                    return implode('<br>', $parts) ?: '<span class="text-muted">-</span>';
+                })
+                // Status badge based on new_status
+                ->addColumn('status_badge', function ($row) {
+                    $status = $row->new_status ?? $row->action ?? 'unknown';
+                    $badgeClass = 'badge-secondary';
+                    if ($status === 'completed') $badgeClass = 'badge-success';
+                    elseif ($status === 'approved') $badgeClass = 'badge-primary';
+                    elseif ($status === 'rejected') $badgeClass = 'badge-danger';
 
-                return '<span class="badge ' . $badgeClass . '">' . $statusLabel . '</span>';
-            })
-            // Requested date
-            ->addColumn('requested_at', function ($row) {
-                return date('d M Y', strtotime($row->created_at));
-            })
-            // Processed date
-            ->addColumn('processed_date', function ($row) {
-                if ($row->processed_at) {
-                    return date('d M Y', strtotime($row->processed_at));
-                }
-                return '<span class="text-muted">-</span>';
-            })
-            // Enable raw HTML rendering
-            ->rawColumns([
-                'user',
-                'amount_formatted',
-                'payment_method_badge',
-                'account_details',
-                'status_badge',
-                'processed_date'
-            ])
-            ->make(true);
+                    $label = ucfirst($status);
+                    return '<span class="badge ' . $badgeClass . '">' . e($label) . '</span>';
+                })
+                // Requested/acted date
+                ->addColumn('requested_at', function ($row) {
+                    return date('d M Y H:i', strtotime($row->created_at));
+                })
+                // Enable raw HTML rendering
+                ->rawColumns([
+                    'user',
+                    'amount_formatted',
+                    'payment_method_badge',
+                    'account_details',
+                    'status_badge',
+                    'processed_date'
+                ])
+                ->make(true);
+        } catch (\Exception $e) {
+            Log::error('ViewWithdrawHistory failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json(['data' => []]);
+        }
     }
 }

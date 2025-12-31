@@ -69,7 +69,7 @@
                         <h4 class="card-title mb-0">View All Invoices</h4>
                     </div>
                     <label id="customFilter">
-                        <a href="{{ url('create/new/order') }}" class="btn btn-primary btn-sm"
+                        <a href="{{ route('CreateNewOrder') }}" class="btn btn-primary btn-sm"
                             style="margin-left: 5px"><b><i class="fas fa-plus"></i> Pos System</b></a>
                     </label>
                     <div class="table-responsive">

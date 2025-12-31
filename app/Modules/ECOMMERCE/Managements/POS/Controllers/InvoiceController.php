@@ -86,7 +86,7 @@ class InvoiceController extends Controller
             $result = $action->execute($request);
         }
 
-        return view('pos.invoice_print', [
+        return view('pos.components.invoice_print', [
             'order' => $result['order'],
             'orderDetails' => $result['orderDetails'],
             'customer' => $result['customer'],
@@ -111,7 +111,7 @@ class InvoiceController extends Controller
             $result = $action->execute($request);
         }
 
-        return view('pos.invoice_content_only', [
+        return view('pos.components.invoice_content_only', [
             'order' => $result['order'],
             'orderDetails' => $result['orderDetails'],
             'customer' => $result['customer'],

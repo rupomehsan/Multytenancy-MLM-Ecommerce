@@ -9,7 +9,6 @@ use Brian2694\Toastr\Facades\Toastr;
 use App\Http\Controllers\Account\AccountsHelper;
 use App\Http\Controllers\Account\Models\AccountsConfiguration;
 use App\Modules\ECOMMERCE\Managements\Orders\Database\Models\Order;
-use App\Modules\ECOMMERCE\Managements\Orders\Database\Models\OrderProgress;
 use App\Modules\ECOMMERCE\Managements\ProductManagements\Products\Database\Models\Product;
 
 class UpdateOrderInfo
@@ -64,11 +63,6 @@ class UpdateOrderInfo
                 'changes' => $data->getChanges(),
             ]);
 
-            OrderProgress::insert([
-                'order_id' => $request->order_id,
-                'order_status' => $request->order_status ?? $data->order_status,
-                'created_at' => Carbon::now()
-            ]);
 
             // Update delivery man
             self::updateDeliveryMan($request->order_id, $request->delivery_man_id);

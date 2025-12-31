@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderPlacedEmail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use App\Modules\ECOMMERCE\Managements\Orders\Database\Models\Order;
+use App\Modules\MLM\Service\ReferralActivityLogger;
 
 
 
@@ -262,11 +265,6 @@ class CheckoutController extends Controller
             'created_at' => Carbon::now()
         ]);
 
-        DB::table('order_progress')->insert([
-            'order_id' => $orderId,
-            'order_status' => 0,
-            'created_at' => Carbon::now()
-        ]);
 
         foreach (session('cart') as $id => $details) {
 
@@ -488,12 +486,15 @@ class CheckoutController extends Controller
                 'created_at' => Carbon::now()
             ]);
 
+            // Log referral activities for ecommerce orders (since raw DB insert doesn't trigger observer)
+            $this->logReferralActivitiesForOrder($orderId);
+
             $this->sendOrderEmail($request->email, $orderInfo);
             session()->forget('coupon');
             session()->forget('discount');
             session()->forget('delivery_cost');
             session()->forget('cart');
-            
+
             // Redirect authenticated users to their orders page, guests to order preview
             if (Auth::guard('customer')->check()) {
                 return redirect('/my/orders')->with('success', 'Order placed successfully!');
@@ -657,5 +658,62 @@ class CheckoutController extends Controller
             'checkoutTotalAmount' => $checkoutTotalAmount,
             'checkoutCoupon' => $checkoutCoupon
         ]);
+    }
+
+    /**
+     * Log referral activities for an ecommerce order
+     * 
+     * Called after order creation since raw DB inserts don't trigger Eloquent observers
+     * 
+     * @param int $orderId
+     * @return void
+     */
+    protected function logReferralActivitiesForOrder(int $orderId): void
+    {
+        try {
+            // Get the order using Eloquent model
+            $order = Order::find($orderId);
+
+            if (!$order) {
+                Log::warning('Ecommerce order not found for referral activity logging', [
+                    'order_id' => $orderId
+                ]);
+                return;
+            }
+
+            // Check if order has a customer
+            if (!$order->user_id) {
+                Log::info('Ecommerce order has no customer, skipping referral activity logging', [
+                    'order_id' => $orderId,
+                    'order_no' => $order->order_no
+                ]);
+                return;
+            }
+
+            Log::info('Logging referral activities for ecommerce order', [
+                'order_id' => $orderId,
+                'order_no' => $order->order_no,
+                'user_id' => $order->user_id,
+            ]);
+
+            // Log referral activities
+            $activityIds = ReferralActivityLogger::logOrderActivity($order);
+
+            if (count($activityIds) > 0) {
+                Log::info('Referral activities created for ecommerce order', [
+                    'order_id' => $order->id,
+                    'order_no' => $order->order_no,
+                    'activities_count' => count($activityIds),
+                    'activity_ids' => $activityIds
+                ]);
+            }
+        } catch (\Exception $e) {
+            // Log error but don't throw exception to prevent blocking order completion
+            Log::error('Error logging referral activities for ecommerce order', [
+                'order_id' => $orderId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+        }
     }
 }

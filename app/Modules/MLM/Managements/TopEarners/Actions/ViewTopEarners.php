@@ -4,6 +4,7 @@ namespace App\Modules\MLM\Managements\TopEarners\Actions;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables;
 
 /**
@@ -56,9 +57,16 @@ class ViewTopEarners
             ->whereNotNull('ref_users.referred_by')
             ->groupBy('ref_users.referred_by');
 
+        // Subquery for total earned (fallback/source of truth): sum of approved/paid commissions
+        $totalEarnedSub = DB::table('mlm_commissions as mc_total')
+            ->select('mc_total.referrer_id', DB::raw('SUM(mc_total.commission_amount) as total_earned'))
+            ->whereIn('mc_total.status', ['approved', 'paid'])
+            ->groupBy('mc_total.referrer_id');
+
         // Main query
         $query = DB::table('users as u')
-            ->join('mlm_user_wallet_balances as wb', 'u.id', '=', 'wb.user_id')
+            // prefer stored wallet balances if available, but fall back to computed total_earned
+            ->leftJoinSub($totalEarnedSub, 'wb', 'u.id', '=', 'wb.referrer_id')
             ->leftJoinSub($level1Earnings, 'l1', 'u.id', '=', 'l1.referrer_id')
             ->leftJoinSub($level2Earnings, 'l2', 'u.id', '=', 'l2.referrer_id')
             ->leftJoinSub($level3Earnings, 'l3', 'u.id', '=', 'l3.referrer_id')
@@ -70,9 +78,9 @@ class ViewTopEarners
                 'u.phone',
                 'u.created_at as join_date',
                 // Wallet balances
-                'wb.total_earned',
-                'wb.total_withdrawn',
-                'wb.total_balance',
+                DB::raw('COALESCE(wb.total_earned, 0) as total_earned'),
+                DB::raw('COALESCE(NULL, 0) as total_withdrawn'),
+                DB::raw('COALESCE(NULL, 0) as total_balance'),
                 // Level-wise earnings (with COALESCE for users with no commissions)
                 DB::raw('COALESCE(l1.level_1_earnings, 0) as level_1_earnings'),
                 DB::raw('COALESCE(l2.level_2_earnings, 0) as level_2_earnings'),
@@ -80,99 +88,107 @@ class ViewTopEarners
                 // Referral stats
                 DB::raw('COALESCE(dr.direct_referrals, 0) as direct_referrals')
             )
-            ->where('wb.total_earned', '>', 0) // Only users with earnings
+            ->whereRaw('COALESCE(wb.total_earned, 0) > 0') // Only users with earnings
             ->orderByDesc('wb.total_earned');
 
-        return Datatables::of($query)
-            // Rank column (auto-incremented)
-            ->addColumn('rank', function ($row) {
-                static $rank = 0;
-                return ++$rank;
-            })
-            // User info column with badge
-            ->addColumn('user_info', function ($row) {
-                $badge = '';
-                if ($row->total_earned >= 50000) {
-                    $badge = '<span class="badge badge-warning ml-2" title="Diamond Earner"><i class="fas fa-gem"></i> Diamond</span>';
-                } elseif ($row->total_earned >= 20000) {
-                    $badge = '<span class="badge badge-success ml-2" title="Gold Earner"><i class="fas fa-star"></i> Gold</span>';
-                } elseif ($row->total_earned >= 10000) {
-                    $badge = '<span class="badge badge-primary ml-2" title="Silver Earner"><i class="fas fa-medal"></i> Silver</span>';
-                }
+        try {
+            $count = DB::table('mlm_user_wallet_balances')->where('total_earned', '>', 0)->count();
+            Log::info('ViewTopEarners - candidates with earnings: ' . $count);
 
-                return '<div class="user-info">
+            return Datatables::of($query)
+                // Rank column (auto-incremented)
+                ->addColumn('rank', function ($row) {
+                    static $rank = 0;
+                    return ++$rank;
+                })
+                // User info column with badge
+                ->addColumn('user_info', function ($row) {
+                    $badge = '';
+                    if ($row->total_earned >= 50000) {
+                        $badge = '<span class="badge badge-warning ml-2" title="Diamond Earner"><i class="fas fa-gem"></i> Diamond</span>';
+                    } elseif ($row->total_earned >= 20000) {
+                        $badge = '<span class="badge badge-success ml-2" title="Gold Earner"><i class="fas fa-star"></i> Gold</span>';
+                    } elseif ($row->total_earned >= 10000) {
+                        $badge = '<span class="badge badge-primary ml-2" title="Silver Earner"><i class="fas fa-medal"></i> Silver</span>';
+                    }
+
+                    return '<div class="user-info">
                             <div><strong>' . e($row->name) . '</strong>' . $badge . '</div>
                             <div class="text-muted small">' . e($row->email) . '</div>
                             <span class="badge badge-secondary">#' . $row->user_id . '</span>
                         </div>';
-            })
-            // Total earnings (formatted with color)
-            ->addColumn('total_earnings', function ($row) {
-                $amount = (float) $row->total_earned;
-                return '<div class="text-center">
+                })
+                // Total earnings (formatted with color)
+                ->addColumn('total_earnings', function ($row) {
+                    $amount = (float) $row->total_earned;
+                    return '<div class="text-center">
                             <strong class="text-success" style="font-size: 16px;">' .
-                    number_format($amount, 2) . ' BDT</strong>
+                        number_format($amount, 2) . ' BDT</strong>
                         </div>';
-            })
-            // Level 1 earnings
-            ->addColumn('level_1_earn', function ($row) {
-                $amount = (float) $row->level_1_earnings;
-                if ($amount > 0) {
-                    return '<div class="text-center">
+                })
+                // Level 1 earnings
+                ->addColumn('level_1_earn', function ($row) {
+                    $amount = (float) $row->level_1_earnings;
+                    if ($amount > 0) {
+                        return '<div class="text-center">
                                 <span class="badge badge-primary" style="font-size: 12px;">' .
-                        number_format($amount, 2) . ' BDT</span>
+                            number_format($amount, 2) . ' BDT</span>
                             </div>';
-                }
-                return '<div class="text-center"><span class="text-muted">0.00</span></div>';
-            })
-            // Level 2 earnings
-            ->addColumn('level_2_earn', function ($row) {
-                $amount = (float) $row->level_2_earnings;
-                if ($amount > 0) {
-                    return '<div class="text-center">
+                    }
+                    return '<div class="text-center"><span class="text-muted">0.00</span></div>';
+                })
+                // Level 2 earnings
+                ->addColumn('level_2_earn', function ($row) {
+                    $amount = (float) $row->level_2_earnings;
+                    if ($amount > 0) {
+                        return '<div class="text-center">
                                 <span class="badge badge-success" style="font-size: 12px;">' .
-                        number_format($amount, 2) . ' BDT</span>
+                            number_format($amount, 2) . ' BDT</span>
                             </div>';
-                }
-                return '<div class="text-center"><span class="text-muted">0.00</span></div>';
-            })
-            // Level 3 earnings
-            ->addColumn('level_3_earn', function ($row) {
-                $amount = (float) $row->level_3_earnings;
-                if ($amount > 0) {
-                    return '<div class="text-center">
+                    }
+                    return '<div class="text-center"><span class="text-muted">0.00</span></div>';
+                })
+                // Level 3 earnings
+                ->addColumn('level_3_earn', function ($row) {
+                    $amount = (float) $row->level_3_earnings;
+                    if ($amount > 0) {
+                        return '<div class="text-center">
                                 <span class="badge badge-warning" style="font-size: 12px;">' .
-                        number_format($amount, 2) . ' BDT</span>
+                            number_format($amount, 2) . ' BDT</span>
                             </div>';
-                }
-                return '<div class="text-center"><span class="text-muted">0.00</span></div>';
-            })
-            // Direct referrals count
-            ->addColumn('referrals', function ($row) {
-                $count = (int) $row->direct_referrals;
-                if ($count > 0) {
-                    return '<div class="text-center">
+                    }
+                    return '<div class="text-center"><span class="text-muted">0.00</span></div>';
+                })
+                // Direct referrals count
+                ->addColumn('referrals', function ($row) {
+                    $count = (int) $row->direct_referrals;
+                    if ($count > 0) {
+                        return '<div class="text-center">
                                 <span class="badge badge-info">' . $count . ' Referrals</span>
                             </div>';
-                }
-                return '<div class="text-center"><span class="text-muted">0</span></div>';
-            })
-            // Join date
-            ->addColumn('join_date', function ($row) {
-                return '<div class="text-center">' .
-                    date('d M Y', strtotime($row->join_date)) .
-                    '</div>';
-            })
-            // Enable raw HTML rendering
-            ->rawColumns([
-                'user_info',
-                'total_earnings',
-                'level_1_earn',
-                'level_2_earn',
-                'level_3_earn',
-                'referrals',
-                'join_date'
-            ])
-            ->make(true);
+                    }
+                    return '<div class="text-center"><span class="text-muted">0</span></div>';
+                })
+                // Join date
+                ->addColumn('join_date', function ($row) {
+                    return '<div class="text-center">' .
+                        date('d M Y', strtotime($row->join_date)) .
+                        '</div>';
+                })
+                // Enable raw HTML rendering
+                ->rawColumns([
+                    'user_info',
+                    'total_earnings',
+                    'level_1_earn',
+                    'level_2_earn',
+                    'level_3_earn',
+                    'referrals',
+                    'join_date'
+                ])
+                ->make(true);
+        } catch (\Exception $e) {
+            Log::error('ViewTopEarners failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json(['data' => []]);
+        }
     }
 }

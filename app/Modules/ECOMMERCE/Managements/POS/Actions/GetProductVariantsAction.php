@@ -17,6 +17,8 @@ class GetProductVariantsAction
             ->select('colors.*')
             ->where('product_variants.product_id', $product->id)
             ->where('product_variants.stock', '>', 0)
+            ->whereNotNull('product_variants.color_id')
+            ->whereNotNull('colors.id')
             ->groupBy('product_variants.color_id')
             ->get();
 

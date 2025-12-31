@@ -43,7 +43,7 @@ class PosController extends Controller
     {
         $products = $action->execute($request);
 
-        $searchResults = view('pos.live_search_products', compact('products'))->render();
+        $searchResults = view('pos.components.live_search_products', compact('products'))->render();
 
         return response()->json(['searchResults' => $searchResults]);
     }
@@ -66,8 +66,8 @@ class PosController extends Controller
     {
         $action->execute($request);
 
-        $returnHTML = view('pos.cart_items')->render();
-        $cartCalculationHTML = view('pos.cart_calculation')->render();
+        $returnHTML = view('pos.components.cart_items')->render();
+        $cartCalculationHTML = view('pos.components.cart_calculation')->render();
 
         return response()->json([
             'rendered_cart' => $returnHTML,
@@ -80,7 +80,7 @@ class PosController extends Controller
         $request->merge(['user_id' => $user_id]);
         $result = $action->execute($request);
 
-        $savedAddressHTML = view('pos.saved_address', ['savedAddressed' => $result['saved_addressed']])->render();
+        $savedAddressHTML = view('pos.components.saved_address', ['savedAddressed' => $result['saved_addressed']])->render();
 
         return response()->json([
             'saved_address' => $savedAddressHTML,
@@ -93,8 +93,8 @@ class PosController extends Controller
         $request->merge(['cart_index' => $cartIndex]);
         $action->execute($request);
 
-        $returnHTML = view('pos.cart_items')->render();
-        $cartCalculationHTML = view('pos.cart_calculation')->render();
+        $returnHTML = view('pos.components.cart_items')->render();
+        $cartCalculationHTML = view('pos.components.cart_calculation')->render();
 
         return response()->json([
             'rendered_cart' => $returnHTML,
@@ -107,8 +107,8 @@ class PosController extends Controller
         $request->merge(['cart_index' => $cartIndex, 'qty' => $qty]);
         $action->execute($request);
 
-        $returnHTML = view('pos.cart_items')->render();
-        $cartCalculationHTML = view('pos.cart_calculation')->render();
+        $returnHTML = view('pos.components.cart_items')->render();
+        $cartCalculationHTML = view('pos.components.cart_calculation')->render();
 
         return response()->json([
             'rendered_cart' => $returnHTML,
@@ -121,8 +121,8 @@ class PosController extends Controller
         $request->merge(['cart_index' => $cartIndex, 'discount' => $discount]);
         $action->execute($request);
 
-        $returnHTML = view('pos.cart_items')->render();
-        $cartCalculationHTML = view('pos.cart_calculation')->render();
+        $returnHTML = view('pos.components.cart_items')->render();
+        $cartCalculationHTML = view('pos.components.cart_calculation')->render();
 
         return response()->json([
             'rendered_cart' => $returnHTML,
@@ -134,7 +134,7 @@ class PosController extends Controller
     {
         $result = $action->execute($request);
 
-        $cartCalculationHTML = view('pos.cart_calculation')->render();
+        $cartCalculationHTML = view('pos.components.cart_calculation')->render();
         $result['cart_calculation'] = $cartCalculationHTML;
 
         return response()->json($result);
@@ -144,7 +144,7 @@ class PosController extends Controller
     {
         $result = $action->execute($request);
 
-        $cartCalculationHTML = view('pos.cart_calculation')->render();
+        $cartCalculationHTML = view('pos.components.cart_calculation')->render();
         $result['cart_calculation'] = $cartCalculationHTML;
 
         return response()->json($result);
@@ -164,7 +164,7 @@ class PosController extends Controller
         $request->merge(['shipping_charge' => $shipping_charge, 'discount' => $discount]);
         $action->execute($request);
 
-        $cartCalculationHTML = view('pos.cart_calculation')->render();
+        $cartCalculationHTML = view('pos.components.cart_calculation')->render();
 
         return response()->json([
             'cart_calculation' => $cartCalculationHTML
@@ -175,7 +175,7 @@ class PosController extends Controller
     {
         $result = $action->execute($request);
 
-        $cartCalculationHTML = view('pos.cart_calculation')->render();
+        $cartCalculationHTML = view('pos.components.cart_calculation')->render();
         $result['cart_calculation'] = $cartCalculationHTML;
 
         return response()->json($result);
@@ -185,7 +185,7 @@ class PosController extends Controller
     {
         $result = $action->execute($request);
 
-        $cartCalculationHTML = view('pos.cart_calculation')->render();
+        $cartCalculationHTML = view('pos.components.cart_calculation')->render();
         $result['cart_calculation'] = $cartCalculationHTML;
 
         return response()->json($result);
@@ -195,7 +195,7 @@ class PosController extends Controller
     {
         $action->execute($request);
 
-        $cartCalculationHTML = view('pos.cart_calculation')->render();
+        $cartCalculationHTML = view('pos.components.cart_calculation')->render();
 
         return response()->json([
             'cart_calculation' => $cartCalculationHTML
@@ -254,7 +254,8 @@ class PosController extends Controller
         // Handle success
         Toastr::success($result['message'], 'Success');
 
-        // Redirect to invoice print page with order ID
-        return redirect()->route('POSInvoicePrint', $result['order_id']);
+        // Redirect back to POS page with order ID in session
+        // JS will open invoice in new tab after Toastr is visible
+        return back()->with('pos_order_success', $result['order_id']);
     }
 }

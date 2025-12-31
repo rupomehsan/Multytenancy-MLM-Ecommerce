@@ -212,15 +212,14 @@
                     </div>
                 </label>
 
-                @if ($paymentGateways[0]->status == 1)
+                @if ($paymentGateways->isNotEmpty() && isset($paymentGateways[0]) && $paymentGateways[0]->status == 1)
                     <label for="flexRadioDefault2">
                         <div class="payment-method-input-main">
                             <input class="form-check-input" type="radio" name="payment_method" value="sslcommerz"
                                 id="flexRadioDefault2" required />
                             SSLCommerz
                         </div>
-                        <img alt="SSLCommerz" src="{{ url(env('ADMIN_URL') . '/images/ssl_commerz.png') }}"
-                            style="max-width: 90px;" />
+                        <img alt="SSLCommerz" src="{{ '/images/ssl_commerz.png' }}" style="max-width: 90px;" />
                     </label>
                 @endif
 

@@ -11,6 +11,7 @@
 
         .tree-container {
             padding: 25px;
+            overflow-x: auto;
         }
 
         .tree ul {

@@ -39,7 +39,7 @@ class CommissionLog extends Model
 {
     use HasFactory;
 
-    protected $table = 'commission_logs';
+    protected $table = 'mlm_commission_logs';
 
     protected $fillable = [
         'commission_id',

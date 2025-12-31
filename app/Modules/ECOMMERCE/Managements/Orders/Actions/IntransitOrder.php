@@ -15,11 +15,6 @@ class IntransitOrder
         $data->updated_at = Carbon::now();
         $data->save();
 
-        OrderProgress::insert([
-            'order_id' => $data->id,
-            'order_status' => Order::STATUS_INTRANSIT,
-            'created_at' => Carbon::now()
-        ]);
 
         return response()->json(['success' => 'Order In Transit successfully.']);
     }

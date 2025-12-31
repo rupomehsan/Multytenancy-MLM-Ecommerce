@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Modules\ECOMMERCE\Managements\UserManagements\Users\Database\Seeder\Seeder as UserSeeder;
 use App\Modules\ECOMMERCE\Managements\Locations\Database\Seeder\Seeder as LocationSeeder;
+use App\Modules\MLM\Managements\Commissions\Database\Seeder\CommissionSettingsSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,7 +22,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CompleteAccountGroupsSeeder::class,
             UserSeeder::class,
-            LocationSeeder::class
+            LocationSeeder::class,
+            CommissionSettingsSeeder::class,
         ]);
 
         // Keep existing ac_accounts data

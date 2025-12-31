@@ -21,22 +21,22 @@ class CartController extends Controller
 {
     const AUTHORIZATION_TOKEN = 'GenericCommerceV1-SBW7583837NUDD82';
 
-    public function addToCart(Request $request){
+    public function addToCart(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $productInfo = Product::where('id', $request->product_id)->first();
             $productPrice = $request->price;
 
-            $cartInfo = Cart::where([['user_unique_cart_no', $request->user_unique_cart_no],['product_id', $request->product_id], ['color_id', $request->color_id], ['region_id', $request->region_id], ['sim_id', $request->sim_id], ['storage_id', $request->storage_id], ['warrenty_id', $request->warrenty_id], ['device_condition_id', $request->device_condition_id]])->first();
+            $cartInfo = Cart::where([['user_unique_cart_no', $request->user_unique_cart_no], ['product_id', $request->product_id], ['color_id', $request->color_id], ['region_id', $request->region_id], ['sim_id', $request->sim_id], ['storage_id', $request->storage_id], ['warrenty_id', $request->warrenty_id], ['device_condition_id', $request->device_condition_id]])->first();
 
-            if($cartInfo){
+            if ($cartInfo) {
 
                 $cartInfo->qty = $cartInfo->qty + $request->qty;
                 $cartInfo->total_price = $request->qty * $productPrice;
                 $cartInfo->save();
                 $cartId = $cartInfo->id;
-
-            } else{
+            } else {
                 $cartId = Cart::insertGetId([
                     'user_unique_cart_no' => $request->user_unique_cart_no,
                     'product_id' => $productInfo->id,
@@ -58,26 +58,25 @@ class CartController extends Controller
             }
 
             $data = DB::table('carts')
-                    ->join('products', 'carts.product_id', '=', 'products.id')
+                ->join('products', 'carts.product_id', '=', 'products.id')
 
-                    ->leftJoin('colors', 'carts.color_id', 'colors.id')
-                    ->leftJoin('product_sizes', 'carts.size_id', 'product_sizes.id')
-                    ->leftJoin('country', 'carts.region_id', 'country.id')
-                    ->leftJoin('sims', 'carts.sim_id', 'sims.id')
-                    ->leftJoin('storage_types', 'carts.storage_id', 'storage_types.id')
-                    ->leftJoin('device_conditions', 'carts.device_condition_id', 'device_conditions.id')
-                    ->leftJoin('product_warrenties', 'carts.warrenty_id', 'product_warrenties.id')
+                ->leftJoin('colors', 'carts.color_id', 'colors.id')
+                ->leftJoin('product_sizes', 'carts.size_id', 'product_sizes.id')
+                ->leftJoin('country', 'carts.region_id', 'country.id')
+                ->leftJoin('sims', 'carts.sim_id', 'sims.id')
+                ->leftJoin('storage_types', 'carts.storage_id', 'storage_types.id')
+                ->leftJoin('device_conditions', 'carts.device_condition_id', 'device_conditions.id')
+                ->leftJoin('product_warrenties', 'carts.warrenty_id', 'product_warrenties.id')
 
-                    ->where('carts.id', $cartId)
-                    ->select('carts.*', 'products.image', 'products.name as product_name', 'products.discount_price', 'products.price as product_price', 'colors.name as color_name', 'colors.code as color_code', 'product_sizes.name as size_name', 'country.name as region_name', 'sims.name as sim_type', DB::Raw("CONCAT(storage_types.ram, '/', storage_types.rom) AS storage_type"), 'device_conditions.name as device_condition', 'product_warrenties.name as product_warrenty')
-                    ->first();
+                ->where('carts.id', $cartId)
+                ->select('carts.*', 'products.image', 'products.name as product_name', 'products.discount_price', 'products.price as product_price', 'colors.name as color_name', 'colors.code as color_code', 'product_sizes.name as size_name', 'country.name as region_name', 'sims.name as sim_type', DB::Raw("CONCAT(storage_types.ram, '/', storage_types.rom) AS storage_type"), 'device_conditions.name as device_condition', 'product_warrenties.name as product_warrenty')
+                ->first();
 
             return response()->json([
                 'success' => true,
                 'date' => $data,
                 'message' => 'Successfully Added'
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -86,11 +85,12 @@ class CartController extends Controller
         }
     }
 
-    public function incrCartQty(Request $request){
+    public function incrCartQty(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $cartInfo = Cart::where('id', $request->cart_id)->first();
-            if($cartInfo){
+            if ($cartInfo) {
                 $productInfo = Product::where('id', $cartInfo->product_id)->first();
                 $productPrice = $productInfo->discount_price > 0 ? $productInfo->discount_price : $productInfo->price;
 
@@ -108,32 +108,30 @@ class CartController extends Controller
                 //         ->first();
 
                 $data = DB::table('carts')
-                            ->join('products', 'carts.product_id', '=', 'products.id')
+                    ->join('products', 'carts.product_id', '=', 'products.id')
 
-                            ->leftJoin('colors', 'carts.color_id', 'colors.id')
-                            ->leftJoin('product_sizes', 'carts.size_id', 'product_sizes.id')
-                            ->leftJoin('country', 'carts.region_id', 'country.id')
-                            ->leftJoin('sims', 'carts.sim_id', 'sims.id')
-                            ->leftJoin('storage_types', 'carts.storage_id', 'storage_types.id')
-                            ->leftJoin('device_conditions', 'carts.device_condition_id', 'device_conditions.id')
-                            ->leftJoin('product_warrenties', 'carts.warrenty_id', 'product_warrenties.id')
+                    ->leftJoin('colors', 'carts.color_id', 'colors.id')
+                    ->leftJoin('product_sizes', 'carts.size_id', 'product_sizes.id')
+                    ->leftJoin('country', 'carts.region_id', 'country.id')
+                    ->leftJoin('sims', 'carts.sim_id', 'sims.id')
+                    ->leftJoin('storage_types', 'carts.storage_id', 'storage_types.id')
+                    ->leftJoin('device_conditions', 'carts.device_condition_id', 'device_conditions.id')
+                    ->leftJoin('product_warrenties', 'carts.warrenty_id', 'product_warrenties.id')
 
-                            ->where('carts.id', $request->cart_id)
-                            ->select('carts.*', 'products.image', 'products.name as product_name', 'products.discount_price', 'products.price as product_price', 'colors.name as color_name', 'colors.code as color_code', 'product_sizes.name as size_name', 'country.name as region_name', 'sims.name as sim_type', DB::Raw("CONCAT(storage_types.ram, '/', storage_types.rom) AS storage_type"), 'device_conditions.name as device_condition', 'product_warrenties.name as product_warrenty')
-                            ->first();
+                    ->where('carts.id', $request->cart_id)
+                    ->select('carts.*', 'products.image', 'products.name as product_name', 'products.discount_price', 'products.price as product_price', 'colors.name as color_name', 'colors.code as color_code', 'product_sizes.name as size_name', 'country.name as region_name', 'sims.name as sim_type', DB::Raw("CONCAT(storage_types.ram, '/', storage_types.rom) AS storage_type"), 'device_conditions.name as device_condition', 'product_warrenties.name as product_warrenty')
+                    ->first();
 
                 return response()->json([
                     'success' => true,
                     'date' => $data
                 ], 200);
-            } else{
+            } else {
                 return response()->json([
                     'success' => false,
                     'message' => "No Data Found"
                 ], 200);
             }
-
-
         } else {
             return response()->json([
                 'success' => false,
@@ -142,12 +140,13 @@ class CartController extends Controller
         }
     }
 
-    public function decrCartQty(Request $request){
+    public function decrCartQty(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $cartInfo = Cart::where('id', $request->cart_id)->first();
-            if($cartInfo){
-                if($cartInfo->qty > 1){
+            if ($cartInfo) {
+                if ($cartInfo->qty > 1) {
                     $productInfo = Product::where('id', $cartInfo->product_id)->first();
                     $productPrice = $productInfo->discount_price > 0 ? $productInfo->discount_price : $productInfo->price;
 
@@ -165,19 +164,19 @@ class CartController extends Controller
                     //         ->first();
 
                     $data = DB::table('carts')
-                            ->join('products', 'carts.product_id', '=', 'products.id')
+                        ->join('products', 'carts.product_id', '=', 'products.id')
 
-                            ->leftJoin('colors', 'carts.color_id', 'colors.id')
-                            ->leftJoin('product_sizes', 'carts.size_id', 'product_sizes.id')
-                            ->leftJoin('country', 'carts.region_id', 'country.id')
-                            ->leftJoin('sims', 'carts.sim_id', 'sims.id')
-                            ->leftJoin('storage_types', 'carts.storage_id', 'storage_types.id')
-                            ->leftJoin('device_conditions', 'carts.device_condition_id', 'device_conditions.id')
-                            ->leftJoin('product_warrenties', 'carts.warrenty_id', 'product_warrenties.id')
+                        ->leftJoin('colors', 'carts.color_id', 'colors.id')
+                        ->leftJoin('product_sizes', 'carts.size_id', 'product_sizes.id')
+                        ->leftJoin('country', 'carts.region_id', 'country.id')
+                        ->leftJoin('sims', 'carts.sim_id', 'sims.id')
+                        ->leftJoin('storage_types', 'carts.storage_id', 'storage_types.id')
+                        ->leftJoin('device_conditions', 'carts.device_condition_id', 'device_conditions.id')
+                        ->leftJoin('product_warrenties', 'carts.warrenty_id', 'product_warrenties.id')
 
-                            ->where('carts.id', $request->cart_id)
-                            ->select('carts.*', 'products.image', 'products.name as product_name', 'products.discount_price', 'products.price as product_price', 'colors.name as color_name', 'colors.code as color_code', 'product_sizes.name as size_name', 'country.name as region_name', 'sims.name as sim_type', DB::Raw("CONCAT(storage_types.ram, '/', storage_types.rom) AS storage_type"), 'device_conditions.name as device_condition', 'product_warrenties.name as product_warrenty')
-                            ->first();
+                        ->where('carts.id', $request->cart_id)
+                        ->select('carts.*', 'products.image', 'products.name as product_name', 'products.discount_price', 'products.price as product_price', 'colors.name as color_name', 'colors.code as color_code', 'product_sizes.name as size_name', 'country.name as region_name', 'sims.name as sim_type', DB::Raw("CONCAT(storage_types.ram, '/', storage_types.rom) AS storage_type"), 'device_conditions.name as device_condition', 'product_warrenties.name as product_warrenty')
+                        ->first();
 
                     return response()->json([
                         'success' => true,
@@ -192,19 +191,19 @@ class CartController extends Controller
                     //         ->first();
 
                     $data = DB::table('carts')
-                                ->join('products', 'carts.product_id', '=', 'products.id')
+                        ->join('products', 'carts.product_id', '=', 'products.id')
 
-                                ->leftJoin('colors', 'carts.color_id', 'colors.id')
-                                ->leftJoin('product_sizes', 'carts.size_id', 'product_sizes.id')
-                                ->leftJoin('country', 'carts.region_id', 'country.id')
-                                ->leftJoin('sims', 'carts.sim_id', 'sims.id')
-                                ->leftJoin('storage_types', 'carts.storage_id', 'storage_types.id')
-                                ->leftJoin('device_conditions', 'carts.device_condition_id', 'device_conditions.id')
-                                ->leftJoin('product_warrenties', 'carts.warrenty_id', 'product_warrenties.id')
+                        ->leftJoin('colors', 'carts.color_id', 'colors.id')
+                        ->leftJoin('product_sizes', 'carts.size_id', 'product_sizes.id')
+                        ->leftJoin('country', 'carts.region_id', 'country.id')
+                        ->leftJoin('sims', 'carts.sim_id', 'sims.id')
+                        ->leftJoin('storage_types', 'carts.storage_id', 'storage_types.id')
+                        ->leftJoin('device_conditions', 'carts.device_condition_id', 'device_conditions.id')
+                        ->leftJoin('product_warrenties', 'carts.warrenty_id', 'product_warrenties.id')
 
-                                ->where('carts.id', $request->cart_id)
-                                ->select('carts.*', 'products.image', 'products.name as product_name', 'products.discount_price', 'products.price as product_price', 'colors.name as color_name', 'colors.code as color_code', 'product_sizes.name as size_name', 'country.name as region_name', 'sims.name as sim_type', DB::Raw("CONCAT(storage_types.ram, '/', storage_types.rom) AS storage_type"), 'device_conditions.name as device_condition', 'product_warrenties.name as product_warrenty')
-                                ->first();
+                        ->where('carts.id', $request->cart_id)
+                        ->select('carts.*', 'products.image', 'products.name as product_name', 'products.discount_price', 'products.price as product_price', 'colors.name as color_name', 'colors.code as color_code', 'product_sizes.name as size_name', 'country.name as region_name', 'sims.name as sim_type', DB::Raw("CONCAT(storage_types.ram, '/', storage_types.rom) AS storage_type"), 'device_conditions.name as device_condition', 'product_warrenties.name as product_warrenty')
+                        ->first();
 
                     return response()->json([
                         'success' => false,
@@ -212,14 +211,12 @@ class CartController extends Controller
                         'message' => 'Qty cannot be less than 1'
                     ], 200);
                 }
-            } else{
+            } else {
                 return response()->json([
                     'success' => false,
                     'message' => "No Data Found"
                 ], 200);
             }
-
-
         } else {
             return response()->json([
                 'success' => false,
@@ -228,7 +225,8 @@ class CartController extends Controller
         }
     }
 
-    public function deleteCartItem(Request $request){
+    public function deleteCartItem(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             Cart::where('id', $request->cart_id)->delete();
@@ -237,8 +235,6 @@ class CartController extends Controller
                 'success' => true,
                 'message' => "Item has removed from Cart"
             ], 200);
-
-
         } else {
             return response()->json([
                 'success' => false,
@@ -247,7 +243,8 @@ class CartController extends Controller
         }
     }
 
-    public function getCartItems(Request $request){
+    public function getCartItems(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             // $data = DB::table('carts')
@@ -258,31 +255,30 @@ class CartController extends Controller
             //             ->get();
 
             $data = DB::table('carts')
-                        ->join('products', 'carts.product_id', '=', 'products.id')
-                        ->leftJoin('units', 'products.unit_id', '=', 'units.id')
+                ->join('products', 'carts.product_id', '=', 'products.id')
+                ->leftJoin('units', 'products.unit_id', '=', 'units.id')
 
-                        ->leftJoin('colors', 'carts.color_id', 'colors.id')
-                        ->leftJoin('product_sizes', 'carts.size_id', 'product_sizes.id')
-                        ->leftJoin('country', 'carts.region_id', 'country.id')
-                        ->leftJoin('sims', 'carts.sim_id', 'sims.id')
-                        ->leftJoin('storage_types', 'carts.storage_id', 'storage_types.id')
-                        ->leftJoin('device_conditions', 'carts.device_condition_id', 'device_conditions.id')
-                        ->leftJoin('product_warrenties', 'carts.warrenty_id', 'product_warrenties.id')
+                ->leftJoin('colors', 'carts.color_id', 'colors.id')
+                ->leftJoin('product_sizes', 'carts.size_id', 'product_sizes.id')
+                ->leftJoin('country', 'carts.region_id', 'country.id')
+                ->leftJoin('sims', 'carts.sim_id', 'sims.id')
+                ->leftJoin('storage_types', 'carts.storage_id', 'storage_types.id')
+                ->leftJoin('device_conditions', 'carts.device_condition_id', 'device_conditions.id')
+                ->leftJoin('product_warrenties', 'carts.warrenty_id', 'product_warrenties.id')
 
-                        ->where('carts.user_unique_cart_no', $request->user_unique_cart_no)
-                        ->select('carts.*', 'units.name as unit_name', 'products.image', 'products.name as product_name', 'products.discount_price', 'products.price as product_price', 'colors.name as color_name', 'colors.code as color_code', 'product_sizes.name as size_name', 'country.name as region_name', 'sims.name as sim_type', DB::Raw("CONCAT(storage_types.ram, '/', storage_types.rom) AS storage_type"), 'device_conditions.name as device_condition', 'product_warrenties.name as product_warrenty')
-                        ->get();
+                ->where('carts.user_unique_cart_no', $request->user_unique_cart_no)
+                ->select('carts.*', 'units.name as unit_name', 'products.image', 'products.name as product_name', 'products.discount_price', 'products.price as product_price', 'colors.name as color_name', 'colors.code as color_code', 'product_sizes.name as size_name', 'country.name as region_name', 'sims.name as sim_type', DB::Raw("CONCAT(storage_types.ram, '/', storage_types.rom) AS storage_type"), 'device_conditions.name as device_condition', 'product_warrenties.name as product_warrenty')
+                ->get();
 
             $totalAmount = DB::table('carts')
-                                ->where('carts.user_unique_cart_no', $request->user_unique_cart_no)
-                                ->sum('total_price');
+                ->where('carts.user_unique_cart_no', $request->user_unique_cart_no)
+                ->sum('total_price');
 
             return response()->json([
                 'success' => true,
                 'date' => $data,
                 'total_amount' => (string) $totalAmount
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -291,14 +287,15 @@ class CartController extends Controller
         }
     }
 
-    public function applyCoupon(Request $request){
+    public function applyCoupon(Request $request)
+    {
 
         $promoInfo = PromoCode::where('code', $request->coupon_code)->where('status', 1)->where('effective_date', '<=', date("Y-m-d"))->where('expire_date', '>=', date("Y-m-d"))->first();
         $data = PromoCode::where('status', 100)->first();
-        if($promoInfo){
+        if ($promoInfo) {
 
             $alreadyUsed = Order::where('user_id', auth()->user()->id)->where('coupon_code', $request->coupon_code)->count();
-            if($alreadyUsed > 0){
+            if ($alreadyUsed > 0) {
                 return response()->json([
                     'success' => false,
                     'data' => $data,
@@ -311,7 +308,6 @@ class CartController extends Controller
                     'message' => "Successfully Applied Coupon Code"
                 ], 200);
             }
-
         } else {
             return response()->json([
                 'success' => false,
@@ -319,10 +315,10 @@ class CartController extends Controller
                 'message' => "Promo Code is Inactive or Out of Date Range"
             ], 200);
         }
-
     }
 
-    public function getAllCoupons(Request $request){
+    public function getAllCoupons(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = PromoCode::where('status', 1)->where('expire_date', '>=', date("Y-m-d"))->get();
@@ -331,7 +327,6 @@ class CartController extends Controller
                 'success' => true,
                 'date' => $data
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -340,15 +335,16 @@ class CartController extends Controller
         }
     }
 
-    public function cartCheckout(Request $request){
+    public function cartCheckout(Request $request)
+    {
 
         $orderId = Order::insertGetId([
-            'order_no' => time().rand(100,999),
+            'order_no' => time() . rand(100, 999),
             'user_id' => auth()->user()->id,
             'order_date' => date("Y-m-d H:i:s"),
             'estimated_dd' => date('Y-m-d', strtotime("+7 day", strtotime(date("Y-m-d")))),
             'payment_method' => NULL,
-            'trx_id' => time().str::random(5),
+            'trx_id' => time() . str::random(5),
             'order_status' => 0,
             'sub_total' => 0,
             'coupon_code' => NULL,
@@ -363,16 +359,11 @@ class CartController extends Controller
             'created_at' => Carbon::now()
         ]);
 
-        OrderProgress::insert([
-            'order_id' => $orderId,
-            'order_status' => 0,
-            'created_at' => Carbon::now()
-        ]);
 
         $totalOrderAmount = 0;
         $cartItems = Cart::where('user_unique_cart_no', $request->user_unique_cart_no)->orderBy('id', 'desc')->get();
 
-        foreach($cartItems as $item){
+        foreach ($cartItems as $item) {
 
             Product::where('id', $item->product_id)->decrement("stock", $item->qty);
 
@@ -403,13 +394,13 @@ class CartController extends Controller
         // calculating coupon discount
         $discount = 0;
         $promoInfo = PromoCode::where('code', $request->coupon_code)->where('status', 1)->where('effective_date', '<=', date("Y-m-d"))->where('expire_date', '>=', date("Y-m-d"))->first();
-        if($promoInfo){
+        if ($promoInfo) {
             $alreadyUsed = Order::where('user_id', auth()->user()->id)->where('coupon_code', $request->coupon_code)->count();
-            if($alreadyUsed == 0){
-                if($promoInfo->type == 1){
+            if ($alreadyUsed == 0) {
+                if ($promoInfo->type == 1) {
                     $discount = $promoInfo->value;
                 } else {
-                    $discount = ($totalOrderAmount*$promoInfo->value)/100;
+                    $discount = ($totalOrderAmount * $promoInfo->value) / 100;
                 }
             }
         }
@@ -431,16 +422,17 @@ class CartController extends Controller
     }
 
 
-    public function guestCartCheckout(Request $request){
+    public function guestCartCheckout(Request $request)
+    {
 
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $orderId = Order::insertGetId([
-                'order_no' => time().rand(100,999),
+                'order_no' => time() . rand(100, 999),
                 'order_date' => date("Y-m-d H:i:s"),
                 'estimated_dd' => date('Y-m-d', strtotime("+7 day", strtotime(date("Y-m-d")))),
                 'payment_method' => NULL,
-                'trx_id' => time().str::random(5),
+                'trx_id' => time() . str::random(5),
                 'order_status' => 0,
                 'sub_total' => 0,
                 'coupon_code' => NULL,
@@ -455,16 +447,11 @@ class CartController extends Controller
                 'created_at' => Carbon::now()
             ]);
 
-            OrderProgress::insert([
-                'order_id' => $orderId,
-                'order_status' => 0,
-                'created_at' => Carbon::now()
-            ]);
 
             $totalOrderAmount = 0;
             $cartItems = Cart::where('user_unique_cart_no', $request->user_unique_cart_no)->orderBy('id', 'desc')->get();
 
-            foreach($cartItems as $item){
+            foreach ($cartItems as $item) {
 
                 Product::where('id', $item->product_id)->decrement("stock", $item->qty);
 
@@ -518,7 +505,6 @@ class CartController extends Controller
                 'message' => "Order is Submitted",
                 'data' => new OrderResource(Order::where('id', $orderId)->first())
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -527,15 +513,16 @@ class CartController extends Controller
         }
     }
 
-    public function checkoutBuyNow(Request $request){
+    public function checkoutBuyNow(Request $request)
+    {
 
         $orderId = Order::insertGetId([
-            'order_no' => time().rand(100,999),
+            'order_no' => time() . rand(100, 999),
             'user_id' => auth()->user()->id,
             'order_date' => date("Y-m-d H:i:s"),
             'estimated_dd' => date('Y-m-d', strtotime("+7 day", strtotime(date("Y-m-d")))),
             'payment_method' => NULL,
-            'trx_id' => time().str::random(5),
+            'trx_id' => time() . str::random(5),
             'order_status' => 0,
             'sub_total' => 0,
             'coupon_code' => NULL,
@@ -550,11 +537,6 @@ class CartController extends Controller
             'created_at' => Carbon::now()
         ]);
 
-        OrderProgress::insert([
-            'order_id' => $orderId,
-            'order_status' => 0,
-            'created_at' => Carbon::now()
-        ]);
 
         $totalOrderAmount = 0;
 
@@ -579,13 +561,13 @@ class CartController extends Controller
         // calculating coupon discount
         $discount = 0;
         $promoInfo = PromoCode::where('code', $request->coupon_code)->where('status', 1)->where('effective_date', '<=', date("Y-m-d"))->where('expire_date', '>=', date("Y-m-d"))->first();
-        if($promoInfo){
+        if ($promoInfo) {
             $alreadyUsed = Order::where('user_id', auth()->user()->id)->where('coupon_code', $request->coupon_code)->count();
-            if($alreadyUsed == 0){
-                if($promoInfo->type == 1){
+            if ($alreadyUsed == 0) {
+                if ($promoInfo->type == 1) {
                     $discount = $promoInfo->value;
                 } else {
-                    $discount = ($totalOrderAmount*$promoInfo->value)/100;
+                    $discount = ($totalOrderAmount * $promoInfo->value) / 100;
                 }
             }
         }
@@ -603,19 +585,19 @@ class CartController extends Controller
             'message' => "Order is Submitted",
             'data' => new OrderResource(Order::where('id', $orderId)->first())
         ], 200);
-
     }
 
-    public function guestCartCheckoutBuyNow(Request $request){
+    public function guestCartCheckoutBuyNow(Request $request)
+    {
 
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $orderId = Order::insertGetId([
-                'order_no' => time().rand(100,999),
+                'order_no' => time() . rand(100, 999),
                 'order_date' => date("Y-m-d H:i:s"),
                 'estimated_dd' => date('Y-m-d', strtotime("+7 day", strtotime(date("Y-m-d")))),
                 'payment_method' => NULL,
-                'trx_id' => time().str::random(5),
+                'trx_id' => time() . str::random(5),
                 'order_status' => 0,
                 'sub_total' => 0,
                 'coupon_code' => NULL,
@@ -630,11 +612,6 @@ class CartController extends Controller
                 'created_at' => Carbon::now()
             ]);
 
-            OrderProgress::insert([
-                'order_id' => $orderId,
-                'order_status' => 0,
-                'created_at' => Carbon::now()
-            ]);
 
             $totalOrderAmount = 0;
 
@@ -659,11 +636,11 @@ class CartController extends Controller
             // calculating coupon discount
             $discount = 0;
             $promoInfo = PromoCode::where('code', $request->coupon_code)->where('status', 1)->where('effective_date', '<=', date("Y-m-d"))->where('expire_date', '>=', date("Y-m-d"))->first();
-            if($promoInfo){
-                if($promoInfo->type == 1){
+            if ($promoInfo) {
+                if ($promoInfo->type == 1) {
                     $discount = $promoInfo->value;
                 } else {
-                    $discount = ($totalOrderAmount*$promoInfo->value)/100;
+                    $discount = ($totalOrderAmount * $promoInfo->value) / 100;
                 }
             }
             // calculating coupon discount
@@ -680,17 +657,16 @@ class CartController extends Controller
                 'message' => "Order is Submitted",
                 'data' => new OrderResource(Order::where('id', $orderId)->first())
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
                 'message' => "Authorization Token is Invalid"
             ], 422);
         }
-
     }
 
-    public function addToWishList(Request $request){
+    public function addToWishList(Request $request)
+    {
         WishList::insert([
             'user_id' => auth()->user()->id,
             'product_id' => $request->product_id,
@@ -702,34 +678,32 @@ class CartController extends Controller
             'success' => true,
             'message' => "Added to WishList",
         ], 200);
-
     }
 
-    public function getMyWishList(){
+    public function getMyWishList()
+    {
 
         $wishLists = DB::table('wish_lists')
-                        ->join('products', 'wish_lists.product_id', '=', 'products.id')
-                        ->leftJoin('units', 'products.unit_id', '=', 'units.id')
-                        ->where('wish_lists.user_id', auth()->user()->id)
-                        ->select('wish_lists.*', 'units.id as unit_id', 'units.name as unit_name', 'products.image', 'products.name as product_name', 'products.name', 'products.discount_price', 'products.price as product_price', 'products.price')
-                        ->orderBy('wish_lists.id', 'desc')
-                        ->paginate(15);
+            ->join('products', 'wish_lists.product_id', '=', 'products.id')
+            ->leftJoin('units', 'products.unit_id', '=', 'units.id')
+            ->where('wish_lists.user_id', auth()->user()->id)
+            ->select('wish_lists.*', 'units.id as unit_id', 'units.name as unit_name', 'products.image', 'products.name as product_name', 'products.name', 'products.discount_price', 'products.price as product_price', 'products.price')
+            ->orderBy('wish_lists.id', 'desc')
+            ->paginate(15);
 
         return response()->json([
             'success' => true,
             'data' => $wishLists,
         ], 200);
-
     }
 
-    public function deleteMyWishList(Request $request){
+    public function deleteMyWishList(Request $request)
+    {
 
         WishList::where('id', $request->wishlist_id)->where('user_id', auth()->user()->id)->delete();
         return response()->json([
             'success' => true,
             'message' => "Item has removed from WishList",
         ], 200);
-
     }
-
 }

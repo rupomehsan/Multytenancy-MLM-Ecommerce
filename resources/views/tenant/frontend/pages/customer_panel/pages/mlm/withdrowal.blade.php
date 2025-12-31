@@ -856,9 +856,10 @@
                     <div class="mlm-balance-info">
                         <h4>Available Balance</h4>
                         <p class="amount">৳{{ number_format($availableBalance, 2) }}</p>
-                        @if ($availableBalance < 500)
+                        @if ($availableBalance < $minimumWithdraw)
                             <p style="color: var(--danger-color); font-size: 14px; margin-top: 8px;">
-                                <i class="fi-rr-info"></i> Insufficient balance for withdrawal (Minimum: ৳500)
+                                <i class="fi-rr-info"></i> Insufficient balance for withdrawal (Minimum:
+                                ৳{{ number_format($minimumWithdraw, 2) }})
                             </p>
                         @endif
                     </div>
@@ -870,10 +871,11 @@
                         </label>
                         <input type="number" name="amount" id="withdrawalAmount"
                             class="mlm-form-input @error('amount') is-invalid @enderror" placeholder="Enter amount"
-                            required min="500" max="{{ $availableBalance }}" step="0.01"
-                            value="{{ old('amount') }}" {{ $availableBalance < 500 ? 'disabled' : '' }}>
+                            required min="{{ $minimumWithdraw }}" max="{{ $availableBalance }}" step="0.01"
+                            value="{{ old('amount') }}" {{ $availableBalance < $minimumWithdraw ? 'disabled' : '' }}>
                         <p class="mlm-form-help">
-                            Minimum: ৳500 | Available: ৳{{ number_format($availableBalance, 2) }}
+                            Minimum: ৳{{ number_format($minimumWithdraw, 2) }} | Available:
+                            ৳{{ number_format($availableBalance, 2) }}
                         </p>
                         @error('amount')
                             <span class="invalid-feedback"
@@ -889,7 +891,7 @@
                             Withdrawal Method <span>*</span>
                         </label>
                         <select name="method" class="mlm-form-select @error('method') is-invalid @enderror" required
-                            {{ $availableBalance < 500 ? 'disabled' : '' }}>
+                            {{ $availableBalance < $minimumWithdraw ? 'disabled' : '' }}>
                             <option value="">Select Method</option>
                             <option value="Bank Transfer" {{ old('method') == 'Bank Transfer' ? 'selected' : '' }}>Bank
                                 Transfer</option>
@@ -904,7 +906,6 @@
                             </span>
                         @enderror
                     </div>
-
                     <!-- Account Number -->
                     <div class="mlm-form-group">
                         <label class="mlm-form-label">
@@ -913,7 +914,7 @@
                         <input type="text" name="account_number"
                             class="mlm-form-input @error('account_number') is-invalid @enderror"
                             placeholder="Enter account number" required value="{{ old('account_number') }}"
-                            {{ $availableBalance < 500 ? 'disabled' : '' }}>
+                            {{ $availableBalance < $minimumWithdraw ? 'disabled' : '' }}>
                         <p class="mlm-form-help">For mobile banking: Enter your mobile number</p>
                         @error('account_number')
                             <span class="invalid-feedback"
@@ -922,7 +923,6 @@
                             </span>
                         @enderror
                     </div>
-
                     <!-- Account Holder Name -->
                     <div class="mlm-form-group">
                         <label class="mlm-form-label">
@@ -932,7 +932,7 @@
                             class="mlm-form-input @error('account_holder') is-invalid @enderror"
                             placeholder="Enter account holder name" required
                             value="{{ old('account_holder', auth('customer')->user()->name ?? '') }}"
-                            {{ $availableBalance < 500 ? 'disabled' : '' }}>
+                            {{ $availableBalance < $minimumWithdraw ? 'disabled' : '' }}>
                         @error('account_holder')
                             <span class="invalid-feedback"
                                 style="color: var(--danger-color); font-size: 13px; display: block; margin-top: 4px;">
@@ -941,27 +941,14 @@
                         @enderror
                     </div>
 
-                    <!-- Notes -->
-                    <div class="mlm-form-group">
-                        <label class="mlm-form-label">
-                            Additional Notes (Optional)
-                        </label>
-                        <textarea name="notes" class="mlm-form-textarea @error('notes') is-invalid @enderror"
-                            placeholder="Add any additional information..." {{ $availableBalance < 500 ? 'disabled' : '' }}>{{ old('notes') }}</textarea>
-                        @error('notes')
-                            <span class="invalid-feedback"
-                                style="color: var(--danger-color); font-size: 13px; display: block; margin-top: 4px;">
-                                {{ $message }}
-                            </span>
-                        @enderror
-                    </div>
+
                 </div>
                 <div class="mlm-modal-footer">
                     <button type="button" class="mlm-btn mlm-btn-outline" onclick="closeWithdrawalModal()">
                         Cancel
                     </button>
                     <button type="submit" class="mlm-btn mlm-btn-success"
-                        {{ $availableBalance < 500 ? 'disabled' : '' }} id="submitWithdrawalBtn">
+                        {{ $availableBalance < $minimumWithdraw ? 'disabled' : '' }} id="submitWithdrawalBtn">
                         <i class="fi-rr-check"></i> Submit Request
                     </button>
                 </div>
@@ -1000,14 +987,15 @@
         const withdrawalForm = document.getElementById('withdrawalForm');
         const amountInput = document.getElementById('withdrawalAmount');
         const availableBalance = {{ $availableBalance }};
+        const minimumWithdraw = {{ $minimumWithdraw }};
 
         if (withdrawalForm) {
             withdrawalForm.addEventListener('submit', function(e) {
                 const amount = parseFloat(amountInput.value);
 
-                if (amount < 500) {
+                if (amount < minimumWithdraw) {
                     e.preventDefault();
-                    alert('Minimum withdrawal amount is ৳500');
+                    alert('Minimum withdrawal amount is ৳' + minimumWithdraw.toFixed(2));
                     amountInput.focus();
                     return false;
                 }
@@ -1026,7 +1014,7 @@
                     const amount = parseFloat(this.value);
                     const submitBtn = document.getElementById('submitWithdrawalBtn');
 
-                    if (amount < 500) {
+                    if (amount < minimumWithdraw) {
                         this.style.borderColor = 'var(--danger-color)';
                         if (submitBtn) submitBtn.disabled = true;
                     } else if (amount > availableBalance) {

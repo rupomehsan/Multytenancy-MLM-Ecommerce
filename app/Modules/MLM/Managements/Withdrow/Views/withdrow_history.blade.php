@@ -55,71 +55,80 @@
 @endsection
 
 @section('footer_js')
-    <script src="{{ url('tenant/admin/dataTable/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ url('tenant/admin/dataTable/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('tenant/admin/assets/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('tenant/admin/dataTable/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('tenant/admin/dataTable/js/dataTables.bootstrap4.min.js') }}"></script>
 
     <script>
-        $(document).ready(function() {
-            console.log('Initializing Withdrawal History DataTable...');
+        // Ensure jQuery and DataTables are loaded
+        if (typeof jQuery === 'undefined') {
+            console.error('jQuery not loaded!');
+        } else if (typeof jQuery.fn.DataTable === 'undefined') {
+            console.error('DataTables plugin not loaded!');
+        } else {
+            $(document).ready(function() {
+                console.log('Initializing Withdrawal History DataTable...');
 
-            var table = $('#withdrawHistoryTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: "{{ route('mlm.withdraw.history') }}",
-                    type: 'GET',
-                    error: function(xhr, error, code) {
-                        console.error('DataTable AJAX Error:', error, code);
-                        console.error('Response:', xhr.responseText);
+                var table = $('#withdrawHistoryTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: {
+                        url: "{{ route('mlm.withdraw.history') }}",
+                        type: 'GET',
+                        error: function(xhr, error, code) {
+                            console.error('DataTable AJAX Error:', error, code);
+                            console.error('Response:', xhr.responseText);
+                        }
+                    },
+                    columns: [{
+                            data: 'user',
+                            name: 'u.name',
+                            orderable: true,
+                            searchable: true
+                        },
+                        {
+                            data: 'amount_formatted',
+                            name: 'wh.amount',
+                            orderable: true,
+                            searchable: false
+                        },
+                        {
+                            data: 'payment_method_badge',
+                            name: 'wh.payment_method',
+                            orderable: true,
+                            searchable: false
+                        },
+                        {
+                            data: 'account_details',
+                            name: 'wh.notes',
+                            orderable: false,
+                            searchable: true
+                        },
+                        {
+                            data: 'status_badge',
+                            name: 'wh.new_status',
+                            orderable: true,
+                            searchable: false
+                        },
+                        {
+                            data: 'requested_at',
+                            name: 'wh.created_at',
+                            orderable: true,
+                            searchable: false
+                        }
+                    ],
+                    order: [
+                        [5, 'desc']
+                    ], // Sort by requested date
+                    pageLength: 25,
+                    language: {
+                        emptyTable: "No withdrawal history found",
+                        zeroRecords: "No matching withdrawals found"
                     }
-                },
-                columns: [{
-                        data: 'user',
-                        name: 'u.name',
-                        orderable: true,
-                        searchable: true
-                    },
-                    {
-                        data: 'amount_formatted',
-                        name: 'wr.amount',
-                        orderable: true,
-                        searchable: false
-                    },
-                    {
-                        data: 'payment_method_badge',
-                        name: 'wr.payment_method',
-                        orderable: true,
-                        searchable: false
-                    },
-                    {
-                        data: 'account_details',
-                        name: 'wr.payment_details',
-                        orderable: false,
-                        searchable: true
-                    },
-                    {
-                        data: 'status_badge',
-                        name: 'wr.status',
-                        orderable: true,
-                        searchable: false
-                    },
-                    {
-                        data: 'requested_at',
-                        name: 'wr.created_at',
-                        orderable: true,
-                        searchable: false
-                    }
-                ],
-                order: [
-                    [5, 'desc']
-                ], // Sort by requested date
-                pageLength: 25,
-                language: {
-                    emptyTable: "No withdrawal history found",
-                    zeroRecords: "No matching withdrawals found"
-                }
+                });
+
+                console.log('DataTable initialized:', table);
             });
-
-            console.log('DataTable initialized:', table);
-        });
+        }
     </script>
+@endsection

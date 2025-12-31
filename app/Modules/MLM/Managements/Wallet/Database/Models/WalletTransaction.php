@@ -32,7 +32,7 @@ class WalletTransaction extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'wallet_transactions';
+    protected $table = 'mlm_wallet_transactions';
 
     protected $fillable = [
         'user_id',

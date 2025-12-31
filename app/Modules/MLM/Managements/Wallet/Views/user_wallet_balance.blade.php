@@ -41,11 +41,8 @@
                             <thead class="thead-dark">
                                 <tr>
                                     <th>User Name</th>
-                                    <th>User ID</th>
                                     <th>Phone</th>
-                                    <th>Total Wallet Balance</th>
-                                    <th>Pending Withdrawal</th>
-                                    <th>Last Transaction</th>
+                                    <th>Wallet Balance</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -79,48 +76,30 @@
                 },
                 columns: [{
                         data: 'user',
-                        name: 'u.name',
+                        name: 'name',
                         orderable: true,
                         searchable: true
                     },
                     {
-                        data: 'user_id_badge',
-                        name: 'u.id',
-                        orderable: true,
-                        searchable: false
-                    },
-                    {
                         data: 'phone_number',
-                        name: 'u.phone',
+                        name: 'phone',
                         orderable: false,
                         searchable: true
                     },
                     {
-                        data: 'wallet_balance',
-                        name: 'total_balance',
-                        orderable: true,
-                        searchable: false
-                    },
-                    {
-                        data: 'pending_amount',
-                        name: 'pending_withdrawal',
-                        orderable: true,
-                        searchable: false
-                    },
-                    {
-                        data: 'last_transaction',
-                        name: 'wb.last_transaction_at',
+                        data: 'wallet_balance_formatted',
+                        name: 'wallet_balance',
                         orderable: true,
                         searchable: false
                     }
                 ],
                 order: [
-                    [3, 'desc']
-                ], // Sort by wallet balance
+                    [2, 'desc']
+                ], // Sort by wallet balance descending
                 pageLength: 25,
                 language: {
-                    emptyTable: "No wallet data found",
-                    zeroRecords: "No matching wallets found"
+                    emptyTable: "No customers with wallet balances found",
+                    zeroRecords: "No matching customers found"
                 }
             });
 

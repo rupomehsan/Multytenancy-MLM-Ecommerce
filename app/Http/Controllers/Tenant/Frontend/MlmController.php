@@ -399,31 +399,32 @@ class MlmController extends Controller
     {
         $customer = auth('customer')->user();
 
-        // Calculate available balance - only count approved/paid commissions
+        // Use the authoritative wallet balance stored on the user record.
+        // Keep other aggregates for display, but the shown/validated available
+        // balance must come from the `users.wallet_balance` column to avoid
+        // divergence between ledger and cached computations.
         $totalEarned = DB::table('mlm_commissions')
             ->where('referrer_id', $customer->id)
-            ->whereIn('status', ['approved', 'paid'])
             ->whereNull('deleted_at')
             ->sum('commission_amount');
 
-        // Get total withdrawn (completed requests)
+        // Consider both approved and completed as withdrawn for user-facing "Total Withdrawn"
         $totalWithdrawn = DB::table('mlm_withdrawal_requests')
             ->where('user_id', $customer->id)
-            ->where('status', 'completed')
+            ->whereIn('status', ['approved', 'completed'])
             ->sum('amount');
 
-        // Get pending withdrawal amount
+        // Pending should only include requests that are not yet approved/processed
         $pendingAmount = DB::table('mlm_withdrawal_requests')
             ->where('user_id', $customer->id)
-            ->whereIn('status', ['pending', 'processing', 'approved'])
+            ->whereIn('status', ['pending', 'processing'])
             ->sum('amount');
 
         $pendingCount = DB::table('mlm_withdrawal_requests')
             ->where('user_id', $customer->id)
-            ->whereIn('status', ['pending', 'processing', 'approved'])
+            ->whereIn('status', ['pending', 'processing'])
             ->count();
 
-        // Get rejected amount
         $rejectedAmount = DB::table('mlm_withdrawal_requests')
             ->where('user_id', $customer->id)
             ->where('status', 'rejected')
@@ -434,8 +435,11 @@ class MlmController extends Controller
             ->where('status', 'rejected')
             ->count();
 
-        // Available balance = total earned - total withdrawn - pending (ensure non-negative)
-        $availableBalance = max(0, $totalEarned - $totalWithdrawn - $pendingAmount);
+        // Authoritative available balance comes from user record
+        $availableBalance = $customer->wallet_balance ?? 0;
+
+        // Minimum withdrawal amount from settings (fallback to 500)
+        $minimumWithdraw = DB::table('mlm_commissions_settings')->value('minimum_withdrawal') ?? 500;
 
         // Build query for withdrawal requests
         $query = DB::table('mlm_withdrawal_requests')
@@ -460,6 +464,7 @@ class MlmController extends Controller
 
         return view($this->baseRoute . 'withdrowal', [
             'availableBalance' => $availableBalance,
+            'minimumWithdraw' => $minimumWithdraw,
             'totalEarned' => $totalEarned,
             'pendingAmount' => $pendingAmount,
             'pendingCount' => $pendingCount,
@@ -480,10 +485,12 @@ class MlmController extends Controller
     {
         $customer = auth('customer')->user();
 
-        // Calculate available balance
+        // Minimum withdrawal amount from settings (fallback to 500)
+        $minimumWithdraw = DB::table('mlm_commissions_settings')->value('minimum_withdrawal') ?? 500;
+
+        // Use authoritative wallet balance stored on the user record for validation
         $totalEarned = DB::table('mlm_commissions')
             ->where('referrer_id', $customer->id)
-            ->whereIn('status', ['approved', 'paid'])
             ->whereNull('deleted_at')
             ->sum('commission_amount');
 
@@ -497,13 +504,13 @@ class MlmController extends Controller
             ->whereIn('status', ['pending', 'processing', 'approved'])
             ->sum('amount');
 
-        $availableBalance = max(0, $totalEarned - $totalWithdrawn - $pendingAmount);
+        $availableBalance = $customer->wallet_balance ?? 0;
 
         $request->validate([
             'amount' => [
                 'required',
                 'numeric',
-                'min:500',
+                'min:' . $minimumWithdraw,
                 'max:' . $availableBalance
             ],
             'method' => 'required|string',
@@ -512,7 +519,7 @@ class MlmController extends Controller
             'notes' => 'nullable|string|max:500'
         ], [
             'amount.max' => 'Insufficient balance. Available: ৳' . number_format($availableBalance, 2),
-            'amount.min' => 'Minimum withdrawal amount is ৳500',
+            'amount.min' => 'Minimum withdrawal amount is ৳' . number_format($minimumWithdraw, 2),
         ]);
 
         // Check available balance again
@@ -521,30 +528,66 @@ class MlmController extends Controller
             return redirect()->back()->withInput();
         }
 
-        if ($availableBalance < 500) {
-            Toastr::error('Minimum withdrawal amount is ৳500. Your available balance is ৳' . number_format($availableBalance, 2), 'Error');
+        if ($availableBalance < $minimumWithdraw) {
+            Toastr::error('Minimum withdrawal amount is ৳' . number_format($minimumWithdraw, 2) . '. Your available balance is ৳' . number_format($availableBalance, 2), 'Error');
             return redirect()->back();
         }
 
-        // Create withdrawal request
-        DB::table('mlm_withdrawal_requests')->insert([
-            'user_id' => $customer->id,
-            'amount' => $request->amount,
-            'payment_method' => $request->method,
-            'payment_details' => json_encode([
-                'account_number' => $request->account_number,
-                'account_holder' => $request->account_holder,
-            ]),
-            'status' => 'pending',
-            'admin_notes' => $request->notes,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // Use transaction to ensure atomicity
+        DB::beginTransaction();
+        try {
+            // Deduct from wallet balance immediately
+            $newBalance = $availableBalance - $request->amount;
+            DB::table('users')
+                ->where('id', $customer->id)
+                ->update(['wallet_balance' => $newBalance]);
 
-        // TODO: Send notification to admin
-        // TODO: Send confirmation email to user
+            // Create withdrawal request (get inserted id for history)
+            $withdrawalId = DB::table('mlm_withdrawal_requests')->insertGetId([
+                'user_id' => $customer->id,
+                'amount' => $request->amount,
+                'payment_method' => $request->method,
+                'payment_details' => json_encode([
+                    'account_number' => $request->account_number,
+                    'account_holder' => $request->account_holder,
+                ]),
+                'status' => 'pending',
+                'admin_notes' => $request->notes,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
-        Toastr::success('Withdrawal request submitted successfully! We will process it within 24-48 hours.', 'Success');
-        return redirect()->back();
+            // Insert history record for creation
+            DB::table('mlm_withdrawal_history')->insert([
+                'withdrawal_request_id' => $withdrawalId,
+                'user_id' => $customer->id,
+                'action' => 'created',
+                'old_status' => null,
+                'new_status' => 'pending',
+                'performed_by' => null,
+                'notes' => $request->notes ?? null,
+                'amount' => $request->amount,
+                'payment_method' => $request->method,
+                'transaction_reference' => null,
+                'meta' => json_encode([
+                    'ip' => $request->ip(),
+                    'user_agent' => $request->header('User-Agent')
+                ]),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::commit();
+
+            // TODO: Send notification to admin
+            // TODO: Send confirmation email to user
+
+            Toastr::success('Withdrawal request submitted successfully! Amount deducted from wallet. We will process it within 24-48 hours.', 'Success');
+            return redirect()->back();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Toastr::error('Failed to submit withdrawal request. Please try again.', 'Error');
+            return redirect()->back()->withInput();
+        }
     }
 }

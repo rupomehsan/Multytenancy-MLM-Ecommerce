@@ -47,7 +47,8 @@ class ApiController extends BaseController
 {
     const AUTHORIZATION_TOKEN = 'GenericCommerceV1-SBW7583837NUDD82';
 
-    public function userProfileInfo(){
+    public function userProfileInfo()
+    {
 
         $userInfo = User::where('id', auth()->user()->id)->first();
 
@@ -76,16 +77,16 @@ class ApiController extends BaseController
         );
 
         return $this->sendResponse($data, 'User Profile Retrieved Successfully.');
-
     }
 
-    public function userProfileUpdate(Request $request){
+    public function userProfileUpdate(Request $request)
+    {
 
         $userInfo = User::where('id', auth()->user()->id)->first();
         $userImage = $userInfo->image;
-        if ($request->hasFile('image')){
+        if ($request->hasFile('image')) {
 
-            if($userImage && file_exists(public_path($userImage))){
+            if ($userImage && file_exists(public_path($userImage))) {
                 unlink(public_path($userImage));
             }
 
@@ -104,43 +105,43 @@ class ApiController extends BaseController
         $current_password = $request->current_password;
         $new_password = $request->new_password;
 
-        if($email != '' && $userInfo->email != $email){
+        if ($email != '' && $userInfo->email != $email) {
             $email_check = User::where('email', $email)->first();
-            if($email_check){
+            if ($email_check) {
                 return response()->json([
-                    'success'=> false,
-                    'message'=> 'Email already used ! Please use another Email'
+                    'success' => false,
+                    'message' => 'Email already used ! Please use another Email'
                 ]);
             }
         }
-        if($phone != '' && $userInfo->phone != $phone){
+        if ($phone != '' && $userInfo->phone != $phone) {
             $phone_check = User::where('phone', $phone)->first();
-            if($phone_check){
+            if ($phone_check) {
                 return response()->json([
-                    'success'=> false,
-                    'message'=> 'Mobile No already used ! Please use another Mobile No'
+                    'success' => false,
+                    'message' => 'Mobile No already used ! Please use another Mobile No'
                 ]);
             }
         }
 
-        if($current_password != '' && $new_password != ''){
-            if(Hash::check($current_password, $userInfo->password)){
+        if ($current_password != '' && $new_password != '') {
+            if (Hash::check($current_password, $userInfo->password)) {
                 User::where('id', $user_id)->update([
                     'password' => Hash::make($new_password),
                     'updated_at' => Carbon::now()
                 ]);
             } else {
                 return response()->json([
-                    'success'=> false,
-                    'message'=> 'Your Current Password is Incorrect'
+                    'success' => false,
+                    'message' => 'Your Current Password is Incorrect'
                 ]);
             }
         }
 
-        if(($email == '' || $email == NULL) && ($phone == '' || $phone == NULL)){
+        if (($email == '' || $email == NULL) && ($phone == '' || $phone == NULL)) {
             return response()->json([
-                'success'=> false,
-                'message'=> 'Both Email & Phone Cannot be Null'
+                'success' => false,
+                'message' => 'Both Email & Phone Cannot be Null'
             ]);
         } else {
             $userInfo->name = $name;
@@ -152,15 +153,15 @@ class ApiController extends BaseController
             $userInfo->save();
 
             return response()->json([
-                'success'=> true,
-                'message'=> 'Profile Updated Successfully',
+                'success' => true,
+                'message' => 'Profile Updated Successfully',
                 'data' => $userInfo
             ]);
         }
-
     }
 
-    public function getCategoryTree(Request $request){
+    public function getCategoryTree(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $categories = Category::orderBy('serial', 'asc')->where('status', 1)->get();
@@ -168,7 +169,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => CategoryResource::collection($categories)
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -177,7 +177,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function getCategoryList(Request $request){
+    public function getCategoryList(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $categories = Category::orderBy('serial', 'asc')->where('status', 1)->get();
@@ -185,7 +186,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => $categories
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -194,22 +194,22 @@ class ApiController extends BaseController
         }
     }
 
-    public function getFeaturedSubcategory(Request $request){
+    public function getFeaturedSubcategory(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $subcategories = DB::table('subcategories')
-                                ->join('categories', 'subcategories.category_id', '=', 'categories.id')
-                                ->select('subcategories.*', 'categories.name as category_name')
-                                ->where('subcategories.status', 1)
-                                ->where('subcategories.featured', 1)
-                                ->orderBy('subcategories.name', 'desc')
-                                ->get();
+                ->join('categories', 'subcategories.category_id', '=', 'categories.id')
+                ->select('subcategories.*', 'categories.name as category_name')
+                ->where('subcategories.status', 1)
+                ->where('subcategories.featured', 1)
+                ->orderBy('subcategories.name', 'desc')
+                ->get();
 
             return response()->json([
                 'success' => true,
                 'data' => $subcategories
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -218,22 +218,22 @@ class ApiController extends BaseController
         }
     }
 
-    public function getSubcategoryOfCategory(Request $request){
+    public function getSubcategoryOfCategory(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $subcategories = DB::table('subcategories')
-                                ->join('categories', 'subcategories.category_id', '=', 'categories.id')
-                                ->select('subcategories.*', 'categories.name as category_name')
-                                ->where('category_id', $request->category_id)
-                                ->where('subcategories.status', 1)
-                                ->orderBy('subcategories.name', 'desc')
-                                ->get();
+                ->join('categories', 'subcategories.category_id', '=', 'categories.id')
+                ->select('subcategories.*', 'categories.name as category_name')
+                ->where('category_id', $request->category_id)
+                ->where('subcategories.status', 1)
+                ->orderBy('subcategories.name', 'desc')
+                ->get();
 
             return response()->json([
                 'success' => true,
                 'data' => $subcategories
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -242,24 +242,24 @@ class ApiController extends BaseController
         }
     }
 
-    public function getChildcategoryOfSubcategory(Request $request){
+    public function getChildcategoryOfSubcategory(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = DB::table('child_categories')
-                        ->join('categories', 'child_categories.category_id', '=' , 'categories.id')
-                        ->join('subcategories', 'child_categories.subcategory_id', '=' , 'subcategories.id')
-                        ->select('child_categories.*', 'categories.name as category_name', 'subcategories.name as subcategory_name')
-                        ->where('child_categories.category_id', $request->category_id)
-                        ->where('child_categories.subcategory_id', $request->subcategory_id)
-                        ->where('child_categories.status', 1)
-                        ->orderBy('child_categories.name', 'asc')
-                        ->get();
+                ->join('categories', 'child_categories.category_id', '=', 'categories.id')
+                ->join('subcategories', 'child_categories.subcategory_id', '=', 'subcategories.id')
+                ->select('child_categories.*', 'categories.name as category_name', 'subcategories.name as subcategory_name')
+                ->where('child_categories.category_id', $request->category_id)
+                ->where('child_categories.subcategory_id', $request->subcategory_id)
+                ->where('child_categories.status', 1)
+                ->orderBy('child_categories.name', 'asc')
+                ->get();
 
             return response()->json([
                 'success' => true,
                 'data' => $data
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -268,7 +268,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function getAllProducts(Request $request){
+    public function getAllProducts(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = DB::table('products')
@@ -289,7 +290,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => ProductResource::collection($data)->resource
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -298,7 +298,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function getRelatedProducts(Request $request){
+    public function getRelatedProducts(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $prodInfo = Product::where('id', $request->product_id)->first();
@@ -306,33 +307,32 @@ class ApiController extends BaseController
             $categoryId = $prodInfo->category_id;
 
             $data = DB::table('products')
-                        ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
-                        ->leftJoin('subcategories', 'products.subcategory_id', '=', 'subcategories.id')
-                        ->leftJoin('child_categories', 'products.childcategory_id', '=', 'child_categories.id')
-                        ->leftJoin('units', 'products.unit_id', '=', 'units.id')
-                        ->leftJoin('flags', 'products.flag_id', '=', 'flags.id')
-                        ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
-                        ->leftJoin('product_models', 'products.model_id', '=', 'product_models.id')
-                        ->leftJoin('product_warrenties', 'products.warrenty_id', '=', 'product_warrenties.id')
-                        ->select('products.*', 'categories.name as category_name', 'subcategories.name as subcategory_name', 'child_categories.name as childcategory_name', 'units.name as unit_name', 'flags.name as flag_name', 'brands.name as brand_name', 'product_models.name as model_name', 'product_warrenties.name as product_warrenty')
-                        ->where('products.status', 1)
-                        ->when($brand_id, function($query) use ($brand_id, $categoryId){
-                            if($brand_id > 0)
-                                return $query->where('products.brand_id', $brand_id);
-                            else
-                            return $query->where('products.category_id', $categoryId);
-                        })
-                        ->where('products.id', '!=', $request->product_id)
-                        ->inRandomOrder()
-                        ->skip(0)
-                        ->limit(5)
-                        ->get();
+                ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+                ->leftJoin('subcategories', 'products.subcategory_id', '=', 'subcategories.id')
+                ->leftJoin('child_categories', 'products.childcategory_id', '=', 'child_categories.id')
+                ->leftJoin('units', 'products.unit_id', '=', 'units.id')
+                ->leftJoin('flags', 'products.flag_id', '=', 'flags.id')
+                ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
+                ->leftJoin('product_models', 'products.model_id', '=', 'product_models.id')
+                ->leftJoin('product_warrenties', 'products.warrenty_id', '=', 'product_warrenties.id')
+                ->select('products.*', 'categories.name as category_name', 'subcategories.name as subcategory_name', 'child_categories.name as childcategory_name', 'units.name as unit_name', 'flags.name as flag_name', 'brands.name as brand_name', 'product_models.name as model_name', 'product_warrenties.name as product_warrenty')
+                ->where('products.status', 1)
+                ->when($brand_id, function ($query) use ($brand_id, $categoryId) {
+                    if ($brand_id > 0)
+                        return $query->where('products.brand_id', $brand_id);
+                    else
+                        return $query->where('products.category_id', $categoryId);
+                })
+                ->where('products.id', '!=', $request->product_id)
+                ->inRandomOrder()
+                ->skip(0)
+                ->limit(5)
+                ->get();
 
             return response()->json([
                 'success' => true,
                 'data' => ProductResource::collection($data)
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -341,35 +341,35 @@ class ApiController extends BaseController
         }
     }
 
-    public function getYouMayLikeProducts(Request $request){
+    public function getYouMayLikeProducts(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $prodInfo = Product::where('id', $request->product_id)->first();
             $categoryId = $prodInfo->category_id;
 
             $data = DB::table('products')
-                        ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
-                        ->leftJoin('subcategories', 'products.subcategory_id', '=', 'subcategories.id')
-                        ->leftJoin('child_categories', 'products.childcategory_id', '=', 'child_categories.id')
-                        ->leftJoin('units', 'products.unit_id', '=', 'units.id')
-                        ->leftJoin('flags', 'products.flag_id', '=', 'flags.id')
-                        ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
-                        ->leftJoin('product_models', 'products.model_id', '=', 'product_models.id')
-                        ->leftJoin('product_warrenties', 'products.warrenty_id', '=', 'product_warrenties.id')
-                        ->select('products.*', 'categories.name as category_name', 'subcategories.name as subcategory_name', 'child_categories.name as childcategory_name', 'units.name as unit_name', 'flags.name as flag_name', 'brands.name as brand_name', 'product_models.name as model_name', 'product_warrenties.name as product_warrenty')
-                        ->where('products.status', 1)
-                        ->where('products.id', '!=', $request->product_id)
-                        ->where('products.category_id', $categoryId)
-                        ->skip(0)
-                        ->limit(6)
-                        ->inRandomOrder()
-                        ->get();
+                ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+                ->leftJoin('subcategories', 'products.subcategory_id', '=', 'subcategories.id')
+                ->leftJoin('child_categories', 'products.childcategory_id', '=', 'child_categories.id')
+                ->leftJoin('units', 'products.unit_id', '=', 'units.id')
+                ->leftJoin('flags', 'products.flag_id', '=', 'flags.id')
+                ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
+                ->leftJoin('product_models', 'products.model_id', '=', 'product_models.id')
+                ->leftJoin('product_warrenties', 'products.warrenty_id', '=', 'product_warrenties.id')
+                ->select('products.*', 'categories.name as category_name', 'subcategories.name as subcategory_name', 'child_categories.name as childcategory_name', 'units.name as unit_name', 'flags.name as flag_name', 'brands.name as brand_name', 'product_models.name as model_name', 'product_warrenties.name as product_warrenty')
+                ->where('products.status', 1)
+                ->where('products.id', '!=', $request->product_id)
+                ->where('products.category_id', $categoryId)
+                ->skip(0)
+                ->limit(6)
+                ->inRandomOrder()
+                ->get();
 
             return response()->json([
                 'success' => true,
                 'data' => ProductResource::collection($data)
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -378,7 +378,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function categoryWiseProducts(Request $request){
+    public function categoryWiseProducts(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $categoryInfo = Category::where('slug', $request->category_slug)->first();
@@ -402,7 +403,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => ProductResource::collection($data)->resource
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -411,7 +411,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function subcategoryWiseProducts(Request $request){
+    public function subcategoryWiseProducts(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $subCategoryInfo = Subcategory::where('slug', $request->subcategory_slug)->first();
@@ -435,7 +436,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => ProductResource::collection($data)->resource
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -444,7 +444,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function childcategoryWiseProducts(Request $request){
+    public function childcategoryWiseProducts(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $childCategoryInfo = ChildCategory::where('slug', $request->childcategory_slug)->first();
@@ -468,7 +469,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => ProductResource::collection($data)->resource
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -478,7 +478,8 @@ class ApiController extends BaseController
     }
 
 
-    public function productDetails(Request $request, $id){
+    public function productDetails(Request $request, $id)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = DB::table('products')
@@ -499,7 +500,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => new ProductResource($data)
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -508,7 +508,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function flagWiseProducts(Request $request){
+    public function flagWiseProducts(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = DB::table('products')
@@ -532,7 +533,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => ProductResource::collection($data)
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -541,7 +541,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function featuredFlagWiseProducts(Request $request){
+    public function featuredFlagWiseProducts(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = Flag::where('featured', 1)->where('status', 1)->get();
@@ -550,7 +551,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => FlagResource::collection($data)
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -559,7 +559,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function flagWiseAllProducts(Request $request){
+    public function flagWiseAllProducts(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = DB::table('products')
@@ -581,7 +582,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => ProductResource::collection($data)->resource
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -590,7 +590,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function getAllFlags(Request $request){
+    public function getAllFlags(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $flags = Flag::orderBy('name', 'asc')->where('status', 1)->get();
@@ -598,7 +599,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => $flags
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -607,12 +607,12 @@ class ApiController extends BaseController
         }
     }
 
-    public function getAllBrands(Request $request){
+    public function getAllBrands(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $brands = Brand::orderBy('serial', 'asc')->where('status', 1)->get();
             return response()->json(['success' => true, 'data' => $brands], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -621,7 +621,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function searchProducts(Request $request){ //post method
+    public function searchProducts(Request $request)
+    { //post method
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $brandInfo = Brand::where('slug', $request->brand_slug)->first();
@@ -638,13 +639,13 @@ class ApiController extends BaseController
                 ->leftJoin('product_warrenties', 'products.warrenty_id', '=', 'product_warrenties.id')
                 ->select('products.*', 'categories.name as category_name', 'subcategories.name as subcategory_name', 'child_categories.name as childcategory_name', 'units.name as unit_name', 'flags.name as flag_name', 'brands.name as brand_name', 'product_models.name as model_name', 'product_warrenties.name as product_warrenty')
                 ->where('products.status', 1)
-                ->where('products.name', 'LIKE', '%'.$request->search_keyword.'%')
-                ->orwhere('categories.name', 'LIKE', '%'.$request->search_keyword.'%')
-                ->orwhere('subcategories.name', 'LIKE', '%'.$request->search_keyword.'%')
-                ->orwhere('products.tags', 'LIKE', '%'.$request->search_keyword.'%')
-                ->orwhere('brands.name', 'LIKE', '%'.$request->search_keyword.'%')
-                ->when($brand_id, function($query) use ($brand_id){
-                    if($brand_id > 0)
+                ->where('products.name', 'LIKE', '%' . $request->search_keyword . '%')
+                ->orwhere('categories.name', 'LIKE', '%' . $request->search_keyword . '%')
+                ->orwhere('subcategories.name', 'LIKE', '%' . $request->search_keyword . '%')
+                ->orwhere('products.tags', 'LIKE', '%' . $request->search_keyword . '%')
+                ->orwhere('brands.name', 'LIKE', '%' . $request->search_keyword . '%')
+                ->when($brand_id, function ($query) use ($brand_id) {
+                    if ($brand_id > 0)
                         return $query->where('products.brand_id', $brand_id);
                 })
                 ->orderBy('products.id', 'desc')
@@ -654,7 +655,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => ProductResource::collection($data)->resource
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -663,14 +663,15 @@ class ApiController extends BaseController
         }
     }
 
-    public function searchLiveProducts(Request $request){ //post method
+    public function searchLiveProducts(Request $request)
+    { //post method
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $brand_slug = $request->brand_slug;
             $category_id = $request->category_id;
             $keyword = $request->search_keyword;
 
-            if($brand_slug != '' || $keyword != '' || $category_id){
+            if ($brand_slug != '' || $keyword != '' || $category_id) {
 
                 $query = DB::table('products')
                     ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
@@ -683,13 +684,13 @@ class ApiController extends BaseController
                     ->leftJoin('product_warrenties', 'products.warrenty_id', '=', 'product_warrenties.id')
                     ->select('products.*', 'categories.name as category_name', 'subcategories.name as subcategory_name', 'child_categories.name as childcategory_name', 'units.name as unit_name', 'flags.name as flag_name', 'brands.name as brand_name', 'product_models.name as model_name', 'product_warrenties.name as product_warrenty')
                     ->where('products.status', 1)
-                    ->where('products.name', 'LIKE', '%'.$keyword.'%')
-                    ->when($category_id, function($query) use ($category_id){
-                        if($category_id > 0)
+                    ->where('products.name', 'LIKE', '%' . $keyword . '%')
+                    ->when($category_id, function ($query) use ($category_id) {
+                        if ($category_id > 0)
                             return $query->where('products.category_id', $category_id);
                     });
 
-                if($request->brand_slug){
+                if ($request->brand_slug) {
                     $brandInfo = Brand::where('slug', $brand_slug)->first();
                     $brand_id = $brandInfo ? $brandInfo->id : 0;
                     $query->where('products.brand_id', $brand_id);
@@ -702,15 +703,12 @@ class ApiController extends BaseController
                     'success' => true,
                     'data' => ProductResource::collection($data)
                 ], 200);
-
             } else {
                 return response()->json([
                     'success' => true,
                     'data' => array()
                 ], 200);
             }
-
-
         } else {
             return response()->json([
                 'success' => false,
@@ -719,7 +717,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function searchProductsGet(Request $request){  //get method
+    public function searchProductsGet(Request $request)
+    {  //get method
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $brandInfo = Brand::where('slug', $request->brand_slug)->first();
@@ -736,13 +735,13 @@ class ApiController extends BaseController
                 ->leftJoin('product_warrenties', 'products.warrenty_id', '=', 'product_warrenties.id')
                 ->select('products.*', 'categories.name as category_name', 'subcategories.name as subcategory_name', 'child_categories.name as childcategory_name', 'units.name as unit_name', 'flags.name as flag_name', 'brands.name as brand_name', 'product_models.name as model_name', 'product_warrenties.name as product_warrenty')
                 ->where('products.status', 1)
-                ->where('products.name', 'LIKE', '%'.$request->search_keyword.'%')
-                ->orwhere('categories.name', 'LIKE', '%'.$request->search_keyword.'%')
-                ->orwhere('subcategories.name', 'LIKE', '%'.$request->search_keyword.'%')
-                ->orwhere('products.tags', 'LIKE', '%'.$request->search_keyword.'%')
-                ->orwhere('brands.name', 'LIKE', '%'.$request->search_keyword.'%')
-                ->when($brand_id, function($query) use ($brand_id){
-                    if($brand_id > 0)
+                ->where('products.name', 'LIKE', '%' . $request->search_keyword . '%')
+                ->orwhere('categories.name', 'LIKE', '%' . $request->search_keyword . '%')
+                ->orwhere('subcategories.name', 'LIKE', '%' . $request->search_keyword . '%')
+                ->orwhere('products.tags', 'LIKE', '%' . $request->search_keyword . '%')
+                ->orwhere('brands.name', 'LIKE', '%' . $request->search_keyword . '%')
+                ->when($brand_id, function ($query) use ($brand_id) {
+                    if ($brand_id > 0)
                         return $query->where('products.brand_id', $brand_id);
                 })
                 ->orderBy('products.id', 'desc')
@@ -752,7 +751,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => ProductResource::collection($data)->resource
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -761,7 +759,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function termsAndCondition(Request $request){
+    public function termsAndCondition(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = DB::table('terms_and_policies')->where('id', 1)->select('terms')->first();
@@ -770,7 +769,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => $data
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -779,7 +777,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function privacyPolicy(Request $request){
+    public function privacyPolicy(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = DB::table('terms_and_policies')->where('id', 1)->select('privacy_policy')->first();
@@ -788,7 +787,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => $data
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -797,7 +795,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function shippingPolicy(Request $request){
+    public function shippingPolicy(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = DB::table('terms_and_policies')->where('id', 1)->select('shipping_policy')->first();
@@ -806,7 +805,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => $data
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -815,7 +813,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function returnPolicy(Request $request){
+    public function returnPolicy(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = DB::table('terms_and_policies')->where('id', 1)->select('return_policy')->first();
@@ -824,7 +823,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => $data
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -833,7 +831,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function aboutUs(Request $request){
+    public function aboutUs(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = AboutUs::where('id', 1)->first();
@@ -842,7 +841,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => $data
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -851,7 +849,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function getAllFaq(Request $request){
+    public function getAllFaq(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = DB::table('faqs')->orderBy('id', 'desc')->get();
@@ -860,7 +859,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => $data
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -869,7 +867,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function generalInfo(Request $request){
+    public function generalInfo(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = DB::table('general_infos')->where('id', 1)->first();
@@ -878,7 +877,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => new GeneralInfoResource($data)
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -887,7 +885,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function getAllSliders(Request $request){
+    public function getAllSliders(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = DB::table('banners')->where('type', 1)->where('status', 1)->orderBy('serial', 'asc')->get();
@@ -896,7 +895,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => $data
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -905,7 +903,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function getAllBanners(Request $request){
+    public function getAllBanners(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = DB::table('banners')->where('type', 2)->where('status', 1)->orderBy('serial', 'asc')->get();
@@ -914,7 +913,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => $data
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -923,7 +921,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function getPromotionalBanner(Request $request){
+    public function getPromotionalBanner(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = DB::table('promotional_banners')->where('id', 1)->first();
@@ -932,7 +931,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => $data
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -941,7 +939,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function submitContactRequest(Request $request){
+    public function submitContactRequest(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             ContactRequest::insert([
@@ -958,7 +957,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'message' => "Request is Submitted"
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -967,17 +965,18 @@ class ApiController extends BaseController
         }
     }
 
-    public function orderCheckout(Request $request){
+    public function orderCheckout(Request $request)
+    {
 
         date_default_timezone_set("Asia/Dhaka");
 
         $orderId = Order::insertGetId([
-            'order_no' => time().rand(100,999),
+            'order_no' => time() . rand(100, 999),
             'user_id' => auth()->user()->id,
             'order_date' => date("Y-m-d H:i:s"),
             'estimated_dd' => date('Y-m-d', strtotime("+7 day", strtotime(date("Y-m-d")))),
             'payment_method' => NULL,
-            'trx_id' => time().str::random(5),
+            'trx_id' => time() . str::random(5),
             'order_status' => 0,
             'sub_total' => 0,
             'coupon_code' => NULL,
@@ -992,11 +991,6 @@ class ApiController extends BaseController
             'created_at' => Carbon::now()
         ]);
 
-        OrderProgress::insert([
-            'order_id' => $orderId,
-            'order_status' => 0,
-            'created_at' => Carbon::now()
-        ]);
 
         $index = 0;
         $totalOrderAmount = 0;
@@ -1016,27 +1010,27 @@ class ApiController extends BaseController
         $warrentyIdArray = explode(",", $request->warrenty_id[0]);
         $deviceConditionIdArray = explode(",", $request->device_condition_id[0]);
 
-        foreach($productIdArray as $productId){
+        foreach ($productIdArray as $productId) {
 
-            $quantity = (double) trim($qtyArray[$index]);
-            $unitPrice = (double) trim($unitPriceArray[$index]);
+            $quantity = (float) trim($qtyArray[$index]);
+            $unitPrice = (float) trim($unitPriceArray[$index]);
             $pId = (int) trim($productId);
-            $unitId = (double) trim($unitIdArray[$index]);
+            $unitId = (float) trim($unitIdArray[$index]);
 
             // variants added later | chosing default variant while no variant is selected although product has variant
             $prodInfo = Product::where('id', $pId)->first();
-            $colorId = (double) trim($colorIdArray[$index]);
-            $regionId = (double) trim($regionIdArray[$index]);
-            $simId = (double) trim($simIdArray[$index]);
-            $storageId = (double) trim($storageIdArray[$index]);
-            $warrentyId = (double) trim($warrentyIdArray[$index]);
-            $deviceConditionId = (double) trim($deviceConditionIdArray[$index]);
-            $sizeId = (double) trim($sizeIdArray[$index]);
+            $colorId = (float) trim($colorIdArray[$index]);
+            $regionId = (float) trim($regionIdArray[$index]);
+            $simId = (float) trim($simIdArray[$index]);
+            $storageId = (float) trim($storageIdArray[$index]);
+            $warrentyId = (float) trim($warrentyIdArray[$index]);
+            $deviceConditionId = (float) trim($deviceConditionIdArray[$index]);
+            $sizeId = (float) trim($sizeIdArray[$index]);
 
-            if($prodInfo->has_variant == 1){
+            if ($prodInfo->has_variant == 1) {
                 $variants = ProductVariant::where('product_id', $prodInfo->id)->where('stock', '>', 0)->count();
-                if($variants > 0){
-                    if(!$colorId && !$regionId && !$simId && !$storageId && !$warrentyId && !$deviceConditionId && !$sizeId){
+                if ($variants > 0) {
+                    if (!$colorId && !$regionId && !$simId && !$storageId && !$warrentyId && !$deviceConditionId && !$sizeId) {
                         $defaultVariant = ProductVariant::where('product_id', $prodInfo->id)->where('stock', '>', 0)->orderBy('price', 'desc')->first();
                         $colorId = $defaultVariant->color_id;
                         $regionId = $defaultVariant->region_id;
@@ -1079,13 +1073,13 @@ class ApiController extends BaseController
         // calculating coupon discount
         $discount = 0;
         $promoInfo = PromoCode::where('code', $request->coupon_code)->where('status', 1)->where('effective_date', '<=', date("Y-m-d"))->where('expire_date', '>=', date("Y-m-d"))->first();
-        if($promoInfo){
+        if ($promoInfo) {
             $alreadyUsed = Order::where('user_id', auth()->user()->id)->where('coupon_code', $request->coupon_code)->count();
-            if($alreadyUsed == 0){
-                if($promoInfo->type == 1){
+            if ($alreadyUsed == 0) {
+                if ($promoInfo->type == 1) {
                     $discount = $promoInfo->value;
                 } else {
-                    $discount = ($totalOrderAmount*$promoInfo->value)/100;
+                    $discount = ($totalOrderAmount * $promoInfo->value) / 100;
                 }
             }
         }
@@ -1105,17 +1099,18 @@ class ApiController extends BaseController
         ], 200);
     }
 
-    public function orderCheckoutAppOnly(Request $request){
+    public function orderCheckoutAppOnly(Request $request)
+    {
 
         date_default_timezone_set("Asia/Dhaka");
 
         $orderId = Order::insertGetId([
-            'order_no' => time().rand(100,999),
+            'order_no' => time() . rand(100, 999),
             'user_id' => auth()->user()->id,
             'order_date' => date("Y-m-d H:i:s"),
             'estimated_dd' => date('Y-m-d', strtotime("+7 day", strtotime(date("Y-m-d")))),
             'payment_method' => NULL,
-            'trx_id' => time().str::random(5),
+            'trx_id' => time() . str::random(5),
             'order_status' => 0,
             'sub_total' => 0,
             'coupon_code' => NULL,
@@ -1130,16 +1125,12 @@ class ApiController extends BaseController
             'created_at' => Carbon::now()
         ]);
 
-        OrderProgress::insert([
-            'order_id' => $orderId,
-            'order_status' => 0,
-            'created_at' => Carbon::now()
-        ]);
+
 
         $index = 0;
         $totalOrderAmount = 0;
 
-        foreach($request->product_id as $productId){
+        foreach ($request->product_id as $productId) {
             Product::where('id', $productId)->decrement("stock", (int) $request->qty[$index]);
             OrderDetails::insert([
                 'order_id' => $orderId,
@@ -1157,11 +1148,11 @@ class ApiController extends BaseController
                 'qty' => $request->qty[$index],
                 'unit_id' => $request->unit_id[$index],
                 'unit_price' => $request->unit_price[$index],
-                'total_price' => (int) $request->qty[$index] * (double) $request->unit_price[$index],
+                'total_price' => (int) $request->qty[$index] * (float) $request->unit_price[$index],
                 'created_at' => Carbon::now()
             ]);
 
-            $totalOrderAmount = $totalOrderAmount + ((int)$request->qty[$index] * (double)$request->unit_price[$index]);
+            $totalOrderAmount = $totalOrderAmount + ((int)$request->qty[$index] * (float)$request->unit_price[$index]);
             $index++;
         }
 
@@ -1169,13 +1160,13 @@ class ApiController extends BaseController
         // calculating coupon discount
         $discount = 0;
         $promoInfo = PromoCode::where('code', $request->coupon_code)->where('status', 1)->where('effective_date', '<=', date("Y-m-d"))->where('expire_date', '>=', date("Y-m-d"))->first();
-        if($promoInfo){
+        if ($promoInfo) {
             $alreadyUsed = Order::where('user_id', auth()->user()->id)->where('coupon_code', $request->coupon_code)->count();
-            if($alreadyUsed == 0){
-                if($promoInfo->type == 1){
+            if ($alreadyUsed == 0) {
+                if ($promoInfo->type == 1) {
                     $discount = $promoInfo->value;
                 } else {
-                    $discount = ($totalOrderAmount*$promoInfo->value)/100;
+                    $discount = ($totalOrderAmount * $promoInfo->value) / 100;
                 }
             }
         }
@@ -1193,22 +1184,22 @@ class ApiController extends BaseController
             'message' => "Order is Submitted",
             'data' => new OrderResource(Order::where('id', $orderId)->first())
         ], 200);
-
     }
 
 
-    public function guestOrderCheckout(Request $request){
+    public function guestOrderCheckout(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             date_default_timezone_set("Asia/Dhaka");
 
             $orderId = Order::insertGetId([
-                'order_no' => time().rand(100,999),
+                'order_no' => time() . rand(100, 999),
                 // 'user_id' => auth()->user()->id,
                 'order_date' => date("Y-m-d H:i:s"),
                 'estimated_dd' => date('Y-m-d', strtotime("+7 day", strtotime(date("Y-m-d")))),
                 'payment_method' => NULL,
-                'trx_id' => time().str::random(5),
+                'trx_id' => time() . str::random(5),
                 'order_status' => 0,
                 'sub_total' => 0,
                 'coupon_code' => NULL,
@@ -1223,11 +1214,7 @@ class ApiController extends BaseController
                 'created_at' => Carbon::now()
             ]);
 
-            OrderProgress::insert([
-                'order_id' => $orderId,
-                'order_status' => 0,
-                'created_at' => Carbon::now()
-            ]);
+
 
             $index = 0;
             $totalOrderAmount = 0;
@@ -1246,25 +1233,25 @@ class ApiController extends BaseController
             $warrentyIdArray = explode(",", $request->warrenty_id[0]);
             $deviceConditionIdArray = explode(",", $request->device_condition_id[0]);
 
-            foreach($productIdArray as $productId){
+            foreach ($productIdArray as $productId) {
 
-                $quantity = (double) trim($qtyArray[$index]);
-                $unitPrice = (double) trim($unitPriceArray[$index]);
+                $quantity = (float) trim($qtyArray[$index]);
+                $unitPrice = (float) trim($unitPriceArray[$index]);
                 $pId = (int) trim($productId);
-                $unitId = (double) trim($unitIdArray[$index]);
+                $unitId = (float) trim($unitIdArray[$index]);
 
                 // variants added later | chosing default variant while no variant is selected although product has variant
                 $prodInfo = Product::where('id', $pId)->first();
-                $colorId = (double) trim($colorIdArray[$index]);
-                $regionId = (double) trim($regionIdArray[$index]);
-                $simId = (double) trim($simIdArray[$index]);
-                $storageId = (double) trim($storageIdArray[$index]);
-                $warrentyId = (double) trim($warrentyIdArray[$index]);
-                $deviceConditionId = (double) trim($deviceConditionIdArray[$index]);
-                if($prodInfo->has_variant == 1){
+                $colorId = (float) trim($colorIdArray[$index]);
+                $regionId = (float) trim($regionIdArray[$index]);
+                $simId = (float) trim($simIdArray[$index]);
+                $storageId = (float) trim($storageIdArray[$index]);
+                $warrentyId = (float) trim($warrentyIdArray[$index]);
+                $deviceConditionId = (float) trim($deviceConditionIdArray[$index]);
+                if ($prodInfo->has_variant == 1) {
                     $variants = ProductVariant::where('product_id', $prodInfo->id)->where('stock', '>', 0)->count();
-                    if($variants > 0){
-                        if(!$colorId && !$regionId && !$simId && !$storageId && !$warrentyId && !$deviceConditionId){
+                    if ($variants > 0) {
+                        if (!$colorId && !$regionId && !$simId && !$storageId && !$warrentyId && !$deviceConditionId) {
                             $defaultVariant = ProductVariant::where('product_id', $prodInfo->id)->where('stock', '>', 0)->orderBy('price', 'desc')->first();
                             $colorId = $defaultVariant->color_id;
                             $regionId = $defaultVariant->region_id;
@@ -1305,11 +1292,11 @@ class ApiController extends BaseController
             // calculating coupon discount
             $discount = 0;
             $promoInfo = PromoCode::where('code', $request->coupon_code)->where('status', 1)->where('effective_date', '<=', date("Y-m-d"))->where('expire_date', '>=', date("Y-m-d"))->first();
-            if($promoInfo){
-                if($promoInfo->type == 1){
+            if ($promoInfo) {
+                if ($promoInfo->type == 1) {
                     $discount = $promoInfo->value;
                 } else {
-                    $discount = ($totalOrderAmount*$promoInfo->value)/100;
+                    $discount = ($totalOrderAmount * $promoInfo->value) / 100;
                 }
             }
             // calculating coupon discount
@@ -1326,7 +1313,6 @@ class ApiController extends BaseController
                 'message' => "Order is Submitted",
                 'data' => new OrderResource(Order::where('id', $orderId)->first())
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -1336,7 +1322,8 @@ class ApiController extends BaseController
     }
 
 
-    public function shippingBillingInfo(Request $request){
+    public function shippingBillingInfo(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             ShippingInfo::where('order_id', $request->order_id)->delete();
@@ -1367,7 +1354,7 @@ class ApiController extends BaseController
 
             $deliveryCharge = 100;
             $districtWiseDeliveryCharge = DB::table('districts')->select('delivery_charge')->where('name', strtolower(trim($request->city)))->first();
-            if($districtWiseDeliveryCharge){
+            if ($districtWiseDeliveryCharge) {
                 $deliveryCharge = $districtWiseDeliveryCharge->delivery_charge;
             }
 
@@ -1378,7 +1365,7 @@ class ApiController extends BaseController
             $orderInfo->save();
 
 
-            if($request->email){
+            if ($request->email) {
                 SubscribedUsers::insert([
                     'email' => $request->email,
                     'created_at' => Carbon::now()
@@ -1392,15 +1379,15 @@ class ApiController extends BaseController
                 $emailConfig = EmailConfigure::where('status', 1)->orderBy('id', 'desc')->first();
                 $userEmail = $request->email;
 
-                if($emailConfig && $userEmail){
+                if ($emailConfig && $userEmail) {
                     $decryption = "";
-                    if($emailConfig){
+                    if ($emailConfig) {
 
                         $ciphering = "AES-128-CTR";
                         $options = 0;
                         $decryption_iv = '1234567891011121';
                         $decryption_key = "GenericCommerceV1";
-                        $decryption = openssl_decrypt ($emailConfig->password, $ciphering, $decryption_key, $options, $decryption_iv);
+                        $decryption = openssl_decrypt($emailConfig->password, $ciphering, $decryption_key, $options, $decryption_iv);
 
                         config([
                             'mail.mailers.smtp.host' => $emailConfig->host,
@@ -1413,8 +1400,7 @@ class ApiController extends BaseController
                         Mail::to(trim($userEmail))->send(new OrderPlacedEmail($orderInfo));
                     }
                 }
-
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 // write code for handling error from here
             }
             // sending order email done
@@ -1425,7 +1411,6 @@ class ApiController extends BaseController
                 'message' => "Order Info Updated",
                 'data' => new OrderResource(Order::where('id', $request->order_id)->first())
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -1434,7 +1419,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function orderPreview(Request $request){
+    public function orderPreview(Request $request)
+    {
         return response()->json([
             'success' => true,
             'message' => "Order Preview",
@@ -1442,7 +1428,8 @@ class ApiController extends BaseController
         ], 200);
     }
 
-    public function getMyOrders(Request $request){
+    public function getMyOrders(Request $request)
+    {
         $data = DB::table('orders')->where('user_id', auth()->user()->id)->where('complete_order', 1)->orderBy('id', 'desc')->paginate(100);
         return response()->json([
             'success' => true,
@@ -1450,7 +1437,8 @@ class ApiController extends BaseController
         ], 200);
     }
 
-    public function orderDetails($slug){
+    public function orderDetails($slug)
+    {
         $data = DB::table('orders')->where('user_id', auth()->user()->id)->where('slug', $slug)->first();
         return response()->json([
             'success' => true,
@@ -1458,11 +1446,12 @@ class ApiController extends BaseController
         ], 200);
     }
 
-    public function orderProgress(Request $request){
+    public function orderProgress(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $order = DB::table('orders')->where('order_no', $request->order_no)->first();
-            if($order){
+            if ($order) {
                 $data = DB::table('order_progress')->where('order_id', $order->id)->orderBy('id', 'asc')->get();
                 return response()->json([
                     'success' => true,
@@ -1474,8 +1463,6 @@ class ApiController extends BaseController
                     'message' => "No Order Found"
                 ], 200);
             }
-
-
         } else {
             return response()->json([
                 'success' => false,
@@ -1484,7 +1471,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function orderCashOnDelivery(Request $request){
+    public function orderCashOnDelivery(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $orderId = $request->order_id;
@@ -1518,7 +1506,6 @@ class ApiController extends BaseController
                 'message' => "Order Payment is Successfull",
                 'data' => new OrderResource(Order::where('id', $orderInfo->id)->first())
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -1527,7 +1514,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function submitProductReview(Request $request){
+    public function submitProductReview(Request $request)
+    {
 
         $product_id = $request->product_id;
         $userId = auth()->user()->id;
@@ -1535,18 +1523,18 @@ class ApiController extends BaseController
         $review = $request->review;
 
         $reviewValidity = DB::table('orders')
-                            ->join('order_details', 'orders.id', '=', 'order_details.order_id')
-                            ->where('orders.user_id', $userId)
-                            ->where('order_details.product_id', $product_id)
-                            ->first();
+            ->join('order_details', 'orders.id', '=', 'order_details.order_id')
+            ->where('orders.user_id', $userId)
+            ->where('order_details.product_id', $product_id)
+            ->first();
 
-        if($reviewValidity){
+        if ($reviewValidity) {
             $id = ProductReview::insertGetId([
                 'product_id' => $product_id,
                 'user_id' => $userId,
                 'rating' => $rating,
                 'review' => $review,
-                'slug' => time().str::random(5),
+                'slug' => time() . str::random(5),
                 'status' => 0,
                 'created_at' => Carbon::now()
             ]);
@@ -1566,7 +1554,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function submitProductQuestion(Request $request){
+    public function submitProductQuestion(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             ProductQuestionAnswer::insert([
@@ -1574,7 +1563,7 @@ class ApiController extends BaseController
                 'full_name' => $request->full_name,
                 'email' => $request->email,
                 'question' => $request->question,
-                'slug' => time().str::random(5),
+                'slug' => time() . str::random(5),
                 'created_at' => Carbon::now()
             ]);
 
@@ -1582,7 +1571,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'message' => "Question Submitted Successfully"
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -1591,7 +1579,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function getAllTestimonials(Request $request){
+    public function getAllTestimonials(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = DB::table('testimonials')->orderBy('id', 'desc')->get();
@@ -1600,7 +1589,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => $data
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -1610,12 +1598,13 @@ class ApiController extends BaseController
     }
 
 
-    public function subscriptionForUpdates(Request $request){
+    public function subscriptionForUpdates(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = SubscribedUsers::where('email', $request->email)->first();
 
-            if($data){
+            if ($data) {
                 return response()->json([
                     'success' => true,
                     'message' => "Already Subscribed"
@@ -1631,7 +1620,6 @@ class ApiController extends BaseController
                     'message' => "Successfully Subscribed"
                 ], 200);
             }
-
         } else {
             return response()->json([
                 'success' => false,
@@ -1640,7 +1628,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function featuredBrandWiseProducts(Request $request){
+    public function featuredBrandWiseProducts(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $featuredBrands = Brand::where('featured', 1)->orderBy('serial', 'asc')->get();
@@ -1648,7 +1637,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => BrandResource::collection($featuredBrands)
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -1657,7 +1645,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function getPaymentGateways(Request $request){
+    public function getPaymentGateways(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $gateways = PaymentGateway::where('status', 1)->get();
@@ -1665,7 +1654,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => $gateways
             ], 200);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -1674,7 +1662,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function bestSellingProduct(Request $request){
+    public function bestSellingProduct(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             // SELECT products.id, count(order_details.product_id) as prod_count FROM products
@@ -1683,28 +1672,27 @@ class ApiController extends BaseController
 
 
             $data = DB::table('products')
-                        ->leftJoin('order_details', 'products.id', '=', 'order_details.product_id')
-                        ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
-                        ->leftJoin('subcategories', 'products.subcategory_id', '=', 'subcategories.id')
-                        ->leftJoin('child_categories', 'products.childcategory_id', '=', 'child_categories.id')
-                        ->leftJoin('units', 'products.unit_id', '=', 'units.id')
-                        ->leftJoin('flags', 'products.flag_id', '=', 'flags.id')
-                        ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
-                        ->leftJoin('product_models', 'products.model_id', '=', 'product_models.id')
-                        ->leftJoin('product_warrenties', 'products.warrenty_id', '=', 'product_warrenties.id')
-                        ->select('products.*', 'categories.name as category_name', 'subcategories.name as subcategory_name', 'child_categories.name as childcategory_name', 'units.name as unit_name', 'flags.name as flag_name', 'brands.name as brand_name', 'product_models.name as model_name', 'product_warrenties.name as product_warrenty', DB::raw("count(order_details.product_id) as order_count"))
-                        ->where('products.status', 1)
-                        ->orderBy('order_count', 'desc')
-                        ->groupBy('products.id') //group is must needed, otherwise only one product will show
-                        ->skip(0)
-                        ->limit(12)
-                        ->get();
+                ->leftJoin('order_details', 'products.id', '=', 'order_details.product_id')
+                ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+                ->leftJoin('subcategories', 'products.subcategory_id', '=', 'subcategories.id')
+                ->leftJoin('child_categories', 'products.childcategory_id', '=', 'child_categories.id')
+                ->leftJoin('units', 'products.unit_id', '=', 'units.id')
+                ->leftJoin('flags', 'products.flag_id', '=', 'flags.id')
+                ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
+                ->leftJoin('product_models', 'products.model_id', '=', 'product_models.id')
+                ->leftJoin('product_warrenties', 'products.warrenty_id', '=', 'product_warrenties.id')
+                ->select('products.*', 'categories.name as category_name', 'subcategories.name as subcategory_name', 'child_categories.name as childcategory_name', 'units.name as unit_name', 'flags.name as flag_name', 'brands.name as brand_name', 'product_models.name as model_name', 'product_warrenties.name as product_warrenty', DB::raw("count(order_details.product_id) as order_count"))
+                ->where('products.status', 1)
+                ->orderBy('order_count', 'desc')
+                ->groupBy('products.id') //group is must needed, otherwise only one product will show
+                ->skip(0)
+                ->limit(12)
+                ->get();
 
             return response()->json([
                 'success' => true,
                 'data' => ProductResource::collection($data)
             ]);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -1714,29 +1702,28 @@ class ApiController extends BaseController
     }
 
 
-    public function productsForYou(Request $request){
+    public function productsForYou(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $data = DB::table('products')
-                    ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
-                    ->leftJoin('subcategories', 'products.subcategory_id', '=', 'subcategories.id')
-                    ->leftJoin('child_categories', 'products.childcategory_id', '=', 'child_categories.id')
-                    ->leftJoin('units', 'products.unit_id', '=', 'units.id')
-                    ->leftJoin('flags', 'products.flag_id', '=', 'flags.id')
-                    ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
-                    ->leftJoin('product_models', 'products.model_id', '=', 'product_models.id')
-                    ->leftJoin('product_warrenties', 'products.warrenty_id', '=', 'product_warrenties.id')
-                    ->select('products.*', 'categories.name as category_name', 'subcategories.name as subcategory_name', 'child_categories.name as childcategory_name', 'units.name as unit_name', 'flags.name as flag_name', 'brands.name as brand_name', 'product_models.name as model_name', 'product_warrenties.name as product_warrenty')
-                    ->where('products.status', 1)
-                    ->inRandomOrder()
-                    ->paginate(20);
+                ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+                ->leftJoin('subcategories', 'products.subcategory_id', '=', 'subcategories.id')
+                ->leftJoin('child_categories', 'products.childcategory_id', '=', 'child_categories.id')
+                ->leftJoin('units', 'products.unit_id', '=', 'units.id')
+                ->leftJoin('flags', 'products.flag_id', '=', 'flags.id')
+                ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
+                ->leftJoin('product_models', 'products.model_id', '=', 'product_models.id')
+                ->leftJoin('product_warrenties', 'products.warrenty_id', '=', 'product_warrenties.id')
+                ->select('products.*', 'categories.name as category_name', 'subcategories.name as subcategory_name', 'child_categories.name as childcategory_name', 'units.name as unit_name', 'flags.name as flag_name', 'brands.name as brand_name', 'product_models.name as model_name', 'product_warrenties.name as product_warrenty')
+                ->where('products.status', 1)
+                ->inRandomOrder()
+                ->paginate(20);
 
             return response()->json([
                 'success' => true,
                 'data' => ProductResource::collection($data)->resource
             ], 200);
-
-
         } else {
             return response()->json([
                 'success' => false,
@@ -1745,7 +1732,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function productsForYouLoggedIn(Request $request){
+    public function productsForYouLoggedIn(Request $request)
+    {
 
         // SELECT products.id as product_id, name as product_name, COUNT(order_details.id) as order_count from products
         // LEFT JOIN order_details ON order_details.product_id = products.id
@@ -1767,14 +1755,14 @@ class ApiController extends BaseController
 
         // calculating already ordered products start
         $alreadyOrderedProducts = DB::table('order_details')
-                                    ->join('orders', 'orders.id', '=', 'order_details.id')
-                                    ->where('orders.user_id', auth()->user()->id)
-                                    ->select('order_details.product_id')
-                                    ->get();
+            ->join('orders', 'orders.id', '=', 'order_details.id')
+            ->where('orders.user_id', auth()->user()->id)
+            ->select('order_details.product_id')
+            ->get();
 
         $alreadyOrdered = array();
         $index = 0;
-        foreach($alreadyOrderedProducts as $item){
+        foreach ($alreadyOrderedProducts as $item) {
             $alreadyOrdered[$index] = $item->product_id;
             $index++;
         }
@@ -1783,18 +1771,18 @@ class ApiController extends BaseController
 
         // calculating already ordered products category start
         $similarOrderedProducts = DB::table('products')
-                                    ->join('order_details', 'order_details.product_id', '=', 'products.id')
-                                    ->join('orders', 'orders.id', '=', 'order_details.id')
-                                    ->where('orders.user_id', auth()->user()->id)
-                                    ->select('products.category_id', 'products.subcategory_id', 'products.childcategory_id')
-                                    ->get();
+            ->join('order_details', 'order_details.product_id', '=', 'products.id')
+            ->join('orders', 'orders.id', '=', 'order_details.id')
+            ->where('orders.user_id', auth()->user()->id)
+            ->select('products.category_id', 'products.subcategory_id', 'products.childcategory_id')
+            ->get();
 
         $similarCategories = array();
         $similarSubCategories = array();
         $similarChildCategories = array();
 
         $index = 0;
-        foreach($similarOrderedProducts as $item){
+        foreach ($similarOrderedProducts as $item) {
             $similarCategories[$index] = $item->category_id;
             $similarSubCategories[$index] = $item->subcategory_id;
             $similarChildCategories[$index] = $item->childcategory_id;
@@ -1805,39 +1793,39 @@ class ApiController extends BaseController
 
 
         $data = DB::table('products')
-                ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
-                ->leftJoin('subcategories', 'products.subcategory_id', '=', 'subcategories.id')
-                ->leftJoin('child_categories', 'products.childcategory_id', '=', 'child_categories.id')
-                ->leftJoin('units', 'products.unit_id', '=', 'units.id')
-                ->leftJoin('flags', 'products.flag_id', '=', 'flags.id')
-                ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
-                ->leftJoin('product_models', 'products.model_id', '=', 'product_models.id')
-                ->leftJoin('product_warrenties', 'products.warrenty_id', '=', 'product_warrenties.id')
-                ->select('products.*', 'categories.name as category_name', 'subcategories.name as subcategory_name', 'child_categories.name as childcategory_name', 'units.name as unit_name', 'flags.name as flag_name', 'brands.name as brand_name', 'product_models.name as model_name', 'product_warrenties.name as product_warrenty')
-                ->where('products.status', 1)
+            ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+            ->leftJoin('subcategories', 'products.subcategory_id', '=', 'subcategories.id')
+            ->leftJoin('child_categories', 'products.childcategory_id', '=', 'child_categories.id')
+            ->leftJoin('units', 'products.unit_id', '=', 'units.id')
+            ->leftJoin('flags', 'products.flag_id', '=', 'flags.id')
+            ->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
+            ->leftJoin('product_models', 'products.model_id', '=', 'product_models.id')
+            ->leftJoin('product_warrenties', 'products.warrenty_id', '=', 'product_warrenties.id')
+            ->select('products.*', 'categories.name as category_name', 'subcategories.name as subcategory_name', 'child_categories.name as childcategory_name', 'units.name as unit_name', 'flags.name as flag_name', 'brands.name as brand_name', 'product_models.name as model_name', 'product_warrenties.name as product_warrenty')
+            ->where('products.status', 1)
 
-                // custom lagic for products you may like
-                ->whereNotIn('products.id', $alreadyOrdered)
-                ->orWhereIn('products.category_id', $similarCategories)
-                ->orWhereIn('products.subcategory_id', $similarSubCategories)
-                ->orWhereIn('products.childcategory_id', $similarChildCategories)
+            // custom lagic for products you may like
+            ->whereNotIn('products.id', $alreadyOrdered)
+            ->orWhereIn('products.category_id', $similarCategories)
+            ->orWhereIn('products.subcategory_id', $similarSubCategories)
+            ->orWhereIn('products.childcategory_id', $similarChildCategories)
 
-                ->inRandomOrder()
-                ->paginate(20);
+            ->inRandomOrder()
+            ->paginate(20);
 
         return response()->json([
             'success' => true,
             'data' => ProductResource::collection($data)->resource
         ], 200);
-
     }
 
-    public function getdeliveryCharge(Request $request, $disctrict){
+    public function getdeliveryCharge(Request $request, $disctrict)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $deliveryCharge = 100;
             $districtWiseDeliveryCharge = DB::table('districts')->select('delivery_charge')->where('name', strtolower(trim($disctrict)))->first();
-            if($districtWiseDeliveryCharge){
+            if ($districtWiseDeliveryCharge) {
                 $deliveryCharge = $districtWiseDeliveryCharge->delivery_charge;
             }
 
@@ -1845,7 +1833,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => $deliveryCharge
             ]);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -1854,7 +1841,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function getAllDistricts(Request $request){
+    public function getAllDistricts(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $districts = DB::table('districts')->orderBy('name', 'asc')->get();
@@ -1863,7 +1851,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => $districts
             ]);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -1872,7 +1859,8 @@ class ApiController extends BaseController
         }
     }
 
-    public function getDistrictWiseThana(Request $request){
+    public function getDistrictWiseThana(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $thana = DB::table('upazilas')->where('district_id', $request->district_id)->orderBy('name', 'asc')->get();
@@ -1881,7 +1869,6 @@ class ApiController extends BaseController
                 'success' => true,
                 'data' => $thana
             ]);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -1889,22 +1876,22 @@ class ApiController extends BaseController
             ], 422);
         }
     }
-    
-    public function getDistrictsWithThana(Request $request){
+
+    public function getDistrictsWithThana(Request $request)
+    {
         if ($request->header('Authorization') == ApiController::AUTHORIZATION_TOKEN) {
 
             $thana = DB::table('districts')
-                    ->leftJoin('upazilas', 'upazilas.district_id', '=', 'districts.id')
-                    ->select('districts.id as district_id', 'districts.name as district_name', 'districts.bn_name as district_bn_name', 'districts.delivery_charge', 'upazilas.id as upazila_id', 'upazilas.name as upazila_name', 'upazilas.bn_name as upazila_bn_name')
-                    ->orderBy('districts.name', 'asc')
-                    ->orderBy('upazilas.name', 'asc')
-                    ->get();
+                ->leftJoin('upazilas', 'upazilas.district_id', '=', 'districts.id')
+                ->select('districts.id as district_id', 'districts.name as district_name', 'districts.bn_name as district_bn_name', 'districts.delivery_charge', 'upazilas.id as upazila_id', 'upazilas.name as upazila_name', 'upazilas.bn_name as upazila_bn_name')
+                ->orderBy('districts.name', 'asc')
+                ->orderBy('upazilas.name', 'asc')
+                ->get();
 
             return response()->json([
                 'success' => true,
                 'data' => $thana
             ]);
-
         } else {
             return response()->json([
                 'success' => false,
@@ -1912,5 +1899,4 @@ class ApiController extends BaseController
             ], 422);
         }
     }
-
 }

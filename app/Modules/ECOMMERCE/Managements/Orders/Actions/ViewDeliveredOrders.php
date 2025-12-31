@@ -11,6 +11,7 @@ class ViewDeliveredOrders
 {
     public static function execute($request)
     {
+
         $qtySub = DB::table('order_details')
             ->select('order_id', DB::raw('SUM(qty) as total_qty'))
             ->groupBy('order_id');

@@ -58,11 +58,6 @@ class CancelOrder
             }
         }
 
-        OrderProgress::insert([
-            'order_id' => $data->id,
-            'order_status' => Order::STATUS_CANCELLED,
-            'created_at' => Carbon::now()
-        ]);
 
         return response()->json(['success' => 'Order Cancelled successfully.']);
     }

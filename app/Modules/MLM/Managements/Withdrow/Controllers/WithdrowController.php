@@ -10,6 +10,7 @@ use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use App\Modules\MLM\Managements\Withdrow\Actions\ViewWithdrawRequest;
 use App\Modules\MLM\Managements\Withdrow\Actions\ViewWithdrawHistory;
+use App\Modules\MLM\Managements\Withdrow\Actions\UpdateWithdrawStatus;
 
 
 class WithdrowController extends Controller
@@ -33,5 +34,24 @@ class WithdrowController extends Controller
             return ViewWithdrawHistory::execute($request);
         }
         return view('withdrow_history');
+    }
+
+    /**
+     * Update withdrawal request status (approve/reject/complete).
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update_status(Request $request)
+    {
+        $result = UpdateWithdrawStatus::execute($request);
+
+        if ($result['success']) {
+            Toastr::success($result['message'], 'Success');
+            return response()->json($result, 200);
+        }
+
+        Toastr::error($result['message'], 'Error');
+        return response()->json($result, 400);
     }
 }

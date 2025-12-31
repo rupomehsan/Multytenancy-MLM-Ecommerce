@@ -44,7 +44,7 @@ class OrderController extends Controller
         return view('all');
     }
 
-    public function viewPendigOrders(Request $request)
+    public function ViewPendingOrders(Request $request)
     {
         if ($request->ajax()) {
             return ViewPendingOrders::execute($request);

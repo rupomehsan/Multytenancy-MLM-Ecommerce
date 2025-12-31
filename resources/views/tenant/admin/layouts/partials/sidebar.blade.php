@@ -353,8 +353,8 @@
                 </a>
             </li>
             <li>
-                <a style="color: rgb(126, 125, 125) !important;" href="{{ route('ViewPendigOrders') }}"
-                    data-active-paths="{{ route('ViewPendigOrders') }}, {{ url('order/edit/*') }}">
+                <a style="color: rgb(126, 125, 125) !important;" href="{{ route('ViewPendingOrders') }}"
+                    data-active-paths="{{ route('ViewPendingOrders') }}, {{ url('order/edit/*') }}">
                     Pending Orders
                     (@php
                         echo DB::table('orders')->where('order_status', Order::STATUS_PENDING)->count();

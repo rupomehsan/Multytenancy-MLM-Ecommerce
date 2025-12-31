@@ -280,7 +280,7 @@
             </div>
 
             <div class="card p-3">
-                <form action="{{ url('order/info/update') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('OrderInfoUpdate') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="order_id" value="{{ $order->id }}">
                     <div class="row">
@@ -293,6 +293,7 @@
                             </div>
                         </div>
                         <div class="col-lg-2">
+
                             <div class="form-group" style="margin-bottom: .5rem;">
                                 <label style="margin-bottom: .2rem; font-weight: 500;">Est. Delivery Date :</label>
                                 <input type="date" class="form-control" name="estimated_dd"

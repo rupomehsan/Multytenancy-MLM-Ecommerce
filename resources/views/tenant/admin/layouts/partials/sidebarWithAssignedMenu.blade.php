@@ -457,8 +457,8 @@ $backupModule = App\Models\UserRolePermission::where('user_id', Auth::user()->id
                     </li>
                 @endif
                 @if (checkAuth('view/pending/orders'))
-                    <li><a style="color: skyblue !important;" href="{{ route('ViewPendigOrders') }}"
-                            data-active-paths="{{ route('ViewPendigOrders') }}, {{ url('order/edit/*') }}">
+                    <li><a style="color: skyblue !important;" href="{{ route('ViewPendingOrders') }}"
+                            data-active-paths="{{ route('ViewPendingOrders') }}, {{ url('order/edit/*') }}">
                             Pending Orders
                             (@php
                                 echo DB::table('orders')->where('order_status', 0)->count();

@@ -73,6 +73,7 @@
 
 @section('content')
     <div class="row">
+
         <div class="col-lg-6 col-xl-3">
             <div class="card graph_card">
                 <div class="card-body">
@@ -156,8 +157,7 @@
                         <label id="customFilter">
                             <a href="{{ route('CreateNewOrder') }}" class="btn btn-primary btn-sm"
                                 style="margin-left: 5px"><b><i class="fas fa-plus"></i> Create Order</b></a>
-                            <a href="{{ route('ViewTrashOrders') }}" class="btn btn-danger btn-sm"
-                                style="margin-left: 5px"><b><i class="fas fa-trash"></i> Trashed Order</b></a>
+
                         </label>
                         <table class="table table-bordered mb-0 data-table">
                             <thead>

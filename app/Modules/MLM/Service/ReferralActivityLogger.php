@@ -37,24 +37,62 @@ class ReferralActivityLogger
     public static function logOrderActivity(Order $order): array
     {
         try {
+            Log::info('ReferralActivityLogger::logOrderActivity called', [
+                'order_id' => $order->id,
+                'order_no' => $order->order_no,
+                'user_id' => $order->user_id,
+            ]);
+
             // Get buyer (user who placed the order)
             $buyer = User::find($order->user_id);
 
-            if (!$buyer || !$buyer->referred_by) {
-                // No referrer, nothing to log
+            if (!$buyer) {
+                Log::warning('Buyer not found for referral activity', [
+                    'order_id' => $order->id,
+                    'user_id' => $order->user_id,
+                ]);
                 return [];
             }
+
+            if (!$buyer->referred_by) {
+                Log::info('Buyer has no referrer, skipping activity log', [
+                    'order_id' => $order->id,
+                    'buyer_id' => $buyer->id,
+                    'buyer_name' => $buyer->name,
+                ]);
+                return [];
+            }
+
+            Log::info('Buyer found with referrer', [
+                'order_id' => $order->id,
+                'buyer_id' => $buyer->id,
+                'buyer_name' => $buyer->name,
+                'referred_by' => $buyer->referred_by,
+            ]);
 
             // Get commission settings
             $settings = self::getCommissionSettings();
 
             if (!$settings) {
-                Log::warning('MLM commission settings not found');
+                Log::warning('MLM commission settings not found', [
+                    'order_id' => $order->id,
+                ]);
                 return [];
             }
 
+            Log::info('Commission settings found, traversing referral chain', [
+                'order_id' => $order->id,
+                'settings_id' => $settings->id ?? null,
+            ]);
+
             // Traverse referral chain and create activity logs
             $activityIds = self::traverseReferralChain($buyer, $order, $settings);
+
+            Log::info('Referral chain traversed', [
+                'order_id' => $order->id,
+                'activities_created' => count($activityIds),
+                'activity_ids' => $activityIds,
+            ]);
 
             return $activityIds;
         } catch (\Exception $e) {
@@ -106,6 +144,15 @@ class ReferralActivityLogger
             // Calculate commission for this level
             $commission = self::calculateCommission($order->total, $level, $settings);
 
+            Log::info('Calculated commission for level', [
+                'order_id' => $order->id,
+                'level' => $level,
+                'referrer_id' => $referrer->id,
+                'referrer_name' => $referrer->name,
+                'commission' => $commission,
+                'order_total' => $order->total,
+            ]);
+
             if ($commission > 0) {
                 // Create activity log entry
                 $activityLog = MlmReferralActivityLog::create([
@@ -123,7 +170,19 @@ class ReferralActivityLogger
                     ],
                 ]);
 
+                Log::info('Activity log created', [
+                    'activity_id' => $activityLog->id,
+                    'order_id' => $order->id,
+                    'level' => $level,
+                ]);
+
                 $activityIds[] = $activityLog->id;
+            } else {
+                Log::info('Commission is zero, skipping activity log creation', [
+                    'order_id' => $order->id,
+                    'level' => $level,
+                    'referrer_id' => $referrer->id,
+                ]);
             }
 
             // Move up the chain
@@ -178,8 +237,7 @@ class ReferralActivityLogger
     protected static function getCommissionSettings()
     {
         return DB::table('mlm_commissions_settings')
-            ->where('status', 1) // Active settings only
-            ->first();
+            ->first(); // No status column in this table, just get the first record
     }
 
     /**

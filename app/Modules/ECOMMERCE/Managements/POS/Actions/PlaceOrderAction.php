@@ -12,7 +12,10 @@ use App\Mail\OrderPlacedEmail;
 use Carbon\Carbon;
 use App\Modules\ECOMMERCE\Managements\POS\Database\Models\Invoice;
 use App\Modules\ECOMMERCE\Managements\Orders\Database\Models\Order;
+use App\Modules\ECOMMERCE\Managements\Orders\Database\Models\OrderLog;
 use App\Http\Controllers\Account\AccountsHelper;
+use App\Modules\MLM\Service\MlmCommissionService;
+use App\Modules\MLM\Service\ReferralActivityLogger;
 
 class PlaceOrderAction
 {
@@ -74,6 +77,12 @@ class PlaceOrderAction
             // self::sendOrderNotifications($request, $orderId);
 
             DB::commit();
+
+            // Distribute MLM commissions AFTER transaction commit (following OrderObserver pattern)
+            // This ensures order data is fully persisted before commission distribution
+            if ($orderStatus['status'] == Order::STATUS_DELIVERED) {
+                self::distributeCommissionsAndActivities($orderId);
+            }
 
             return [
                 'success' => true,
@@ -567,5 +576,109 @@ class PlaceOrderAction
         }
 
         return $phoneNumber;
+    }
+
+    /**
+     * Distribute MLM commissions and log referral activities for POS orders
+     * 
+     * This is called after order is successfully placed and marked as delivered.
+     * Follows the same logic as OrderObserver for ecommerce orders.
+     * 
+     * @param int $orderId
+     * @return void
+     */
+    private static function distributeCommissionsAndActivities(int $orderId): void
+    {
+        try {
+            // Get the order
+            $order = Order::find($orderId);
+
+            if (!$order) {
+                Log::warning('POS Order not found for commission distribution', ['order_id' => $orderId]);
+                return;
+            }
+
+            // Check if order has a customer with referrer
+            if (!$order->user_id) {
+                Log::info('POS Order has no customer, skipping commission distribution', [
+                    'order_id' => $orderId,
+                    'order_no' => $order->order_no
+                ]);
+                return;
+            }
+
+            Log::info('Processing MLM commission and activity logging for POS order', [
+                'order_id' => $orderId,
+                'order_no' => $order->order_no,
+                'user_id' => $order->user_id,
+                'order_status' => $order->order_status,
+            ]);
+
+            // 1. Log referral activities (similar to OrderObserverForMLM)
+            try {
+                $activityIds = ReferralActivityLogger::logOrderActivity($order);
+
+                if (count($activityIds) > 0) {
+                    Log::info('Referral activities created for POS order', [
+                        'order_id' => $order->id,
+                        'order_no' => $order->order_no,
+                        'activities_count' => count($activityIds),
+                        'activity_ids' => $activityIds
+                    ]);
+
+                    // Since order is already delivered, approve and mark as paid immediately
+                    $approvedCount = ReferralActivityLogger::approveOrderActivities($order->id);
+                    $paidCount = ReferralActivityLogger::markOrderActivitiesAsPaid($order->id);
+
+                    Log::info('Referral activities approved and marked as paid for POS order', [
+                        'order_id' => $order->id,
+                        'approved_count' => $approvedCount,
+                        'paid_count' => $paidCount,
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::error('Error logging referral activities for POS order', [
+                    'order_id' => $orderId,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+
+            // 2. Initialize commission service and distribute commissions
+            $commissionService = new MlmCommissionService();
+
+            // Distribute commissions
+            $result = $commissionService->distributeCommissions($order);
+
+            if ($result['success']) {
+                // Log to order logs
+                OrderLog::logCommissionDistribution(
+                    $order->id,
+                    $result['commissions_count'] ?? 0,
+                    auth()->id(),
+                    $result['message']
+                );
+
+                Log::info('MLM commissions distributed successfully for POS order', [
+                    'order_id' => $orderId,
+                    'order_no' => $order->order_no,
+                    'commissions_count' => $result['commissions_count'] ?? 0,
+                    'message' => $result['message'],
+                ]);
+            } else {
+                Log::warning('MLM commission distribution skipped or failed for POS order', [
+                    'order_id' => $orderId,
+                    'order_no' => $order->order_no,
+                    'message' => $result['message'],
+                    'idempotent' => $result['idempotent'] ?? false,
+                ]);
+            }
+        } catch (\Exception $e) {
+            // Log error but don't throw exception to prevent blocking order completion
+            Log::error('MLM commission/activity distribution exception for POS order', [
+                'order_id' => $orderId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+        }
     }
 }

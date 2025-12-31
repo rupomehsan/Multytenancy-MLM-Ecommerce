@@ -399,7 +399,7 @@
                     <div class="kpi-label">Today's Orders</div>
                     <div class="kpi-value">{{ number_format($todaysOrder[0]) }}</div>
                     <div class="kpi-comparison">
-                        <a href="{{ url('view/pending/orders') }}" target="_blank" class="btn btn-sm btn-success"
+                        <a href="{{ route('ViewPendingOrders') }}" target="_blank" class="btn btn-sm btn-success"
                             style="padding: 4px 12px; font-size: 11px;">
                             <i class="feather-eye"></i> View All Orders
                         </a>

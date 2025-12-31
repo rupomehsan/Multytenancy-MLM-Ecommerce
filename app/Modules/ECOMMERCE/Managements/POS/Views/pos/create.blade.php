@@ -693,7 +693,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="cart_items">
-                                    @include('pos.cart_items')
+                                    @include('pos.components.cart_items')
                                 </tbody>
                             </table>
                         </div>
@@ -712,7 +712,7 @@
 
                         <div class="pos-totals mt-3">
                             <table class="cart_calculation">
-                                @include('pos.cart_calculation')
+                                @include('pos.components.cart_calculation')
                             </table>
                         </div>
 
@@ -795,7 +795,7 @@
                                     <span id="shipping-tab-text">Shipping</span>
                                 </div>
                                 <div class="pt-3">
-                                    @include('pos.shipping_form')
+                                    @include('pos.components.shipping_form')
                                 </div>
                             </div>
 
@@ -805,7 +805,7 @@
                                     Billing
                                 </div>
                                 <div class="pt-3">
-                                    @include('pos.billing_form')
+                                    @include('pos.components.billing_form')
                                 </div>
                             </div>
                         </div>
@@ -833,24 +833,24 @@
         <div class="pos-right-products">
             <!-- Product Filters -->
             <div class="pos-filters">
-                @include('pos.product_search_form')
+                @include('pos.components.product_search_form')
             </div>
 
             <!-- Products Grid -->
             <div class="pos-products-grid">
                 <div class="pos-products-row live_search">
                     {{-- Live search results will be rendered here --}}
-                    @include('pos.live_search_products')
+                    @include('pos.components.live_search_products')
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal -->
-    @include('pos.customer_create_modal')
+    @include('pos.components.customer_create_modal')
 
     <!-- Modal -->
-    @include('pos.customer_address_modal')
+    @include('pos.components.customer_address_modal')
 
     <div class="modal fade" id="variantModal" tabindex="-1" role="dialog" aria-labelledby="variantModalLabel"
         aria-hidden="true">
@@ -1731,49 +1731,90 @@
         }
     </script>
 
-    <!-- On successful order, open invoice in new tab and clear form -->
-    @if (session('invoice_url'))
+    <!-- On successful order, show Toastr then open invoice in new tab -->
+    @if (session('pos_order_success'))
         <script>
-            // Open invoice immediately when page loads
-            const invoiceUrl = "{{ session('invoice_url') }}";
-            console.log('Opening invoice URL:', invoiceUrl);
+            (function() {
+                const orderId = "{{ session('pos_order_success') }}";
+                const invoiceUrl = "{{ url('admin/pos/invoice/print') }}/" + orderId;
 
-            // Open invoice in new tab immediately
-            // Try to open invoice in new tab immediately
-            let win = window.open(invoiceUrl, '_blank');
-            if (!win || win.closed || typeof win.closed == 'undefined') {
-                // If blocked, try to open on user interaction
-                function openOnUserAction() {
-                    let win2 = window.open(invoiceUrl, '_blank');
-                    if (win2) {
-                        win2.focus();
-                        document.removeEventListener('click', openOnUserAction);
-                        document.removeEventListener('keydown', openOnUserAction);
+                // Wait for DOM to be ready
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Delay to show Toastr message clearly
+                    setTimeout(function() {
+                        // Show confirmation alert
+                        const userConfirmed = confirm('Order placed successfully! Click OK to view invoice or Cancel to stay here.');
+
+                        // Only open new tab if user clicks OK
+                        if (userConfirmed) {
+                            const invoiceWindow = window.open(invoiceUrl, '_blank');
+                            if (invoiceWindow) {
+                                invoiceWindow.focus();
+                                return;
+                            }
+
+                            // Popup blocked — create a single in-page banner/button so user can open invoice manually
+                            if (!document.getElementById('pos-invoice-banner')) {
+                                const banner = document.createElement('div');
+                                banner.id = 'pos-invoice-banner';
+                                banner.style.position = 'fixed';
+                                banner.style.right = '20px';
+                                banner.style.bottom = '20px';
+                                banner.style.zIndex = 20000;
+                                banner.style.background = '#fff';
+                                banner.style.border = '1px solid rgba(0,0,0,0.1)';
+                                banner.style.boxShadow = '0 6px 18px rgba(0,0,0,0.12)';
+                                banner.style.padding = '12px 14px';
+                                banner.style.borderRadius = '8px';
+                                banner.style.fontSize = '14px';
+
+                                banner.innerHTML = `
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        <div style="flex:1">Invoice popup was blocked. Click to open manually:</div>
+                                        <button id="pos-open-invoice-btn" class="btn btn-sm btn-primary">Open Invoice</button>
+                                        <button id="pos-close-invoice-banner" class="btn btn-sm btn-secondary">Close</button>
+                                    </div>
+                                `;
+
+                                document.body.appendChild(banner);
+
+                                document.getElementById('pos-open-invoice-btn').addEventListener('click', function() {
+                                    // This click is a direct user gesture and will open the tab
+                                    const w = window.open(invoiceUrl, '_blank');
+                                    if (w) w.focus();
+                                    banner.remove();
+                                });
+
+                                document.getElementById('pos-close-invoice-banner').addEventListener('click', function() {
+                                    banner.remove();
+                                });
+                            }
+                        }
+                    }, 800);
+
+                    // Clear and reset form
+                    const form = document.querySelector('form[action="{{ route('PosPlaceOrder') }}"]');
+                    if (form) {
+                        form.reset();
+                        form.dataset.confirmed = '';
+
+                        // Reset Select2 dropdowns
+                        $('[data-toggle="select2"]').val(null).trigger('change');
                     }
-                }
-                document.addEventListener('click', openOnUserAction);
-                document.addEventListener('keydown', openOnUserAction);
-            }
 
-            document.addEventListener('DOMContentLoaded', function() {
-                // Show success message
-                toastr.success('Order placed successfully! Invoice opened in new tab.', 'Success');
+                    // Re-enable submit button
+                    const confirmBtn = document.getElementById('confirmOrderBtn');
+                    if (confirmBtn) {
+                        confirmBtn.disabled = false;
+                        confirmBtn.innerHTML = 'Confirm Order';
+                    }
 
-                // Clear form
-                const form = document.querySelector('form[action="{{ route('PosPlaceOrder') }}"]');
-                if (form) {
-                    form.reset();
-                    // Also reset Select2 dropdowns
-                    $('[data-toggle="select2"]').val(null).trigger('change');
-                }
-                const confirmBtn = document.getElementById('confirmOrderBtn');
-                if (confirmBtn) {
-                    confirmBtn.disabled = false;
-                    confirmBtn.innerHTML = 'Confirm Order';
-                }
-                // Reset global coupon price after successful order
-                couponPrice = 0;
-            });
+                    // Reset global coupon price
+                    if (typeof couponPrice !== 'undefined') {
+                        couponPrice = 0;
+                    }
+                });
+            })();
         </script>
     @endif
 @endsection
