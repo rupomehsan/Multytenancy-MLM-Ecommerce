@@ -159,7 +159,7 @@
             serverSide: true,
             pageLength: 15,
             lengthMenu: [15, 25, 50, 100],
-            ajax: "{{ url('view/all/colors') }}",
+            ajax: "{{ route('ViewAllColors') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -207,7 +207,7 @@
             $(this).html('Saving..');
             $.ajax({
                 data: $('#productForm2').serialize(),
-                url: "{{ url('create/new/color') }}",
+                url: "{{ route('AddNewColor') }}",
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {
@@ -228,7 +228,7 @@
 
         $('body').on('click', '.editBtn', function() {
             var id = $(this).data('id');
-            $.get("{{ url('get/color/info') }}" + '/' + id, function(data) {
+            $.get("{{ route('GetColorInfo', '') }}" + '/' + id, function(data) {
                 $('#exampleModal').modal('show');
                 $('#color_id').val(id);
                 $('#color_name').val(data.name);
@@ -241,7 +241,7 @@
             $(this).html('Updating...');
             $.ajax({
                 data: $('#productForm').serialize(),
-                url: "{{ url('update/color') }}",
+                url: "{{ route('UpdateColor') }}",
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {
@@ -267,7 +267,7 @@
                 }
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/color') }}" + '/' + id,
+                    url: "{{ route('DeleteColor', '') }}" + '/' + id,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Color has been Deleted", "Deleted Successfully");

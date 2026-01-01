@@ -171,7 +171,7 @@
                             </h4>
                         </div>
                         <div class="col-lg-6 text-right">
-                            <a href="{{ url('package-products') }}" class="btn btn-secondary">
+                            <a href="{{ route('PackageProducts.Index') }}" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Back to List
                             </a>
                         </div>
@@ -193,7 +193,7 @@
                             <!-- Add New Item Form -->
                             <div class="add-item-form">
                                 <h5 class="mb-3"><i class="fas fa-plus"></i> Add Item to Package</h5>
-                                <form method="POST" action="{{ url('package-products/' . $product->id . '/add-item') }}"
+                                <form method="POST" action="{{ route('PackageProducts.AddItem', $product->id) }}"
                                     id="add-item-form">
                                     @csrf
                                     <div class="row">
@@ -284,7 +284,7 @@
                                             data-size-id="{{ $item->size_id ?? '' }}">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div class="item-info">
-                                                    <img src="{{ $item->product->image ? url($item->product->image) : url('demo_products/demo_product.png') }}"
+                                                    <img src="{{ $item->product->image ? asset($item->product->image) : asset('demo_products/demo_product.png') }}"
                                                         alt="{{ $item->product->name }}" class="item-image">
                                                     <div class="item-details">
                                                         <h6>{{ $item->product->name }}</h6>
@@ -366,7 +366,7 @@
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <form method="POST"
-                                                        action="{{ url('package-products/' . $product->id . '/items/' . $item->id) }}">
+                                                        action="{{ route('PackageProducts.UpdateItem', ['packageId' => $product->id, 'itemId' => $item->id]) }}">
                                                         @csrf
                                                         @method('PUT')
                                                         <div class="modal-header">
@@ -449,7 +449,8 @@
                             </div>
 
                             <form class="needs-validation" method="POST"
-                                action="{{ url('package-products/' . $product->id) }}" enctype="multipart/form-data">
+                                action="{{ route('PackageProducts.Update', $product->id) }}"
+                                enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
 
@@ -460,7 +461,7 @@
                                                 <h5 class="card-title">Package Image</h5>
                                                 @if ($product->image)
                                                     <div class="text-center mt-2">
-                                                        <img src="{{ url($product->image) }}" class="img-fluid"
+                                                        <img src="{{ asset($product->image) }}" class="img-fluid"
                                                             style="max-height: 200px;">
                                                         <p class="text-muted mt-1">Current Image</p>
                                                     </div>
@@ -641,7 +642,7 @@
                                 </div>
 
                                 <div class="form-group text-center pt-3">
-                                    <a href="{{ url('package-products') }}" style="width: 130px;"
+                                    <a href="{{ route('PackageProducts.Index') }}" style="width: 130px;"
                                         class="btn btn-danger d-inline-block text-white m-2">
                                         <i class="mdi mdi-cancel"></i> Cancel
                                     </a>
@@ -699,7 +700,7 @@
 
             if (productId) {
                 $.ajax({
-                    url: "{{ url('get-product-variants') }}/" + productId,
+                    url: "{{ route('GetProductVariants', '') }}/" + productId,
                     type: "GET",
                     success: function(response) {
                         selectedProductData = response;
@@ -787,7 +788,7 @@
 
             if (productId && (colorId || sizeId)) {
                 $.ajax({
-                    url: "{{ url('get-variant-stock') }}/" + productId,
+                    url: "{{ route('GetVariantStock', '') }}/" + productId,
                     type: "POST",
                     data: {
                         color_id: colorId,

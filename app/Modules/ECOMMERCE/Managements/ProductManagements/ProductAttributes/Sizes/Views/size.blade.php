@@ -1,8 +1,8 @@
 @extends('tenant.admin.layouts.app')
 
 @section('header_css')
-    <link href="{{ url('tenant/admin/dataTable') }}/css/jquery.dataTables.min.css" rel="stylesheet">
-    <link href="{{ url('tenant/admin/dataTable') }}/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="{{ asset('tenant/admin/dataTable') }}/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="{{ asset('tenant/admin/dataTable') }}/css/dataTables.bootstrap4.min.css" rel="stylesheet">
     <style>
         .dataTables_wrapper .dataTables_paginate .paginate_button {
             padding: 0px;
@@ -45,7 +45,7 @@
                         <label id="customFilter">
                             <button class="btn btn-success btn-sm" id="addNewSize" style="margin-left: 5px"><i
                                     class="feather-plus"></i> Add New Size</button>
-                            <a href="{{ url('rearrange/size') }}" class="btn btn-success btn-sm"
+                            <a href="{{ route('RearrangeSize') }}" class="btn btn-success btn-sm"
                                 style="margin-left: 5px"><b><i class="fas fa-sort-amount-up"></i> Rearrange Size</b></a>
                         </label>
 
@@ -143,15 +143,15 @@
 
 @section('footer_js')
     {{-- js code for data table --}}
-    <script src="{{ url('tenant/admin/dataTable') }}/js/jquery.validate.js"></script>
-    <script src="{{ url('tenant/admin/dataTable') }}/js/jquery.dataTables.min.js"></script>
-    <script src="{{ url('tenant/admin/dataTable') }}/js/dataTables.bootstrap4.min.js"></script>
+    <script src="{{ asset('tenant/admin/dataTable') }}/js/jquery.validate.js"></script>
+    <script src="{{ asset('tenant/admin/dataTable') }}/js/jquery.dataTables.min.js"></script>
+    <script src="{{ asset('tenant/admin/dataTable') }}/js/dataTables.bootstrap4.min.js"></script>
 
     <script type="text/javascript">
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('view/all/sizes') }}",
+            ajax: "{{ route('ViewAllSizes') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -229,7 +229,7 @@
             $(this).html('Saving..');
             $.ajax({
                 data: $('#productForm2').serialize(),
-                url: "{{ url('create/new/size') }}",
+                url: "{{ route('CreateNewSize') }}",
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {
@@ -249,7 +249,7 @@
 
         $('body').on('click', '.editBtn', function() {
             var id = $(this).data('id');
-            $.get("{{ url('get/size/info') }}" + '/' + id, function(data) {
+            $.get("{{ route('GetSizeInfo', '') }}" + '/' + id, function(data) {
                 $('#exampleModal').modal('show');
                 $('#flag_slug').val(id);
                 $('#flag_name').val(data.name);
@@ -262,7 +262,7 @@
             $(this).html('Updating..');
             $.ajax({
                 data: $('#productForm').serialize(),
-                url: "{{ url('update/size') }}",
+                url: "{{ route('UpdateSizeInfo') }}",
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {
@@ -287,7 +287,7 @@
                 }
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/size') }}" + '/' + id,
+                    url: "{{ route('DeleteSize', '') }}" + '/' + id,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Size has been Deleted", "Deleted Successfully");

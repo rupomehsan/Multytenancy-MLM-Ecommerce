@@ -35,7 +35,8 @@ class ProductModelController extends Controller
     public function addNewModel()
     {
         $result = GetModelFormData::execute(request());
-        return view('create', compact('brands'))->with('brands', $result['data']['brands']);
+        $brands = $result['data']['brands'] ?? [];
+        return view('create', compact('brands'));
     }
 
     public function saveNewModel(Request $request)
@@ -69,7 +70,7 @@ class ProductModelController extends Controller
 
         if ($result['status'] === 'success') {
             Toastr::success($result['message'], 'Success');
-            return redirect('/view/all/models');
+            return redirect()->route('ViewAllModels');
         } else {
             Toastr::error($result['message'], 'Error');
             return back();

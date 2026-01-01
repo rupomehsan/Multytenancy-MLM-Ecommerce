@@ -111,7 +111,7 @@
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('view/all/childcategory') }}",
+            ajax: "{{ route('ViewAllChildcategory') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -193,7 +193,7 @@
                 }
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/childcategory') }}" + '/' + slug,
+                    url: "{{ route('DeleteChildcategory', '') }}" + '/' + slug,
                     success: function(data) {
 
                         if (data.data == 1) {

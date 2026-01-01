@@ -43,7 +43,7 @@
                     <div class="table-responsive">
 
                         <label id="customFilter">
-                            <a href="{{ url('add/new/model') }}" class="btn btn-success btn-sm" id="addNewFlag"
+                            <a href="{{ route('AddNewModel') }}" class="btn btn-success btn-sm" id="addNewFlag"
                                 style="margin-left: 5px"><i class="feather-plus"></i> Add New Model</a>
                         </label>
 
@@ -84,7 +84,7 @@
             stateSave: true,
             pageLength: 15,
             lengthMenu: [15, 25, 50, 100],
-            ajax: "{{ url('view/all/models') }}",
+            ajax: "{{ route('ViewAllModels') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -137,7 +137,7 @@
                 }
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/model') }}" + '/' + id,
+                    url: "{{ route('DeleteModel', '') }}" + '/' + id,
                     success: function(data) {
 
                         table.draw(false);

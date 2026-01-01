@@ -19,7 +19,7 @@
                         </a>
                     </div>
 
-                    <form class="needs-validation" method="POST" action="{{ url('update/childcategory') }}"
+                    <form class="needs-validation" method="POST" action="{{ route('UpdateChildcategory') }}"
                         enctype="multipart/form-data">
                         @csrf
 
@@ -116,7 +116,7 @@
                 var categoryId = this.value;
                 $("#colFormLabe2").html('');
                 $.ajax({
-                    url: "{{ route('CategoryWiseSubcategory') }}",
+                    url: "{{ route('SubcategoryCategoryWise') }}",
                     type: "POST",
                     data: {
                         category_id: categoryId,

@@ -43,7 +43,7 @@
                     <div class="table-responsive">
 
                         <label id="customFilter">
-                            <a href="{{ url('rearrange/category') }}" class="btn btn-success btn-sm"
+                            <a href="{{ route('RearrangeCategory') }}" class="btn btn-success btn-sm"
                                 style="margin-left: 5px"><b><i class="fas fa-sort-amount-up"></i> Rearrange Category</b></a>
                             <a href="{{ route('AddNewCategory') }}" class="btn btn-primary btn-sm"
                                 style="margin-left: 5px"><b><i class="fas fa-plus"></i> Add New Category</b></a>
@@ -86,7 +86,7 @@
             processing: true,
             serverSide: true,
             stateSave: true,
-            ajax: "{{ url('view/all/category') }}",
+            ajax: "{{ route('ViewAllCategory') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -192,7 +192,7 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/category') }}" + '/' + categorySlug,
+                    url: "{{ route('DeleteCategory', '') }}" + '/' + categorySlug,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Category has been Deleted", "Deleted Successfully");
@@ -209,7 +209,7 @@
             if (confirm("Are You sure to Change the Feature Status !")) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('feature/category') }}" + '/' + categorySlug,
+                    url: "{{ route('FeatureCategory', '') }}" + '/' + categorySlug,
                     success: function(data) {
 
                         table.draw(false);

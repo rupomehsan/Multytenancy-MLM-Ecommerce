@@ -25,7 +25,7 @@
                         </a>
                     </div>
 
-                    <form class="needs-validation" method="POST" action="{{ url('update/category') }}"
+                    <form class="needs-validation" method="POST" action="{{ route('UpdateCategory') }}"
                         enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="id" value="{{ $category->id }}">
@@ -145,14 +145,14 @@
             $(".dropify-preview").eq(0).css("display", "block");
             $(".dropify-clear").eq(0).css("display", "block");
             $(".dropify-filename-inner").eq(0).html("{{ $category->icon }}");
-            $("span.dropify-render").eq(0).html("<img src='{{ url($category->icon) }}'>");
+            $("span.dropify-render").eq(0).html("<img src='{{ asset($category->icon) }}'>");
         @endif
 
         @if ($category->banner_image && file_exists(public_path($category->banner_image)))
             $(".dropify-preview").eq(1).css("display", "block");
             $(".dropify-clear").eq(1).css("display", "block");
             $(".dropify-filename-inner").eq(1).html("{{ $category->banner_image }}");
-            $("span.dropify-render").eq(1).html("<img src='{{ url($category->banner_image) }}'>");
+            $("span.dropify-render").eq(1).html("<img src='{{ asset($category->banner_image) }}'>");
         @endif
     </script>
 @endsection

@@ -73,7 +73,7 @@ class BrandController extends Controller
 
         if ($result['status'] === 'error') {
             Toastr::error($result['message'], 'Error');
-            return redirect('/view/all/brands');
+            return redirect()->route('ViewAllBrands');
         }
 
         return view($result['view'], [
@@ -97,7 +97,7 @@ class BrandController extends Controller
         }
 
         Toastr::success($result['message'], 'Success');
-        return redirect('/view/all/brands');
+        return redirect()->route('ViewAllBrands');
     }
 
     public function rearrangeBrands()
@@ -114,7 +114,7 @@ class BrandController extends Controller
         $result = SaveRearrangeBrands::execute($request);
 
         Toastr::success($result['message'] ?? 'Brand has been Rerranged', 'Success');
-        return redirect('/view/all/brands');
+        return redirect()->route('ViewAllBrands');
     }
 
     public function deleteBrand($slug)

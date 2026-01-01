@@ -66,7 +66,7 @@ class SubcategoryController extends Controller
 
         if ($result['status'] === 'error') {
             Toastr::error($result['message'], 'Error');
-            return redirect('/view/all/subcategory');
+            return redirect()->route('ViewAllSubcategory');
         }
 
         return view($result['view'], [
@@ -88,7 +88,7 @@ class SubcategoryController extends Controller
         }
 
         Toastr::success($result['message'], 'Success');
-        return redirect('/view/all/subcategory');
+        return redirect()->route('ViewAllSubcategory');
     }
 
     public function featureSubcategory($id)

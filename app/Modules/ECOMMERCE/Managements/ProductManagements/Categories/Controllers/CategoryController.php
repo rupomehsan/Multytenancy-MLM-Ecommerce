@@ -37,7 +37,7 @@ class CategoryController extends Controller
         }
 
         Toastr::success('New Category has been Created', 'Success');
-        return redirect('/view/all/category');
+        return redirect()->route('ViewAllCategory');
     }
 
     public function viewAllCategory(Request $request)
@@ -67,7 +67,7 @@ class CategoryController extends Controller
 
         if ($result['status'] === 'error') {
             Toastr::error($result['message'], 'Error');
-            return redirect('/view/all/category');
+            return redirect()->route('ViewAllCategory');
         }
 
         return view($result['view'], [
@@ -88,7 +88,7 @@ class CategoryController extends Controller
         }
 
         Toastr::success($result['message'], 'Success');
-        return redirect('/view/all/category');
+        return redirect()->route('ViewAllCategory');
     }
 
     public function rearrangeCategory()
@@ -105,6 +105,6 @@ class CategoryController extends Controller
         $result = SaveRearrangeCategoryOrder::execute($request);
 
         Toastr::success($result['message'] ?? 'Category has been Rerranged', 'Success');
-        return redirect('/view/all/category');
+        return redirect()->route('ViewAllCategory');
     }
 }

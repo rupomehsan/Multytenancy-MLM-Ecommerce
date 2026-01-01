@@ -149,7 +149,7 @@
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('view/all/units') }}",
+            ajax: "{{ route('ViewAllUnits') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -227,7 +227,7 @@
             $(this).html('Saving..');
             $.ajax({
                 data: $('#productForm2').serialize(),
-                url: "{{ url('create/new/unit') }}",
+                url: "{{ route('CreateNewUnit') }}",
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {
@@ -247,7 +247,7 @@
 
         $('body').on('click', '.editBtn', function() {
             var id = $(this).data('id');
-            $.get("{{ url('get/unit/info') }}" + '/' + id, function(data) {
+            $.get("{{ route('GetUnitInfo', '') }}" + '/' + id, function(data) {
                 $('#exampleModal').modal('show');
                 $('#flag_slug').val(id);
                 $('#flag_name').val(data.name);
@@ -260,7 +260,7 @@
             $(this).html('Updating..');
             $.ajax({
                 data: $('#productForm').serialize(),
-                url: "{{ url('update/unit') }}",
+                url: "{{ route('UpdateUnitInfo') }}",
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {
@@ -285,7 +285,7 @@
                 }
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/unit') }}" + '/' + id,
+                    url: "{{ route('DeleteUnit', '') }}" + '/' + id,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Unit has been Deleted", "Deleted Successfully");

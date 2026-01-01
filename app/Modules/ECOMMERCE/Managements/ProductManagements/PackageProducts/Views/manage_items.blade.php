@@ -82,10 +82,10 @@
                             <p class="text-muted">Package Price: ৳{{ number_format($package->price, 2) }}</p>
                         </div>
                         <div>
-                            <a href="{{ url('package-products') }}" class="btn btn-secondary">
+                            <a href="{{ route('PackageProducts.Index') }}" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Back to List
                             </a>
-                            <a href="{{ url('package-products/' . $package->id . '/edit') }}" class="btn btn-warning">
+                            <a href="{{ route('PackageProducts.Edit', $package->id) }}" class="btn btn-warning">
                                 <i class="fas fa-edit"></i> Edit Package
                             </a>
                         </div>
@@ -95,7 +95,7 @@
                     <!-- Add New Item Form -->
                     <div class="add-item-form">
                         <h5 class="mb-3"><i class="fas fa-plus"></i> Add Item to Package</h5>
-                        <form method="POST" action="{{ url('package-products/' . $package->id . '/add-item') }}">
+                        <form method="POST" action="{{ route('PackageProducts.AddItem', $package->id) }}">
                             @csrf
                             <div class="row">
                                 <div class="col-lg-4">
@@ -176,7 +176,7 @@
                                 <div class="package-item-card">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="item-info">
-                                            <img src="{{ $item->product->image ? url($item->product->image) : url('demo_products/demo_product.png') }}"
+                                            <img src="{{ $item->product->image ? asset($item->product->image) : asset('demo_products/demo_product.png') }}"
                                                 alt="{{ $item->product->name }}" class="item-image">
                                             <div class="item-details">
                                                 <h6>{{ $item->product->name }}</h6>
@@ -214,7 +214,7 @@
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <form method="POST"
-                                                action="{{ url('package-products/' . $package->id . '/items/' . $item->id) }}">
+                                                action="{{ route('PackageProducts.UpdateItem', ['packageId' => $package->id, 'itemId' => $item->id]) }}">
                                                 @csrf
                                                 @method('PUT')
                                                 <div class="modal-header">
@@ -315,7 +315,7 @@
             var productId = $(this).val();
             if (productId) {
                 $.ajax({
-                    url: "{{ url('get-product-variants') }}/" + productId,
+                    url: "{{ route('GetProductVariants', '') }}/" + productId,
                     type: "GET",
                     success: function(response) {
                         // Update colors

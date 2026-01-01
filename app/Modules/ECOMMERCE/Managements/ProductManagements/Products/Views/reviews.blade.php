@@ -164,7 +164,7 @@
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('view/product/reviews') }}",
+            ajax: "{{ route('ViewAllProductReviews') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -238,7 +238,7 @@
             if (confirm("Are You sure want to delete !")) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/product/review') }}" + '/' + slug,
+                    url: "{{ route('DeleteProductReview', '') }}" + '/' + slug,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Product Review has been Deleted", "Deleted Successfully");
@@ -255,7 +255,7 @@
             if (confirm("Are You sure want to Approve !")) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('approve/product/review') }}" + '/' + slug,
+                    url: "{{ route('ApproveProductReview', '') }}" + '/' + slug,
                     success: function(data) {
                         table.draw(false);
                         toastr.success("Product Review has been Approved", "Approved Successfully");
@@ -269,7 +269,7 @@
 
         $('body').on('click', '.replyBtn', function() {
             var id = $(this).data('id');
-            $.get("{{ url('get/product/review/info') }}" + '/' + id, function(data) {
+            $.get("{{ route('GetProductReviewInfo', '') }}" + '/' + id, function(data) {
                 $('#review_id').val(data.id);
                 $('#customer_review').text(data.review);
                 $('#reply_from_admin').text(data.reply);
@@ -283,7 +283,7 @@
             $(this).html('Saving..');
             $.ajax({
                 data: $('#productForm').serialize(),
-                url: "{{ url('submit/reply/product/review') }}",
+                url: "{{ route('SubmitReplyOfProductReview') }}",
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {

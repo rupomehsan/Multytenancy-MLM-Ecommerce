@@ -72,6 +72,6 @@ class ProductSizeController extends Controller
     {
         $result = SaveRearrangeSizes::execute($request);
         Toastr::success($result['message'], 'Success');
-        return redirect('/view/all/sizes');
+        return redirect()->route('ViewAllSizes');
     }
 }

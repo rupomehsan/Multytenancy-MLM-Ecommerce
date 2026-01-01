@@ -25,7 +25,7 @@
                                 Remove all the demo please click on the button below.
                             </span>
 
-                            <a href="{{ url('remove/demo/products') }}" class="btn btn-danger rounded w-100 d-block mt-5"><i
+                            <a href="{{ route('RemoveDemoProducts') }}" class="btn btn-danger rounded w-100 d-block mt-5"><i
                                     class="feather-trash-2"></i> Remove Demo Products</a>
                         </div>
                     </div>

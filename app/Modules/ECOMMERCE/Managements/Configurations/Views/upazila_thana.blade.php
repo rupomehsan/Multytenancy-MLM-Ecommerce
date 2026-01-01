@@ -38,10 +38,10 @@
 @endsection
 
 @section('page_title')
-    Upazila & Thana
+    Location
 @endsection
 @section('page_heading')
-    View All Upazila & Thana
+    View All Location
 @endsection
 
 @section('content')
@@ -49,12 +49,12 @@
         <div class="col-lg-12 col-xl-12">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title mb-3">Upazila & Thana List</h4>
+                    <h4 class="card-title mb-3">Location List</h4>
                     <div class="table-responsive">
 
                         <label id="customFilter">
                             <button class="btn btn-success btn-sm" id="addUpazilaThana" style="margin-left: 5px"><b><i
-                                        class="feather-plus"></i> Add Upazila/Thana</b></button>
+                                        class="feather-plus"></i> Add Location</b></button>
                         </label>
 
                         <table class="table table-bordered mb-0 data-table">
@@ -189,7 +189,7 @@
             stateSave: true,
             lengthMenu: [15, 25, 50, 100],
 
-            ajax: "{{ url('view/upazila/thana') }}",
+            ajax: "{{ route('ViewUpazilaThana') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -240,7 +240,7 @@
             $(this).html('Saving..');
             $.ajax({
                 data: $('#productForm2').serialize(),
-                url: "{{ url('save/new/upazila') }}",
+                url: "{{ route('SaveNewUpazila') }}",
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {
@@ -259,7 +259,8 @@
 
         $('body').on('click', '.editBtn', function() {
             var id = $(this).data('id');
-            $.get("{{ url('get/upazila/info') }}" + '/' + id, function(data) {
+            var getUpazilaInfoUrl = "{{ route('getUpazilaInfo', ':id') }}";
+            $.get(getUpazilaInfoUrl.replace(':id', id), function(data) {
                 console.log(data);
                 $('#exampleModal').modal('show');
                 $('#upazila_id').val(id);
@@ -275,7 +276,7 @@
             $(this).html('Updating...');
             $.ajax({
                 data: $('#productForm').serialize(),
-                url: "{{ url('update/upazila/info') }}",
+                url: "{{ route('UpdateUpazilaInfo') }}",
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {
@@ -302,7 +303,7 @@
                 }
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/upazila') }}" + '/' + id,
+                    url: ("{{ route('DeleteUpazila', ':id') }}").replace(':id', id),
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Upazila/Thana has been Deleted", "Deleted Successfully");

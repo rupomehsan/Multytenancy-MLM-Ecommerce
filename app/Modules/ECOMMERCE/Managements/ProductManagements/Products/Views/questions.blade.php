@@ -144,7 +144,7 @@
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('view/product/question/answer') }}",
+            ajax: "{{ route('ViewAllQuestionAnswer') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -206,7 +206,7 @@
                 }
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/question/answer/') }}" + '/' + slug,
+                    url: "{{ route('DeleteQuestionAnswer', '') }}" + '/' + slug,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Question has been Deleted", "Deleted Successfully");
@@ -221,7 +221,7 @@
 
         $('body').on('click', '.replyBtn', function() {
             var id = $(this).data('id');
-            $.get("{{ url('get/question/answer/info') }}" + '/' + id, function(data) {
+            $.get("{{ route('GetQuestionAnswerInfo', '') }}" + '/' + id, function(data) {
                 $('#question_answer_id').val(data.id);
                 $('#customers_question').text(data.question);
                 $('#question_answer').text(data.answer);
@@ -236,7 +236,7 @@
             $(this).html('Saving..');
             $.ajax({
                 data: $('#productForm').serialize(),
-                url: "{{ url('submit/question/answer') }}",
+                url: "{{ route('SubmitAnswerOfQuestion') }}",
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {

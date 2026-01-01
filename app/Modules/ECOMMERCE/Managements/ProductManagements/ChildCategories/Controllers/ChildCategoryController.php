@@ -72,7 +72,7 @@ class ChildCategoryController extends Controller
 
         if ($result['status'] === 'error') {
             Toastr::error($result['message'], 'Error');
-            return redirect('/view/all/childcategory');
+            return redirect()->route('ViewAllChildcategory');
         }
 
         return view($result['view'], [
@@ -95,6 +95,6 @@ class ChildCategoryController extends Controller
         }
 
         Toastr::success($result['message'], 'Success');
-        return redirect('/view/all/childcategory');
+        return redirect()->route('ViewAllChildcategory');
     }
 }

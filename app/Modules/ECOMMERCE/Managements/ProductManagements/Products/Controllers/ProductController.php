@@ -89,7 +89,7 @@ class ProductController extends Controller
 
         if ($result['status'] === 'success') {
             Toastr::success($result['message'], 'Success');
-            return redirect('/view/all/product');
+            return redirect()->route('ViewAllProducts');
         } else {
             Toastr::error($result['message'], 'Error');
             return back();

@@ -23,7 +23,7 @@
                         </a>
                     </div>
 
-                    <form class="needs-validation" method="POST" action="{{ url('save/new/category') }}"
+                    <form class="needs-validation" method="POST" action="{{ route('SaveNewCategory') }}"
                         enctype="multipart/form-data">
                         @csrf
 

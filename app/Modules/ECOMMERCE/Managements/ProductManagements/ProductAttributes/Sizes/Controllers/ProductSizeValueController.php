@@ -120,7 +120,7 @@ class ProductSizeValueController extends Controller
 
         Toastr::success('Updated Successfully', 'Success!');
         $lastInsertedId = ProductSizeValue::latest('id')->first()->id;
-        return redirect('edit/product-size-value/' . $lastInsertedId);
+        return redirect()->route('EditSizeValue', $lastInsertedId);
     }
 
 

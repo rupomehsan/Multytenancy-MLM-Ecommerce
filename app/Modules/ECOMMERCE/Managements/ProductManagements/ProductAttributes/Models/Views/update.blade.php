@@ -24,7 +24,7 @@
                         </a>
                     </div>
 
-                    <form class="needs-validation" method="POST" action="{{ url('update/model') }}"
+                    <form class="needs-validation" method="POST" action="{{ route('UpdateModel') }}"
                         enctype="multipart/form-data">
                         @csrf
 

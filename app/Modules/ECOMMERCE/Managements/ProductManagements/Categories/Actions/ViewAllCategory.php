@@ -54,7 +54,7 @@ class ViewAllCategory
                 })
                 ->addIndexColumn()
                 ->addColumn('action', function ($data) {
-                    $btn = ' <a href="' . url('edit/category') . '/' . $data->slug . '" class="mb-1 btn-sm btn-warning rounded"><i class="fas fa-edit"></i></a>';
+                    $btn = ' <a href="' . route('EditCategory', $data->slug) . '" class="mb-1 btn-sm btn-warning rounded"><i class="fas fa-edit"></i></a>';
                     $btn .= ' <a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $data->slug . '" data-original-title="Delete" class="btn-sm btn-danger rounded deleteBtn"><i class="fas fa-trash-alt"></i></a>';
 
                     // if($data->featured == 0){

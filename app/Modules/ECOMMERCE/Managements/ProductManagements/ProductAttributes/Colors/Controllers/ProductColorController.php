@@ -59,7 +59,7 @@ class ProductColorController extends Controller
 
         if ($result['status'] === 'error') {
             Toastr::error($result['message'], 'Error');
-            return redirect('/view/all/product-color');
+            return redirect()->route('ViewAllColors');
         }
 
         return view($result['view'], ['data' => $result['data']]);

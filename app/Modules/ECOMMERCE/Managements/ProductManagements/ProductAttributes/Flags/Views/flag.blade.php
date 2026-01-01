@@ -183,7 +183,7 @@
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('view/all/flags') }}",
+            ajax: "{{ route('ViewAllFlags') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -283,7 +283,7 @@
             $.ajax({
                 // data: $('#productForm2').serialize(),
                 data: formData,
-                url: "{{ url('create/new/flag') }}",
+                url: "{{ route('CreateNewFlag') }}",
                 type: "POST",
                 cache: false,
                 contentType: false,
@@ -306,7 +306,7 @@
 
         $('body').on('click', '.editBtn', function() {
             var slug = $(this).data('id');
-            $.get("{{ url('get/flag/info') }}" + '/' + slug, function(data) {
+            $.get("{{ route('GetFlagInfo', '') }}" + '/' + slug, function(data) {
                 $('#exampleModal').modal('show');
                 $('#flag_slug').val(slug);
                 $('#flag_name').val(data.name);
@@ -326,7 +326,7 @@
             $(this).html('Updating..');
             $.ajax({
                 data: formDataUpdate,
-                url: "{{ url('update/flag') }}",
+                url: "{{ route('UpdateFlagInfo') }}",
                 type: "POST",
                 cache: false,
                 contentType: false,
@@ -353,7 +353,7 @@
                 }
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/flag') }}" + '/' + slug,
+                    url: "{{ route('DeleteFlag', '') }}" + '/' + slug,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Flag has been Deleted", "Deleted Successfully");
@@ -370,7 +370,7 @@
             if (confirm("Are You sure to Change the Feature Status !")) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('feature/flag') }}" + '/' + id,
+                    url: "{{ route('FeatureFlag', '') }}" + '/' + id,
                     success: function(data) {
 
                         table.draw(false);

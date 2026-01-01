@@ -95,7 +95,7 @@
             processing: true,
             serverSide: true,
             stateSave: true,
-            ajax: "{{ url('view/all/subcategory') }}",
+            ajax: "{{ route('ViewAllSubcategory') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -198,7 +198,7 @@
                 }
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/subcategory') }}" + '/' + subcategorySlug,
+                    url: "{{ route('DeleteSubcategory', '') }}" + '/' + subcategorySlug,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Subcategory has been Deleted", "Deleted Successfully");
@@ -215,7 +215,7 @@
             if (confirm("Are You sure to Change the Feature Status !")) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('feature/subcategory') }}" + '/' + id,
+                    url: "{{ route('FeatureSubcategory', '') }}" + '/' + id,
                     success: function(data) {
 
                         table.draw(false);

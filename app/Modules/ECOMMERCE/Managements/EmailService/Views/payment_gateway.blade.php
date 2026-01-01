@@ -38,7 +38,7 @@
                             </div>
                         </div>
 
-                        <form class="needs-validation" method="POST" action="{{ url('update/payment/gateway/info') }}"
+                        <form class="needs-validation" method="POST" action="{{ route('UpdatePaymentGatewayInfo') }}"
                             enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="provider_name" value="{{ $gateways[0]->provider_name }}">
@@ -166,7 +166,7 @@
                         </div>
                     </div>
 
-                    <form class="needs-validation" method="POST" action="{{url('update/payment/gateway/info')}}" enctype="multipart/form-data">
+                    <form class="needs-validation" method="POST" action="{{route('UpdatePaymentGatewayInfo')}}" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="provider_name" value="{{$gateways[1]->provider_name}}">
                         <div class="row">
@@ -262,7 +262,7 @@
                         </div>
                     </div>
 
-                    <form class="needs-validation" method="POST" action="{{url('update/payment/gateway/info')}}" enctype="multipart/form-data">
+                    <form class="needs-validation" method="POST" action="{{route('UpdatePaymentGatewayInfo')}}" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="provider_name" value="{{$gateways[2]->provider_name}}">
                         <div class="row">
@@ -358,7 +358,7 @@
                         </div>
                     </div>
 
-                    <form class="needs-validation" method="POST" action="{{url('update/payment/gateway/info')}}" enctype="multipart/form-data">
+                    <form class="needs-validation" method="POST" action="{{route('UpdatePaymentGatewayInfo')}}" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="provider_name" value="{{$gateways[3]->provider_name}}">
                         <div class="row">
@@ -450,7 +450,12 @@
             var provider = value;
             $.ajax({
                 type: "GET",
-                url: "{{ url('change/payment/gateway/status') }}" + '/' + provider,
+                // Use named route and replace placeholder with provider value
+                url: (function() {
+                    var u =
+                    "{{ route('ChangePaymentGatewayStatus', ['provider' => 'PROVIDER_REPLACE']) }}";
+                    return u.replace('PROVIDER_REPLACE', provider);
+                })(),
                 success: function(data) {
                     toastr.success("Status Changed", "Updated Successfully");
                     setTimeout(function() {

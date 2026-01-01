@@ -124,7 +124,7 @@
             stateSave: true,
             lengthMenu: [15, 25, 50, 100],
 
-            ajax: "{{ url('view/delivery/charges') }}",
+            ajax: "{{ route('ViewAllDeliveryCharges') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -165,7 +165,11 @@
 
         $('body').on('click', '.editBtn', function() {
             var id = $(this).data('id');
-            $.get("{{ url('get/delivery/charge') }}" + '/' + id, function(data) {
+            var getUrl = (function() {
+                var u = "{{ route('GetDeliveryCharge', ['id' => 'ID_REPLACE']) }}";
+                return u.replace('ID_REPLACE', id);
+            })();
+            $.get(getUrl, function(data) {
                 $('#exampleModal').modal('show');
                 $('#delivery_charge_id').val(id);
                 $('#name').val(data.name);
@@ -179,7 +183,7 @@
             $(this).html('Updating...');
             $.ajax({
                 data: $('#productForm').serialize(),
-                url: "{{ url('update/delivery/charge') }}",
+                url: "{{ route('UpdateDeliveryCharge') }}",
                 type: "POST",
                 dataType: 'json',
                 success: function(data) {

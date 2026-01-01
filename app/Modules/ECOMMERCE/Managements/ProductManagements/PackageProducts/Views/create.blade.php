@@ -116,7 +116,7 @@
             <div class="card">
                 <div class="card-body">
 
-                    <form class="needs-validation" method="POST" action="{{ url('package-products') }}"
+                    <form class="needs-validation" method="POST" action="{{ route('PackageProducts.Store') }}"
                         enctype="multipart/form-data">
                         @csrf
                         {{-- 
@@ -140,7 +140,7 @@
                                     Product</h4>
                             </div>
                             <div class="col-lg-6 text-right">
-                                <a href="{{ url('package-products') }}" class="btn btn-secondary">
+                                <a href="{{ route('PackageProducts.Index') }}" class="btn btn-secondary">
                                     <i class="fas fa-arrow-left"></i> Back to List
                                 </a>
                             </div>
@@ -431,7 +431,7 @@
                         </div>
 
                         <div class="form-group text-center pt-3">
-                            <a href="{{ url('package-products') }}" style="width: 130px;"
+                            <a href="{{ route('PackageProducts.Index') }}" style="width: 130px;"
                                 class="btn btn-danger d-inline-block text-white m-2" type="submit"><i
                                     class="mdi mdi-cancel"></i> Cancel</a>
                             <button class="btn btn-primary m-2" style="width: 180px;" type="submit"><i
@@ -474,7 +474,7 @@
                 $("#subcategory_id").html('');
                 $("#childcategory_id").html('');
                 $.ajax({
-                    url: "{{ route('CategoryWiseSubcategory') }}",
+                    url: "{{ route('SubcategoryCategoryWise') }}",
                     type: "POST",
                     data: {
                         category_id: categoryId,
@@ -550,7 +550,7 @@
                     const productIds = [...new Set(Object.values(oldItems).map(item => item.product_id))];
                     productIds.forEach(productId => {
                         $.ajax({
-                            url: "{{ url('get-product-variants') }}/" + productId,
+                            url: "{{ route('GetProductVariants', '') }}/" + productId,
                             type: "GET",
                             success: function(response) {
                                 if (response.has_variants) {
@@ -593,7 +593,7 @@
 
             // Get product variants and restore the item
             $.ajax({
-                url: "{{ url('get-product-variants') }}/" + itemData.product_id,
+                url: "{{ route('GetProductVariants', '') }}/" + itemData.product_id,
                 type: "GET",
                 success: function(response) {
                     const productData = {
@@ -713,7 +713,7 @@
         function getProductVariantsAndValidate(productId, productData) {
             console.log('Getting variants for product ID:', productId);
             $.ajax({
-                url: "{{ url('get-product-variants') }}/" + productId,
+                url: "{{ route('GetProductVariants', '') }}/" + productId,
                 type: "GET",
                 success: function(response) {
                     console.log('Variants response:', response);
@@ -919,7 +919,7 @@
             // If variant was selected, get the specific stock
             if (productData.has_variants && (oldItemData.color_id || oldItemData.size_id)) {
                 $.ajax({
-                    url: "{{ url('get-variant-stock') }}/" + productData.product_id,
+                    url: "{{ route('GetVariantStock', '') }}/" + productData.product_id,
                     type: "POST",
                     data: {
                         color_id: oldItemData.color_id,
@@ -1067,7 +1067,7 @@
             if (removedItem && removedItem.has_variants) {
                 // Get product variants to calculate remaining slots
                 $.ajax({
-                    url: "{{ url('get-product-variants') }}/" + productId,
+                    url: "{{ route('GetProductVariants', '') }}/" + productId,
                     type: "GET",
                     success: function(response) {
                         const maxVariants = getMaxVariantCombinations(response.colors, response.sizes);
@@ -1117,7 +1117,7 @@
             if (item && item.has_variants && (colorId || sizeId)) {
                 // If product has variants and color/size is selected, get specific stock
                 $.ajax({
-                    url: "{{ url('get-variant-stock') }}/" + productId,
+                    url: "{{ route('GetVariantStock', '') }}/" + productId,
                     type: "POST",
                     data: {
                         color_id: colorId,

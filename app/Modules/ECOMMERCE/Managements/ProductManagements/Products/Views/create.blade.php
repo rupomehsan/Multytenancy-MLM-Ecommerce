@@ -92,7 +92,7 @@
             <div class="card">
                 <div class="card-body">
 
-                    <form class="needs-validation" method="POST" action="{{ url('save/new/product') }}"
+                    <form class="needs-validation" method="POST" action="{{ route('SaveNewProduct') }}"
                         enctype="multipart/form-data">
                         @csrf
 
@@ -101,7 +101,7 @@
                                 <h4 class="card-title mb-3" style="font-size: 18px; padding-top: 12px;">Add New Product</h4>
                             </div>
                             <div class="col-lg-6 text-right">
-                                <a href="{{ url('view/all/product') }}" style="width: 130px;"
+                                <a href="{{ route('ViewAllProducts') }}" style="width: 130px;"
                                     class="btn btn-danger d-inline-block text-white m-2" type="submit"><i
                                         class="mdi mdi-cancel"></i> Discard</a>
                                 <button class="btn btn-primary m-2" style="width: 130px;" type="submit"><i
@@ -1018,7 +1018,7 @@
                         </div>
 
                         <div class="form-group text-center pt-3 mt-4 border-top">
-                            <a href="{{ url('view/all/product') }}" style="width: 130px;"
+                            <a href="{{ route('ViewAllProducts') }}" style="width: 130px;"
                                 class="btn btn-danger d-inline-block text-white m-2"><i class="mdi mdi-cancel"></i>
                                 Discard</a>
                             <button class="btn btn-primary m-2" style="width: 130px;" type="submit"><i
@@ -1170,7 +1170,7 @@
                 $("#subcategory_id").html('');
                 $("#childcategory_id").html('');
                 $.ajax({
-                    url: "{{ route('CategoryWiseSubcategory') }}",
+                    url: "{{ route('SubcategoryCategoryWise') }}",
                     type: "POST",
                     data: {
                         category_id: categoryId,

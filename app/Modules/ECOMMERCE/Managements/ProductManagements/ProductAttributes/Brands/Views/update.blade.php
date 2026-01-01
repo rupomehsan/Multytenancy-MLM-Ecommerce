@@ -49,7 +49,7 @@
                         </a>
                     </div>
 
-                    <form class="needs-validation" method="POST" action="{{ url('update/brand') }}"
+                    <form class="needs-validation" method="POST" action="{{ route('UpdateBrand') }}"
                         enctype="multipart/form-data">
                         @csrf
 
@@ -193,14 +193,14 @@
             $(".dropify-preview").eq(0).css("display", "block");
             $(".dropify-clear").eq(0).css("display", "block");
             $(".dropify-filename-inner").eq(0).html("{{ $data->logo }}");
-            $("span.dropify-render").eq(0).html("<img src='{{ url($data->logo) }}'>");
+            $("span.dropify-render").eq(0).html("<img src='{{ asset($data->logo) }}'>");
         @endif
 
         @if ($data->banner && file_exists(public_path($data->banner)))
             $(".dropify-preview").eq(1).css("display", "block");
             $(".dropify-clear").eq(1).css("display", "block");
             $(".dropify-filename-inner").eq(1).html("{{ $data->banner }}");
-            $("span.dropify-render").eq(1).html("<img src='{{ url($data->banner) }}'>");
+            $("span.dropify-render").eq(1).html("<img src='{{ asset($data->banner) }}'>");
         @endif
     </script>
 @endsection

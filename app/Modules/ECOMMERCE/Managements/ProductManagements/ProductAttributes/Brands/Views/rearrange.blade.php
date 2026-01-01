@@ -56,7 +56,7 @@
                     <small class="instruction_text">[N/B: Drag the Item using your Mouse Cursor to Rearrange their Order.
                         Then Press the save button to save the Rearranged Order]</small>
 
-                    <form action="{{ url('save/rearranged/brands') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('saveRearrangeBrands') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <ol class="clearfix">
                             @php

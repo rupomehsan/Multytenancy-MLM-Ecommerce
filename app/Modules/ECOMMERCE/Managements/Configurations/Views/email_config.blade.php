@@ -79,7 +79,7 @@
                 <div class="card-body">
                     <h4 class="card-title mb-3">SMTP Email Configurations</h4>
                     <div class="table-responsive">
-                        <form method="POST" action="{{ url('save/new/email/configure') }}" class="form-horizontal">
+                        <form method="POST" action="{{ route('SaveEmailCredential') }}" class="form-horizontal">
                             @csrf
                             @if ($errors->any())
                                 <div class="alert alert-danger">

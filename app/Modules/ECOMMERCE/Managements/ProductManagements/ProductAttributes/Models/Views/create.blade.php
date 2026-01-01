@@ -20,7 +20,7 @@
                         </a>
                     </div>
 
-                    <form class="needs-validation" method="POST" action="{{ url('save/new/model') }}"
+                    <form class="needs-validation" method="POST" action="{{ route('SaveNewModel') }}"
                         enctype="multipart/form-data">
                         @csrf
 

@@ -167,6 +167,7 @@
             <span>Config</span>
         </a>
         <ul class="sub-menu" aria-expanded="false">
+
             <li>
                 <a href="{{ route('ConfigSetup') }}" data-active-paths="{{ route('ConfigSetup') }}">Setup
                     Your
@@ -202,6 +203,19 @@
             {{-- <li><a href="{{ route('SetupSmsGateways') }}">SMS Gateway</a></li> --}}
             <li><a href="{{ route('ViewPaymentGateways') }}" data-active-paths="{{ route('ViewPaymentGateways') }}">
                     Payment Gateway
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('ViewAllDeliveryCharges') }}"
+                    data-active-paths="{{ route('ViewAllDeliveryCharges') }}">
+
+                    <span>Delivery Charges</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('ViewUpazilaThana') }}" data-active-paths="{{ route('ViewUpazilaThana') }}">
+
+                    <span>Upazila & Thana</span>
                 </a>
             </li>
 
@@ -514,18 +528,8 @@
             <span>Customer's Wishlist</span>
         </a>
     </li>
-    <li>
-        <a href="{{ route('ViewAllDeliveryCharges') }}" data-active-paths="{{ route('ViewAllDeliveryCharges') }}">
-            <i class="feather-truck"></i>
-            <span>Delivery Charges</span>
-        </a>
-    </li>
-    <li>
-        <a href="{{ route('ViewUpazilaThana') }}" data-active-paths="{{ route('ViewUpazilaThana') }}">
-            <i class="dripicons-location"></i>
-            <span>Upazila & Thana</span>
-        </a>
-    </li>
+
+
     <li><a href="{{ route('ViewPaymentHistory') }}" data-active-paths="{{ route('ViewPaymentHistory') }}">
             <i class="feather-dollar-sign"></i>
             <span>Payment History</span>

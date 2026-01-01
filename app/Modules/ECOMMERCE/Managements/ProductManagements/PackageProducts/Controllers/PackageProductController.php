@@ -58,7 +58,7 @@ class PackageProductController extends Controller
 
             return DataTables::of($data)
                 ->addColumn('image', function ($data) {
-                    $imagePath = $data->image ? url($data->image) : url('demo_products/demo_product.png');
+                    $imagePath = $data->image ? asset($data->image) : asset('demo_products/demo_product.png');
                     return '<img src="' . $imagePath . '" class="gridProductImage" style="width: 50px; height: 50px; object-fit: cover;">';
                 })
                 ->addColumn('price', function ($data) {
@@ -84,7 +84,7 @@ class PackageProductController extends Controller
                     return '<span class="badge badge-info">' . $count . ' items</span>';
                 })
                 ->addColumn('action', function ($data) {
-                    $btn = '<a href="' . url('package-products/' . $data->id . '/edit') . '" class="btn btn-sm btn-warning mb-1"><i class="fas fa-edit"></i> Edit</a>';
+                    $btn = '<a href="' . route('PackageProducts.Edit', $data->id) . '" class="btn btn-sm btn-warning mb-1"><i class="fas fa-edit"></i> Edit</a>';
                     $btn .= ' <a href="javascript:void(0)" data-id="' . $data->id . '" class="btn btn-sm btn-danger mb-1 deleteBtn"><i class="fas fa-trash"></i> Delete</a>';
                     return $btn;
                 })

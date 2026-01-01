@@ -39,7 +39,7 @@
                 <div class="card-body">
                     <h4 class="card-title mb-3">Update Setup Config</h4>
 
-                    <form class="needs-validation" method="POST" action="{{ url('update/config/setup') }}"
+                    <form class="needs-validation" method="POST" action="{{ route('UpdateConfigSetup') }}"
                         enctype="multipart/form-data">
                         @csrf
 

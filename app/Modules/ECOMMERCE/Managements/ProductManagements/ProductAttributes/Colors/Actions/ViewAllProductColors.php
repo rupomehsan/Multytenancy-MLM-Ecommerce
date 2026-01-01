@@ -22,7 +22,7 @@ class ViewAllProductColors
                 })
                 ->addIndexColumn()
                 ->addColumn('action', function ($data) {
-                    $btn = ' <a href="' . url('edit/product-color') . '/' . $data->id . '" class=\"btn-sm btn-warning rounded editBtn\"><i class=\"fas fa-edit\"></i></a>';
+                    $btn = ' <a href="' . route('GetColorInfo', $data->id) . '" class="btn-sm btn-warning rounded editBtn"><i class="fas fa-edit"></i></a>';
                     $btn .= ' <a href=\"javascript:void(0)\" data-toggle=\"tooltip\" data-id=\"' . $data->id . '\" data-original-title=\"Delete\" class=\"btn-sm btn-danger rounded deleteBtn\"><i class=\"fas fa-trash-alt\"></i></a>';
                     return $btn;
                 })

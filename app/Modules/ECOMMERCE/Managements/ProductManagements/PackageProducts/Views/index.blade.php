@@ -87,7 +87,7 @@
         var table = $(".data-table").DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ url('package-products/data') }}",
+            ajax: "{{ route('PackageProducts.Data') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -141,7 +141,7 @@
             if (confirm("Are you sure you want to delete this package product?")) {
                 $.ajax({
                     type: "DELETE",
-                    url: "{{ url('package-products') }}" + '/' + id,
+                    url: "{{ route('PackageProducts.Destroy', '') }}" + '/' + id,
                     success: function(data) {
                         table.draw(false);
                         toastr.success("Package Product has been deleted", "Deleted Successfully");

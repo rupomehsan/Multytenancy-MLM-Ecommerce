@@ -96,7 +96,7 @@
             <div class="card">
                 <div class="card-body">
 
-                    <form class="needs-validation" method="POST" action="{{ url('update/product') }}"
+                    <form class="needs-validation" method="POST" action="{{ route('UpdateProduct') }}"
                         enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="slug" value="{{ $product->slug }}">
@@ -108,7 +108,7 @@
                                 <h4 class="card-title mb-3" style="font-size: 18px; padding-top: 12px;">Update Product</h4>
                             </div>
                             <div class="col-lg-6 text-right">
-                                <a href="{{ url('view/all/product') }}" style="width: 130px;"
+                                <a href="{{ route('ViewAllProducts') }}" style="width: 130px;"
                                     class="btn btn-danger d-inline-block text-white m-2" type="submit"><i
                                         class="mdi mdi-cancel"></i> Discard</a>
                                 <button class="btn btn-primary m-2" style="width: 150px;" type="submit"><i
@@ -521,7 +521,7 @@
                                                                                 <tr>
                                                                                     <td class="text-center">
                                                                                         @if ($productVariant->image)
-                                                                                            <img src="{{ url('/admin/uploads/productImages/' . $productVariant->image) }}"
+                                                                                            <img src="{{ asset('admin/uploads/productImages/' . $productVariant->image) }}"
                                                                                                 style="max-height: 40px; max-width: 40px;">
                                                                                         @endif
                                                                                         <input type="hidden"
@@ -1228,7 +1228,7 @@
                             </div>
 
                             <div class="form-group text-center pt-3 mt-4 border-top">
-                                <a href="{{ url('view/all/product') }}" style="width: 130px;"
+                                <a href="{{ route('ViewAllProducts') }}" style="width: 130px;"
                                     class="btn btn-danger d-inline-block text-white m-2"><i class="mdi mdi-cancel"></i>
                                     Discard</a>
                                 <button class="btn btn-primary m-2" style="width: 150px;" type="submit"><i
@@ -1260,7 +1260,7 @@
             @foreach ($gallery as $image)
                 {
                     id: {{ $image->id }},
-                    src: '{{ url('uploads/productImages') . '/' . $image->image }}'
+                    src: '{{ asset('uploads/productImages') . '/' . $image->image }}'
                 },
             @endforeach
         ];
@@ -1338,7 +1338,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "{{ url('delete/product/variant') }}" + '/' + id,
+                url: "{{ route('DeleteProductVariant', '') }}" + '/' + id,
                 success: function(data) {
                     console.log("Deleted Successfully")
                 },
@@ -1353,7 +1353,7 @@
             if (confirm("Are You sure want to delete !")) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/product') }}" + '/' + slug,
+                    url: "{{ route('DeleteProduct', '') }}" + '/' + slug,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Product has been Deleted", "Deleted Successfully");
@@ -1405,7 +1405,7 @@
                 $("#subcategory_id").html('');
                 $("#childcategory_id").html('');
                 $.ajax({
-                    url: "{{ route('CategoryWiseSubcategory') }}",
+                    url: "{{ route('SubcategoryCategoryWise') }}",
                     type: "POST",
                     data: {
                         category_id: categoryId,
@@ -1480,7 +1480,7 @@
             $(".dropify-preview").eq(0).css("display", "block");
             $(".dropify-clear").eq(0).css("display", "block");
             $(".dropify-filename-inner").eq(0).html("{{ $product->image }}");
-            $("span.dropify-render").eq(0).html("<img src='{{ url($product->image) }}'>");
+            $("span.dropify-render").eq(0).html("<img src='{{ asset($product->image) }}'>");
         @endif
     </script>
 @endsection

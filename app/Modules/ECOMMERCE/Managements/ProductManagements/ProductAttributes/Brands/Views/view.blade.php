@@ -43,9 +43,9 @@
                     <div class="table-responsive">
 
                         <label id="customFilter">
-                            <a href="{{ url('add/new/brand') }}" class="btn btn-success btn-sm" id="addNewFlag"
+                            <a href="{{ route('AddNewBrand') }}" class="btn btn-success btn-sm" id="addNewFlag"
                                 style="margin-left: 5px"><i class="feather-plus"></i> Add New Brand</a>
-                            <a href="{{ url('rearrange/brands') }}" class="btn btn-info btn-sm"
+                            <a href="{{ route('RearrangeBrands') }}" class="btn btn-info btn-sm"
                                 style="margin-left: 5px"><b><i class="fas fa-sort-amount-up"></i> Rearrange Brand</b></a>
                         </label>
 
@@ -88,7 +88,7 @@
             processing: true,
             serverSide: true,
             stateSave: true,
-            ajax: "{{ url('view/all/brands') }}",
+            ajax: "{{ route('ViewAllBrands') }}",
             columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex'
@@ -168,7 +168,7 @@
             if (confirm("Are You sure to Change the Feature Status !")) {
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('feature/brand') }}" + '/' + id,
+                    url: "{{ route('FeatureBrand', '') }}" + '/' + id,
                     success: function(data) {
 
                         table.draw(false);
@@ -190,7 +190,7 @@
                 }
                 $.ajax({
                     type: "GET",
-                    url: "{{ url('delete/brand') }}" + '/' + brandSlug,
+                    url: "{{ route('DeleteBrand', '') }}" + '/' + brandSlug,
                     success: function(data) {
                         table.draw(false);
                         toastr.error("Brand has been Deleted", "Deleted Successfully");

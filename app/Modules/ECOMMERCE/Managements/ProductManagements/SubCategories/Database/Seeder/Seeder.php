@@ -1,29 +1,44 @@
 <?php
 
-namespace App\Modules\{path}\Database\Seeders;
+namespace App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Database\Seeders;
 
 use Illuminate\Database\Seeder as SeederClass;
-use Faker\Factory as Faker;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\SubCategories\Database\Models\Subcategory;
+use App\Modules\ECOMMERCE\Managements\ProductManagements\Categories\Database\Models\Category;
 
 class Seeder extends SeederClass
 {
-    /**
-     * Run the database seeds.
-    php artisan db:seed --class="\App\Modules\{path}\Database\Seeders\Seeder"
-     */
-    static $model = \App\Modules\{path}\Models\Model::class;
-
     public function run(): void
     {
-        $faker = Faker::create();
-        self::$model::truncate();
+        DB::transaction(function () {
+            $now = Carbon::now();
 
+            // Ensure subcategories from Categories seeder exist (idempotent)
+            $mapping = [
+                'electronics' => [
+                    ['name' => 'Mobile Phones', 'slug' => 'mobile-phones'],
+                    ['name' => 'Computers & Laptops', 'slug' => 'computers-laptops'],
+                    ['name' => 'TV & Home Theater', 'slug' => 'tv-home-theater'],
+                ],
+                'fashion' => [
+                    ['name' => 'Men Clothing', 'slug' => 'men-clothing'],
+                    ['name' => 'Women Clothing', 'slug' => 'women-clothing'],
+                    ['name' => 'Shoes', 'slug' => 'shoes'],
+                ],
+            ];
 
-        self::$model::create([
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-        ]);
+            foreach ($mapping as $catSlug => $subs) {
+                $category = Category::where('slug', $catSlug)->first();
+                if (!$category) continue;
+                foreach ($subs as $s) {
+                    Subcategory::updateOrCreate(
+                        ['slug' => $s['slug']],
+                        ['category_id' => $category->id, 'name' => $s['name'], 'status' => 1, 'featured' => 0, 'updated_at' => $now, 'created_at' => $now]
+                    );
+                }
+            }
+        });
     }
 }
