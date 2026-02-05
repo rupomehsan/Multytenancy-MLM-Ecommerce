@@ -36,8 +36,8 @@
     <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/plugins/datepicker.css" />
     <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/plugins/icofont.css" />
     <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/plugins/uicons.css" />
-    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/style.css" />
-    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/responsive.css">
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/style.css?v={{ rand(1000, 9999) }}" />
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/responsive.css?v={{ rand(1000, 9999) }}">
     <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/toastr.min.css">
     <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/custom.css?v={{ rand(1000, 9999) }}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" />
@@ -341,7 +341,7 @@
             <div class="popup-content">
                 <span id="close-popup" class="close-popup-btn">&times;</span>
                 <a href="#" class="popup-img">
-                    <img src="{{  $popUpBanner->image }}" alt="banner-1" />
+                    <img src="{{ $popUpBanner->image }}" alt="banner-1" />
                 </a>
                 <div class="dont-show">
                     <input type="checkbox" id="dont-show-checkbox" />
@@ -603,21 +603,21 @@
         $(document).ready(function() {
             // Handle AJAX wishlist buttons
             $(document).on('click', '.ajax-wishlist-btn', function(e) {
-                    e.preventDefault();
+                e.preventDefault();
 
-                    const button = $(this);
-                    const productSlug = button.data('product-slug');
-                    const action = button.data('action');
-                    const url = action === 'add' ? '{{ url('add/to/wishlist') }}/' + productSlug :
-                        '{{ url('remove/from/wishlist') }}/' + productSlug;
+                const button = $(this);
+                const productSlug = button.data('product-slug');
+                const action = button.data('action');
+                const url = action === 'add' ? '{{ url('add/to/wishlist') }}/' + productSlug :
+                    '{{ url('remove/from/wishlist') }}/' + productSlug;
 
-                    // Check if customer is authenticated
-                    const isAuthenticated = {{ auth('customer')->check() ? 'true' : 'false' }};
-                    if (!isAuthenticated) {
-                        toastr.error('Please login to add items to wishlist');
-                        window.location.href = '{{ route('login') }}';
-                        return;
-                    }
+                // Check if customer is authenticated
+                const isAuthenticated = {{ auth('customer')->check() ? 'true' : 'false' }};
+                if (!isAuthenticated) {
+                    toastr.error('Please login to add items to wishlist');
+                    window.location.href = '{{ route('login') }}';
+                    return;
+                }
 
                 // Show loading state
                 const originalIcon = button.find('i').attr('class');
@@ -657,8 +657,9 @@
                                 } else {
                                     // Product card style
                                     button.find('i').attr('class',
-                                        'fi fi-ss-heart product__items--action__btn--svg').css(
-                                        'color', 'red');
+                                            'fi fi-ss-heart product__items--action__btn--svg')
+                                        .css(
+                                            'color', 'red');
                                     if (regularSpan.length > 0) {
                                         regularSpan.text('Remove from Wishlist');
                                     }
@@ -676,8 +677,9 @@
                                 } else {
                                     // Product card style
                                     button.find('i').attr('class',
-                                        'fi fi-rs-heart product__items--action__btn--svg').css(
-                                        'color', '');
+                                            'fi fi-rs-heart product__items--action__btn--svg')
+                                        .css(
+                                            'color', '');
                                     if (regularSpan.length > 0) {
                                         regularSpan.text('Add to Wishlist');
                                     }
@@ -687,8 +689,10 @@
                             // Update wishlist count in header
                             if (response.wishlist_count !== undefined) {
                                 $('.items__count.wishlist').text(response.wishlist_count);
-                                $('.items__count.wishlist__count').text(response.wishlist_count);
-                                $('.items__count.wishlist.style2').text(response.wishlist_count);
+                                $('.items__count.wishlist__count').text(response
+                                    .wishlist_count);
+                                $('.items__count.wishlist.style2').text(response
+                                    .wishlist_count);
                             }
 
                             // Show appropriate message based on action
