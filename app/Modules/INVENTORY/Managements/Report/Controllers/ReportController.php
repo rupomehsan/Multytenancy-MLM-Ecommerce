@@ -1,0 +1,96 @@
+<?php
+
+namespace App\Modules\INVENTORY\Managements\Report\Controllers;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+use App\Modules\INVENTORY\Managements\Purchase\PurchaseOrders\Database\Models\ProductPurchaseOrder;
+use App\Modules\ECOMMERCE\Managements\Orders\Database\Models\Order;
+
+class ReportController extends Controller
+{
+    public function __construct()
+    {
+        $this->loadModuleViewPath('INVENTORY/Managements/Report');
+    }
+    public function salesReport()
+    {
+        return view('sales_report');
+    }
+
+    public function generateSalesReport(Request $request)
+    {
+
+        $startDate = date("Y-m-d", strtotime(str_replace("/", "-", $request->start_date))) . " 00:00:00";
+        $endDate = date("Y-m-d", strtotime(str_replace("/", "-", $request->end_date))) . " 23:59:59";
+        $orderStatus = $request->order_status;
+        $paymentStatus = $request->payment_status;
+        $paymentMethod = $request->payment_method;
+
+        $query = Order::query();
+        $query->whereBetween('order_date', [$startDate, $endDate]);
+
+        if ($orderStatus != '') {
+            $query->where('order_status', $orderStatus);
+        }
+        if ($paymentStatus != '') {
+            $query->where('payment_status', $paymentStatus);
+        }
+        if ($paymentMethod != '') {
+            $query->where('payment_method', $paymentMethod);
+        }
+        $data = $query->orderBy('id', 'desc')->get();
+
+        $returnHTML = view('sales_report_view', compact('startDate', 'endDate', 'data'))->render();
+        return response()->json(['variant' => $returnHTML]);
+    }
+
+    public function productPurchaseReport(Request $request)
+    {
+        return view('product_purchase_report');
+    }
+    public function generateProductPurchaseReport(Request $request)
+    {
+        // Handle empty or invalid dates
+        $startDateInput = $request->start_date ?? date('d/m/Y', strtotime('-30 days'));
+        $endDateInput = $request->end_date ?? date('d/m/Y');
+
+        // Convert dates for comparison (just date, no time)
+        $startDate = date("Y-m-d", strtotime(str_replace("/", "-", $startDateInput)));
+        $endDate = date("Y-m-d", strtotime(str_replace("/", "-", $endDateInput)));
+
+        $query = ProductPurchaseOrder::query();
+        $query->whereDate('date', '>=', $startDate)
+            ->whereDate('date', '<=', $endDate)
+            ->leftJoin('product_warehouses', 'product_purchase_orders.product_warehouse_id', '=', 'product_warehouses.id')
+            ->leftJoin('product_warehouse_rooms', 'product_purchase_orders.product_warehouse_room_id', '=', 'product_warehouse_rooms.id')
+            ->leftJoin('product_warehouse_room_cartoons', 'product_purchase_orders.product_warehouse_room_cartoon_id', '=', 'product_warehouse_room_cartoons.id')
+            ->leftJoin('product_suppliers', 'product_purchase_orders.product_supplier_id', '=', 'product_suppliers.id')
+            ->select(
+                'product_purchase_orders.*',
+                'product_warehouses.title as warehouse_name',
+                'product_warehouse_rooms.title as room_name',
+                'product_warehouse_room_cartoons.title as cartoon_name',
+                'product_suppliers.name as supplier_name'
+            );
+
+        $data = $query->orderBy('product_purchase_orders.id', 'desc')->get();
+
+        // Add the datetime strings back for display
+        $startDate = $startDate . " 00:00:00";
+        $endDate = $endDate . " 23:59:59";
+
+        // Check if it's an AJAX request
+        if ($request->ajax() || $request->wantsJson()) {
+            $returnHTML = view('product_purchase_report_view', compact('startDate', 'endDate', 'data'))->render();
+            return response()->json(['variant' => $returnHTML], 200, [], JSON_UNESCAPED_SLASHES);
+        }
+
+        // For direct browser access, redirect to the main report page
+        return redirect()->route('productPurchaseReport')->with([
+            'start_date' => $startDateInput,
+            'end_date' => $endDateInput
+        ]);
+    }
+}

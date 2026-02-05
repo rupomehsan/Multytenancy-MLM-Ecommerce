@@ -1,0 +1,9 @@
+{
+  "liveServer.settings.port": 5501,
+  "[blade]": {
+    "editor.defaultFormatter": "shufo.vscode-blade-formatter",
+    "editor.formatOnSave": true
+  },
+  "blade.format.enable": true,
+  "editor.formatOnSave": true
+}

@@ -1,0 +1,16 @@
+/* Icon color and sizing for header shipping items */
+.icon--secondary {
+	color: var(--template-secondary, #ff6b6b);
+}
+
+.header__shipping--text__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 16px;
+	width: 18px;
+	height: 18px;
+	margin-right: 8px;
+	line-height: 1;
+}
+

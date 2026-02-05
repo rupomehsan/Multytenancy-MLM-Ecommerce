@@ -1,0 +1,215 @@
+@extends('tenant.frontend.layouts.app')
+
+@section('header_css')
+    <link rel="stylesheet" href="{{ url('tenant/frontend') }}/css/user-pannel.css" />
+    <style>
+        .create-ticket-inner select.form-control {
+            font-size: 16px !important;
+            height: 45px !important;
+            padding: .6rem .8rem !important;
+        }
+
+        .create-ticket-inner input.form-control {
+            font-size: 16px !important;
+            height: 45px !important;
+            padding: .6rem .8rem !important;
+        }
+
+        .create-ticket-inner button.theme-btn {
+            font-size: 14px;
+        }
+
+        /* Responsive for mobile */
+        @media (max-width: 768px) {
+            .dashboard-head-widget {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 12px;
+            }
+
+            .dashboard-head-widget-btn {
+                width: 100%;
+            }
+
+            .dashboard-head-widget-btn a {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .create-ticket-form-btn button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+@endsection
+
+@push('site-seo')
+    {{-- $generalInfo is provided globally by AppServiceProvider --}}
+    <title>
+        @if ($generalInfo && $generalInfo->meta_title)
+            {{ $generalInfo->meta_title }}
+        @else
+            {{ $generalInfo->company_name }}
+        @endif
+    </title>
+    @if ($generalInfo && $generalInfo->fav_icon)
+        <link rel="icon" href="{{  $generalInfo->fav_icon }}" type="image/x-icon" />
+    @endif
+@endpush
+
+@section('header_css')
+    <style>
+        .pagination {
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+@endsection
+
+@push('user_dashboard_menu')
+    @include('tenant.frontend.pages.customer_panel.layouts.partials.mobile_menu_offcanvus')
+@endpush
+
+@section('content')
+    <section class="getcom-user-body">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="getcom-user-body-bg">
+                        <img alt="" src="{{ url('tenant/frontend') }}/assets/images/user-hero-bg.png" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-12">
+                    @include('tenant.frontend.pages.customer_panel.layouts.partials.menu')
+                </div>
+                <div class="col-lg-12 col-xl-9 col-12">
+
+                    <div class="dashboard-create-ticket mgTop24">
+                        <div class="dashboard-head-widget style-2 m-0">
+                            <h5 class="dashboard-head-widget-title">{{ __('customer.create_ticket') }}</h5>
+                            <div class="dashboard-head-widget-btn">
+                                <a class="theme-btn secondary-btn icon-right" href="{{ url('support/tickets') }}"><i
+                                        class="fi-rr-arrow-left"></i>{{ __('customer.back_to_tickets') }}</a>
+                            </div>
+                        </div>
+                        <div class="create-ticket-inner" style="margin-top: 0px">
+                            <form action="{{ url('save/support/ticket') }}" method="post" class="create-ticket-form"
+                                enctype="multipart/form-data">
+                                @csrf
+                                <div class="form-group">
+                                    <label class="form-label" for="ticketTitle">{{ __('customer.ticket_title') }}</label>
+                                    <input name="subject" placeholder="{{ __('customer.ticket_title_placeholder') }}" required="" type="text"
+                                        id="ticketTitle" class="form-control" value="">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="selectTopic">{{ __('customer.select_topic') }}</label>
+                                    <select name="topic" required="" id="selectTopic" class="form-control">
+                                        <option value="Select">{{ __('customer.select') }}</option>
+                                        <option value="General Support">{{ __('customer.general_support') }}</option>
+                                        <option value="Technical Issue">{{ __('customer.technical_issue') }}</option>
+                                        <option value="Order Issue">{{ __('customer.order_issue') }}</option>
+                                        <option value="Payment Issue">{{ __('customer.payment_issue') }}</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="description">{{ __('customer.ticket_description') }}</label>
+                                    <textarea name="description" rows="3" placeholder="{{ __('customer.describe_issues') }}" required="" id="description"
+                                        class="form-control"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">{{ __('customer.upload_attachment') }}</label>
+                                    <div class="create-ticket-form-upload-image">
+                                        <div class="library-photo-input">
+                                            <input type="file" name="image" accept="image/*" id="library-photo-input"
+                                                class="hidden" onchange="uploadLibraryPhoto()">
+                                            <label for="library-photo-input">
+                                                <i class="fi fi-rr-upload"></i>
+                                                <span>{{ __('customer.upload_photo') }}</span>
+                                            </label>
+                                        </div>
+                                        <div class="upload-image-list upload-img-input">
+                                            <div style="position: relative">
+                                                <div class="remove-icon" id="remove-icon" style="display: none"
+                                                    onclick="removeImage()">
+                                                    <i class="fi fi-rr-cross"></i>
+                                                </div>
+                                                <img id="uploaded-image" style="display: none">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="create-ticket-form-btn">
+                                    <button type="submit" class="theme-btn icon-right btn btn-primary">
+                                        <i class="fi-br-plus"></i> &nbsp; {{ __('customer.create_ticket') }}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+@endsection
+
+@section('footer_js')
+    <script type="text/javascript">
+        function uploadLibraryPhoto() {
+            // Get the file that the user selected.
+            const fileInput = document.getElementById("library-photo-input");
+            const file = fileInput.files[0];
+
+            // Check if a file was selected
+            if (file) {
+                // Create a new FileReader
+                const reader = new FileReader();
+
+                // Set up the onload event handler for the reader
+                reader.onload = function() {
+                    // Get the element where you want to display the uploaded image.
+                    const imageElement = document.getElementById("uploaded-image");
+
+                    // Get the remove icon element
+                    const removeIcon = document.getElementById("remove-icon");
+
+                    // Set the source of the image element to the data URL from the FileReader.
+                    imageElement.src = reader.result;
+
+                    // Show the image element.
+                    imageElement.style.display = "block";
+
+                    // Show the remove icon.
+                    removeIcon.style.display = "block";
+                };
+
+                // Read the file as a data URL
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage() {
+            // Get the image element
+            const imageElement = document.getElementById("uploaded-image");
+
+            // Get the remove icon element
+            const removeIcon = document.getElementById("remove-icon");
+
+            // Hide the image element
+            imageElement.style.display = "none";
+
+            // Clear the source (removes the image)
+            imageElement.src = "";
+
+            // Hide the remove icon again
+            removeIcon.style.display = "none";
+
+            // Reset the file input
+            const fileInput = document.getElementById("library-photo-input");
+            fileInput.value = "";
+        }
+    </script>
+@endsection
